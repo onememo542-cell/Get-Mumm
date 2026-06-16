@@ -6,13 +6,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Moon, Sun, Globe, User, X, LogIn, ShoppingCart, Bell } from "lucide-react";
 import { useState, useEffect } from "react";
 import { AuthModal } from "@/components/auth/AuthModal";
+import { nav, common } from "@/locales";
 
 /* ─── tiny icon-button shared style ─────────────────────────────────────── */
 const iconBtn =
   "relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-muted transition-colors shrink-0";
 
 export function Navbar() {
-  const { t, language, setLanguage, isRtl } = useLanguage();
+  const { tx, language, setLanguage, isRtl } = useLanguage();
   const { theme, setTheme } = useTheme();
   const { totalItems, openCart } = useCart();
   const [location] = useLocation();
@@ -36,12 +37,12 @@ export function Navbar() {
   }, [mobileMenuOpen, authOpen]);
 
   const navLinks = [
-    { href: "/",            label: t("Home",        "الرئيسية") },
-    { href: "/menu",        label: t("Menu",         "المنيو")   },
-    { href: "/for-offices", label: t("For Offices",  "للشركات")  },
-    { href: "/about",       label: t("About Us",     "من نحن")   },
-    { href: "/blog",        label: t("Blog",         "المدونة")  },
-    { href: "/contact",     label: t("Contact",      "تواصل")    },
+    { href: "/",            label: tx(nav.home)       },
+    { href: "/menu",        label: tx(nav.menu)       },
+    { href: "/for-offices", label: tx(nav.forOffices) },
+    { href: "/about",       label: tx(nav.aboutUs)    },
+    { href: "/blog",        label: tx(nav.blog)       },
+    { href: "/contact",     label: tx(nav.contact)    },
   ];
 
   const toggleLanguage = () => setLanguage(language === "en" ? "ar" : "en");
@@ -77,9 +78,6 @@ export function Navbar() {
         >
           <div className="flex items-center h-12 gap-2">
 
-            {/* ── Logo (absolute-center on mobile) ─────────────────────── */}
-            {/* Mobile: hamburger on left, logo centered, icons on right   */}
-
             {/* Hamburger — left side on mobile only */}
             <button
               className={`lg:hidden ${iconBtn}`}
@@ -98,7 +96,7 @@ export function Navbar() {
                 Get Mumm
               </span>
               <span className="text-[8px] uppercase tracking-widest text-muted-foreground hidden sm:block mt-0.5">
-                {t("Homemade Meals Delivered with Love", "وجبات منزلية بنكهة الحب")}
+                {tx(nav.tagline)}
               </span>
             </Link>
 
@@ -227,7 +225,7 @@ export function Navbar() {
               <div className="flex flex-col">
                 <span className="text-xl font-serif font-bold text-primary leading-none">Get Mumm</span>
                 <span className="text-[8px] uppercase tracking-widest text-muted-foreground mt-1">
-                  {t("Homemade Meals Delivered with Love", "وجبات منزلية بنكهة الحب")}
+                  {tx(nav.tagline)}
                 </span>
               </div>
               <div className="flex items-center gap-1">
@@ -298,14 +296,14 @@ export function Navbar() {
                   className="flex items-center justify-center gap-2 py-2.5 rounded-2xl border border-border hover:border-primary hover:text-primary transition-colors text-sm font-semibold"
                 >
                   <LogIn className="h-4 w-4" />
-                  {t("Sign In", "تسجيل الدخول")}
+                  {tx(common.signIn)}
                 </button>
                 <button
                   onClick={() => openAuth("register")}
                   className="flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/85 transition-colors text-sm font-semibold"
                 >
                   <User className="h-4 w-4" />
-                  {t("Register", "إنشاء حساب")}
+                  {tx(common.register)}
                 </button>
               </div>
 
@@ -323,7 +321,7 @@ export function Navbar() {
                   className="flex items-center justify-center gap-2 py-2.5 rounded-2xl border border-border hover:border-primary hover:text-primary transition-colors text-sm font-medium"
                 >
                   {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                  {theme === "dark" ? t("Light Mode", "الوضع الفاتح") : t("Dark Mode", "الوضع الداكن")}
+                  {theme === "dark" ? tx(nav.lightMode) : tx(nav.darkMode)}
                 </button>
               </div>
             </div>

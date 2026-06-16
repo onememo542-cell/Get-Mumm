@@ -4,6 +4,7 @@ import { X, Eye, EyeOff, Mail, Lock, User, LogIn, UserPlus, ShieldCheck } from "
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { ease } from "@/lib/motion";
+import { auth, common } from "@/locales";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -12,7 +13,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalProps) {
-  const { t, isRtl } = useLanguage();
+  const { t, tx, isRtl } = useLanguage();
   const { toast } = useToast();
   const [tab, setTab] = useState<"login" | "register">(defaultTab);
   const [showPass, setShowPass] = useState(false);
@@ -43,8 +44,8 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
     setTimeout(() => {
       setLoading(false);
       toast({
-        title: t("Account created!", "تم إنشاء حسابك!"),
-        description: t("Welcome to Get Mumm.", "أهلاً بك في ممم."),
+        title: tx(auth.accountCreated),
+        description: tx(auth.welcomeToMumm),
       });
       onClose();
     }, 900);
@@ -138,14 +139,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                 {/* Title */}
                 <div className="text-center mb-5">
                   <h2 className="text-xl font-bold text-white tracking-tight mb-1">
-                    {tab === "login"
-                      ? t("Welcome to Mumm", "أهلاً في ممم")
-                      : t("Join Get Mumm", "انضم إلى ممم")}
+                    {tab === "login" ? tx(auth.welcomeBack) : tx(auth.joinGetMumm)}
                   </h2>
                   <p className="text-[13px]" style={{ color: "rgba(255,255,255,0.38)" }}>
-                    {tab === "login"
-                      ? t("Sign in to track your orders", "سجل الدخول لمتابعة طلباتك")
-                      : t("Create your free account today", "أنشئ حسابك المجاني الآن")}
+                    {tab === "login" ? tx(auth.signInSubtitle) : tx(auth.registerSubtitle)}
                   </p>
                 </div>
 
@@ -172,7 +169,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                       className="relative z-10 flex-1 py-2 text-xs font-semibold rounded-[10px] transition-colors"
                       style={{ color: tab === t_ ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.35)" }}
                     >
-                      {t_ === "login" ? t("Sign In", "تسجيل الدخول") : t("Register", "إنشاء حساب")}
+                      {t_ === "login" ? tx(common.signIn) : tx(common.register)}
                     </button>
                   ))}
                 </div>
@@ -195,13 +192,13 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                           className="block mb-1.5 text-[10px] font-semibold tracking-[0.11em] uppercase"
                           style={{ color: "rgba(255,255,255,0.38)" }}
                         >
-                          {t("Email Address", "البريد الإلكتروني")}
+                          {tx(auth.emailAddress)}
                         </label>
                         <div className="relative">
                           <Mail className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none ${iconSide("l")}`} style={{ color: "rgba(255,255,255,0.28)" }} />
                           <input
                             type="email"
-                            placeholder={t("Enter your email", "أدخل بريدك الإلكتروني")}
+                            placeholder={tx(auth.enterEmail)}
                             className={`${inputCls} ${padL}`}
                             value={loginForm.email}
                             onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
@@ -216,7 +213,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                           className="block mb-1.5 text-[10px] font-semibold tracking-[0.11em] uppercase"
                           style={{ color: "rgba(255,255,255,0.38)" }}
                         >
-                          {t("Passcode", "كلمة المرور")}
+                          {tx(auth.passcode)}
                         </label>
                         <div className="relative">
                           <Lock className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none ${iconSide("l")}`} style={{ color: "rgba(255,255,255,0.28)" }} />
@@ -250,7 +247,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                             style={{ accentColor: "#f5c83a" }}
                           />
                           <span className="text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
-                            {t("Maintain session", "حفظ الجلسة")}
+                            {tx(auth.maintainSession)}
                           </span>
                         </label>
                         <button
@@ -258,7 +255,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                           className="text-[11px] font-medium transition-colors"
                           style={{ color: "#f5c83a" }}
                         >
-                          {t("Recover access", "استعادة الوصول")}
+                          {tx(auth.recoverAccess)}
                         </button>
                       </div>
 
@@ -281,25 +278,25 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                               className="w-4 h-4 rounded-full border-2 animate-spin"
                               style={{ borderColor: "rgba(0,0,0,0.15)", borderTopColor: "rgba(0,0,0,0.55)" }}
                             />
-                            {t("Signing in…", "جاري الدخول…")}
+                            {tx(auth.signingIn)}
                           </>
                         ) : (
                           <>
-                            {t("Authenticate", "تسجيل الدخول")}
+                            {tx(auth.authenticate)}
                             <LogIn className="w-4 h-4" />
                           </>
                         )}
                       </button>
 
                       <p className="text-center text-[11px] pt-1" style={{ color: "rgba(255,255,255,0.28)" }}>
-                        {t("Don't have an account?", "ليس لديك حساب؟")}{" "}
+                        {tx(auth.noAccount)}{" "}
                         <button
                           type="button"
                           onClick={() => setTab("register")}
                           className="font-semibold transition-colors"
                           style={{ color: "#f5c83a" }}
                         >
-                          {t("Register", "سجل الآن")}
+                          {tx(auth.registerNow)}
                         </button>
                       </p>
                     </motion.form>
@@ -319,13 +316,13 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                           className="block mb-1.5 text-[10px] font-semibold tracking-[0.11em] uppercase"
                           style={{ color: "rgba(255,255,255,0.38)" }}
                         >
-                          {t("Full Name", "الاسم الكامل")}
+                          {tx(common.fullName)}
                         </label>
                         <div className="relative">
                           <User className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none ${iconSide("l")}`} style={{ color: "rgba(255,255,255,0.28)" }} />
                           <input
                             type="text"
-                            placeholder={t("Your full name", "اسمك الكامل")}
+                            placeholder={tx(auth.yourFullName)}
                             className={`${inputCls} ${padL}`}
                             value={regForm.name}
                             onChange={(e) => setRegForm({ ...regForm, name: e.target.value })}
@@ -340,13 +337,13 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                           className="block mb-1.5 text-[10px] font-semibold tracking-[0.11em] uppercase"
                           style={{ color: "rgba(255,255,255,0.38)" }}
                         >
-                          {t("Email Address", "البريد الإلكتروني")}
+                          {tx(auth.emailAddress)}
                         </label>
                         <div className="relative">
                           <Mail className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none ${iconSide("l")}`} style={{ color: "rgba(255,255,255,0.28)" }} />
                           <input
                             type="email"
-                            placeholder={t("Enter your email", "أدخل بريدك الإلكتروني")}
+                            placeholder={tx(auth.enterEmail)}
                             className={`${inputCls} ${padL}`}
                             value={regForm.email}
                             onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
@@ -361,7 +358,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                           className="block mb-1.5 text-[10px] font-semibold tracking-[0.11em] uppercase"
                           style={{ color: "rgba(255,255,255,0.38)" }}
                         >
-                          {t("Passcode", "كلمة المرور")}
+                          {tx(auth.passcode)}
                         </label>
                         <div className="relative">
                           <Lock className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none ${iconSide("l")}`} style={{ color: "rgba(255,255,255,0.28)" }} />
@@ -404,25 +401,25 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                               className="w-4 h-4 rounded-full border-2 animate-spin"
                               style={{ borderColor: "rgba(0,0,0,0.15)", borderTopColor: "rgba(0,0,0,0.55)" }}
                             />
-                            {t("Creating account…", "جاري إنشاء الحساب…")}
+                            {tx(auth.creatingAccount)}
                           </>
                         ) : (
                           <>
-                            {t("Create Account", "إنشاء الحساب")}
+                            {tx(auth.createAccount)}
                             <UserPlus className="w-4 h-4" />
                           </>
                         )}
                       </button>
 
                       <p className="text-center text-[11px] pt-1" style={{ color: "rgba(255,255,255,0.28)" }}>
-                        {t("Already have an account?", "لديك حساب بالفعل؟")}{" "}
+                        {tx(auth.alreadyHaveAccount)}{" "}
                         <button
                           type="button"
                           onClick={() => setTab("login")}
                           className="font-semibold transition-colors"
                           style={{ color: "#f5c83a" }}
                         >
-                          {t("Sign In", "تسجيل الدخول")}
+                          {tx(common.signIn)}
                         </button>
                       </p>
                     </motion.form>
@@ -434,7 +431,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                   <div className="flex items-center gap-3 mb-4">
                     <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
                     <span className="text-[10px] font-medium tracking-wide" style={{ color: "rgba(255,255,255,0.25)" }}>
-                      {t("OR CONTINUE WITH", "أو تابع مع")}
+                      {tx(auth.orContinueWith)}
                     </span>
                     <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
                   </div>

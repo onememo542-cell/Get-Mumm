@@ -5,9 +5,10 @@ import { useCart, FREE_DELIVERY_THRESHOLD } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { ease } from "@/lib/motion";
+import { cart, common } from "@/locales";
 
 export function CartDrawer() {
-  const { t, isRtl } = useLanguage();
+  const { t, tx, isRtl } = useLanguage();
   const { items, totalItems, subtotal, deliveryFee, total, updateQty, removeItem, closeCart, isOpen } = useCart();
   const [, navigate] = useLocation();
 
@@ -43,7 +44,7 @@ export function CartDrawer() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-primary" />
-                <h2 className="font-bold text-lg">{t("Your Cart", "سلة التسوق")}</h2>
+                <h2 className="font-bold text-lg">{tx(cart.yourCart)}</h2>
                 {totalItems > 0 && (
                   <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
                     {totalItems}
@@ -81,7 +82,7 @@ export function CartDrawer() {
               <div className="px-5 py-3 bg-green-500/10 border-b border-border">
                 <div className="flex items-center gap-2 text-xs font-semibold text-green-600 dark:text-green-400">
                   <Truck className="w-3.5 h-3.5" />
-                  {t("You've unlocked free delivery! 🎉", "لقد حصلت على توصيل مجاني! 🎉")}
+                  {tx(cart.freeDelivery)}
                 </div>
               </div>
             )}
@@ -96,13 +97,13 @@ export function CartDrawer() {
                     className="flex flex-col items-center justify-center h-full py-16 text-center"
                   >
                     <div className="text-6xl mb-4">🛒</div>
-                    <h3 className="font-bold text-lg mb-2">{t("Your cart is empty", "سلتك فارغة")}</h3>
+                    <h3 className="font-bold text-lg mb-2">{tx(common.cartEmpty)}</h3>
                     <p className="text-muted-foreground text-sm mb-6">
-                      {t("Add some delicious homemade dishes!", "أضف بعض الأطباق المنزلية اللذيذة!")}
+                      {tx(cart.addDishes)}
                     </p>
                     <Link href="/menu" onClick={closeCart}>
                       <Button className="rounded-full px-6 font-bold">
-                        {t("Browse Menu", "تصفح المنيو")}
+                        {tx(cart.browseMenu)}
                       </Button>
                     </Link>
                   </motion.div>
@@ -132,7 +133,7 @@ export function CartDrawer() {
                           {isRtl ? item.nameAr : item.name}
                         </p>
                         <p className="text-primary font-bold text-sm mt-0.5">
-                          {(item.price * item.qty).toFixed(0)} {t("EGP", "ج.م")}
+                          {(item.price * item.qty).toFixed(0)} {tx(common.egp)}
                         </p>
                         {item.qty > 1 && (
                           <p className="text-muted-foreground text-xs">
@@ -193,20 +194,20 @@ export function CartDrawer() {
                 >
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between text-muted-foreground">
-                      <span>{t("Subtotal", "المجموع الفرعي")}</span>
-                      <span>{subtotal.toFixed(0)} {t("EGP", "ج.م")}</span>
+                      <span>{tx(cart.subtotal)}</span>
+                      <span>{subtotal.toFixed(0)} {tx(common.egp)}</span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
-                      <span>{t("Delivery", "التوصيل")}</span>
+                      <span>{tx(common.delivery)}</span>
                       {deliveryFee === 0 ? (
-                        <span className="text-green-500 font-semibold">{t("Free", "مجاني")}</span>
+                        <span className="text-green-500 font-semibold">{tx(common.free)}</span>
                       ) : (
-                        <span>{deliveryFee} {t("EGP", "ج.م")}</span>
+                        <span>{deliveryFee} {tx(common.egp)}</span>
                       )}
                     </div>
                     <div className="flex justify-between font-bold text-base border-t border-border pt-2 mt-2">
-                      <span>{t("Total", "الإجمالي")}</span>
-                      <span className="text-primary">{total.toFixed(0)} {t("EGP", "ج.م")}</span>
+                      <span>{tx(common.total)}</span>
+                      <span className="text-primary">{total.toFixed(0)} {tx(common.egp)}</span>
                     </div>
                   </div>
 
@@ -214,14 +215,14 @@ export function CartDrawer() {
                     onClick={toCheckout}
                     className="w-full h-12 rounded-xl font-bold text-base flex items-center justify-center gap-2"
                   >
-                    {t("Proceed to Checkout", "إتمام الطلب")}
+                    {tx(cart.proceedToCheckout)}
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                   <button
                     onClick={closeCart}
                     className="w-full text-center text-sm text-muted-foreground hover:text-primary transition-colors py-1"
                   >
-                    {t("Continue Shopping", "متابعة التسوق")}
+                    {tx(cart.continueShopping)}
                   </button>
                 </motion.div>
               )}

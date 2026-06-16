@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Building2, UtensilsCrossed, CalendarClock, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
+import { offices, common } from "@/locales";
 
 const formSchema = z.object({
   companyName: z.string().min(2, "Company name is required"),
@@ -27,7 +28,7 @@ const formSchema = z.object({
 });
 
 export default function ForOfficesPage() {
-  const { t, isRtl } = useLanguage();
+  const { tx, isRtl } = useLanguage();
   const { toast } = useToast();
   const submitInquiry = useSubmitOfficeInquiry();
 
@@ -51,15 +52,15 @@ export default function ForOfficesPage() {
       {
         onSuccess: () => {
           toast({
-            title: t("Inquiry sent!", "تم إرسال طلبك!"),
-            description: t("Our corporate team will contact you shortly.", "سيتواصل معك فريق الشركات قريباً."),
+            title: tx(offices.inquirySent),
+            description: tx(offices.teamWillContact),
           });
           form.reset();
         },
         onError: () => {
           toast({
-            title: t("Error", "خطأ"),
-            description: t("Failed to send inquiry.", "فشل إرسال الطلب."),
+            title: tx(common.error),
+            description: tx(offices.failedToSend),
             variant: "destructive",
           });
         }
@@ -70,24 +71,24 @@ export default function ForOfficesPage() {
   const benefits = [
     {
       icon: <UtensilsCrossed className="w-8 h-8 text-primary" />,
-      title: t("Virtual Cafeteria", "كافيتيريا افتراضية"),
-      desc: t("Let employees choose their own daily meals from our diverse menu.", "دع موظفيك يختارون وجباتهم اليومية من قائمة طعامنا المتنوعة.")
+      title: tx(offices.virtualCafeteria),
+      desc: tx(offices.virtualCafeteriaDesc),
     },
     {
       icon: <CalendarClock className="w-8 h-8 text-primary" />,
-      title: t("Reliable Delivery", "توصيل دقيق"),
-      desc: t("Hot, fresh food arrives precisely on time for your team's lunch break.", "طعام ساخن وطازج يصل في الوقت المحدد لاستراحة غداء فريقك.")
+      title: tx(offices.reliableDelivery),
+      desc: tx(offices.reliableDeliveryDesc),
     },
     {
       icon: <ShieldCheck className="w-8 h-8 text-primary" />,
-      title: t("Highest Quality", "أعلى جودة"),
-      desc: t("Strict hygiene standards and premium ingredients for every single meal.", "معايير نظافة صارمة ومكونات ممتازة لكل وجبة.")
+      title: tx(offices.highestQuality),
+      desc: tx(offices.highestQualityDesc),
     },
     {
       icon: <Building2 className="w-8 h-8 text-primary" />,
-      title: t("Flexible Billing", "فواتير مرنة"),
-      desc: t("Subsidize fully, partially, or let employees pay. Easy monthly invoicing.", "ادعم الوجبات كلياً أو جزئياً. فواتير شهرية ميسرة.")
-    }
+      title: tx(offices.flexibleBilling),
+      desc: tx(offices.flexibleBillingDesc),
+    },
   ];
 
   return (
@@ -97,37 +98,33 @@ export default function ForOfficesPage() {
         <div className="container mx-auto px-4 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
           <motion.div {...sectionReveal}>
             <span className="inline-block bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-bold mb-6">
-              Get Mumm {t("Corporate", "للشركات")}
+              Get Mumm {tx(offices.corporate)}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
-              {t("Fuel your team with real food.", "غذي فريقك بطعام حقيقي.")}
+              {tx(offices.heroTitle)}
             </h1>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-              {t(
-                "Say goodbye to sad desk lunches and unhealthy fast food. Treat your team to authentic, homemade Egyptian meals cooked with love.",
-                "وداعاً لغداء المكتب الممل والوجبات السريعة غير الصحية. قدم لفريقك وجبات مصرية أصيلة مطبوخة بحب."
-              )}
+              {tx(offices.heroDesc)}
             </p>
             <div className="flex items-center gap-4">
               <Button size="lg" className="rounded-full px-8 h-14 text-lg" onClick={() => document.getElementById("inquiry-form")?.scrollIntoView({ behavior: "smooth" })}>
-                {t("Get a Quote", "احصل على عرض سعر")}
+                {tx(offices.getQuote)}
               </Button>
             </div>
           </motion.div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7 }}
             className="relative"
           >
             <div className="aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl relative">
-              <img 
-                src="/office_catering.png" 
-                alt="Office catering" 
+              <img
+                src="/office_catering.png"
+                alt="Office catering"
                 className="w-full h-full object-cover"
               />
             </div>
-            {/* Decorative elements */}
             <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-secondary rounded-full -z-10" />
             <div className="absolute -top-6 -right-6 w-32 h-32 bg-primary/20 rounded-full -z-10" />
           </motion.div>
@@ -141,13 +138,13 @@ export default function ForOfficesPage() {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-              {t("Why Get Mumm for your office?", "لماذا ممم لشركتك؟")}
+              {tx(offices.whyMumm)}
             </h2>
             <p className="text-muted-foreground text-lg">
-              {t("We make corporate dining simple, delicious, and impactful.", "نجعل طعام الشركات بسيطاً، لذيذاً، وذو أثر إيجابي.")}
+              {tx(offices.whyMummDesc)}
             </p>
           </div>
-          
+
           <motion.div
             variants={sectionStagger}
             initial="initial"
@@ -175,9 +172,9 @@ export default function ForOfficesPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="bg-card border rounded-[2.5rem] p-8 md:p-12 shadow-xl">
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-serif font-bold mb-4">{t("Corporate Inquiry", "طلب للشركات")}</h2>
+              <h2 className="text-3xl font-serif font-bold mb-4">{tx(offices.formTitle)}</h2>
               <p className="text-muted-foreground">
-                {t("Fill out the form below and our team will craft a custom meal plan for your company.", "املأ النموذج أدناه وسيقوم فريقنا بتصميم خطة وجبات مخصصة لشركتك.")}
+                {tx(offices.formDesc)}
               </p>
             </div>
 
@@ -189,7 +186,7 @@ export default function ForOfficesPage() {
                     name="companyName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("Company Name", "اسم الشركة")}</FormLabel>
+                        <FormLabel>{tx(offices.companyName)}</FormLabel>
                         <FormControl><Input {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
@@ -200,21 +197,21 @@ export default function ForOfficesPage() {
                     name="contactName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("Contact Person", "اسم مسؤول التواصل")}</FormLabel>
+                        <FormLabel>{tx(offices.contactPerson)}</FormLabel>
                         <FormControl><Input {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                
+
                 <div className="grid sm:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("Work Email", "البريد الإلكتروني للعمل")}</FormLabel>
+                        <FormLabel>{tx(offices.workEmail)}</FormLabel>
                         <FormControl><Input type="email" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
@@ -225,8 +222,8 @@ export default function ForOfficesPage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("Phone Number", "رقم الهاتف")}</FormLabel>
-                        <FormControl><Input {...field} dir="ltr" className={isRtl ? 'text-right' : ''}/></FormControl>
+                        <FormLabel>{tx(common.phoneNumber)}</FormLabel>
+                        <FormControl><Input {...field} dir="ltr" className={isRtl ? "text-right" : ""} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -239,7 +236,7 @@ export default function ForOfficesPage() {
                     name="headCount"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("Number of Employees", "عدد الموظفين")}</FormLabel>
+                        <FormLabel>{tx(offices.numEmployees)}</FormLabel>
                         <FormControl><Input type="number" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
@@ -250,7 +247,7 @@ export default function ForOfficesPage() {
                     name="deliveryArea"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("Office Location", "موقع الشركة")}</FormLabel>
+                        <FormLabel>{tx(offices.officeLocation)}</FormLabel>
                         <FormControl><Input {...field} placeholder="Maadi, New Cairo..." /></FormControl>
                         <FormMessage />
                       </FormItem>
@@ -261,18 +258,18 @@ export default function ForOfficesPage() {
                     name="frequency"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("Frequency", "معدل التوصيل")}</FormLabel>
+                        <FormLabel>{tx(offices.frequency)}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger dir={isRtl ? "rtl" : "ltr"}>
-                              <SelectValue placeholder={t("Select frequency", "اختر المعدل")} />
+                              <SelectValue placeholder={tx(offices.selectFrequency)} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent dir={isRtl ? "rtl" : "ltr"}>
-                            <SelectItem value="daily">{t("Daily", "يومياً")}</SelectItem>
-                            <SelectItem value="weekly">{t("Weekly", "أسبوعياً")}</SelectItem>
-                            <SelectItem value="monthly">{t("Monthly", "شهرياً")}</SelectItem>
-                            <SelectItem value="one_time">{t("One-time event", "حدث لمرة واحدة")}</SelectItem>
+                            <SelectItem value="daily">{tx(offices.daily)}</SelectItem>
+                            <SelectItem value="weekly">{tx(offices.weekly)}</SelectItem>
+                            <SelectItem value="monthly">{tx(offices.monthly)}</SelectItem>
+                            <SelectItem value="one_time">{tx(offices.oneTimeEvent)}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -286,21 +283,21 @@ export default function ForOfficesPage() {
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("Additional Requirements", "متطلبات إضافية")}</FormLabel>
+                      <FormLabel>{tx(offices.additionalReqs)}</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          className="min-h-[120px]" 
-                          placeholder={t("Tell us about your team's dietary needs, budget, or preferred time.", "أخبرنا عن احتياجات فريقك، الميزانية، أو وقت التوصيل المفضل.")}
-                          {...field} 
+                        <Textarea
+                          className="min-h-[120px]"
+                          placeholder={tx(offices.additionalReqsPlaceholder)}
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <Button type="submit" size="lg" className="w-full h-14 text-lg rounded-xl" disabled={submitInquiry.isPending}>
-                  {submitInquiry.isPending ? t("Sending...", "جاري الإرسال...") : t("Submit Inquiry", "إرسال الطلب")}
+                  {submitInquiry.isPending ? tx(offices.sending) : tx(offices.submitInquiry)}
                 </Button>
               </form>
             </Form>

@@ -17,6 +17,7 @@ import { PaginationControls } from "@/components/ui/pagination-controls";
 import { motion, AnimatePresence } from "framer-motion";
 import { staggerGrid, cardVariant, sectionReveal, ease } from "@/lib/motion";
 import { useToast } from "@/hooks/use-toast";
+import { menu, common } from "@/locales";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -44,26 +45,21 @@ const SORT_OPTIONS = [
 ];
 
 export default function MenuPage() {
-  const { t, isRtl } = useLanguage();
+  const { t, tx, isRtl } = useLanguage();
   const { toast } = useToast();
   const { addItem, updateQty, items: cartItems, totalItems, openCart } = useCart();
   const searchString = useSearch();
   const [, navigate] = useLocation();
 
-  // Navigate to /menu with or without category param — keeps URL in sync
   const selectCategory = (id: number | null) => {
     navigate(id !== null ? `/menu?category=${id}` : "/menu");
   };
 
   useSEO({
-    title: t("Our Menu", "قائمة الطعام"),
-    description: t(
-      "Browse fresh homemade meals from our talented chefs — Egyptian cuisine delivered to your door in Cairo and Giza.",
-      "تصفح وجبات طازجة ومنزلية من أمهر طهاتنا — مطبخ مصري أصيل يصل إلى بابك في القاهرة والجيزة."
-    ),
+    title: tx(menu.ourMenu),
+    description: tx(menu.heroDesc),
   });
 
-  // ── Filter state ─────────────────────────────────────────────────────────
   const [search, setSearch]                 = useState("");
   const [debSearch, setDebSearch]           = useState("");
   const [activeCategory, setActiveCategory] = useState<number | null>(() => {
@@ -78,30 +74,25 @@ export default function MenuPage() {
   const [filtersOpen, setFiltersOpen]       = useState(false);
   const [sortOpen, setSortOpen]             = useState(false);
 
-  // ── Sync category from URL param whenever the search string changes ──────
   useEffect(() => {
     const params = new URLSearchParams(searchString);
     const cat = params.get("category");
     setActiveCategory(cat ? Number(cat) : null);
   }, [searchString]);
 
-  // ── Debounce search ──────────────────────────────────────────────────────
   useEffect(() => {
-    const t = setTimeout(() => setDebSearch(search), 320);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setDebSearch(search), 320);
+    return () => clearTimeout(timer);
   }, [search]);
 
-  // ── Reset page on filter change ──────────────────────────────────────────
   useEffect(() => { setCurrentPage(1); }, [activeCategory, activeDietary, priceRangeIdx, debSearch, sortKey]);
 
-  // ── Data fetching — load ALL items; filter client-side for live counts ───
   const { data: categories, isLoading: isCatsLoading } = useListCategories();
   const { data: rawItems, isLoading: isItemsLoading }  = useListMenuItems({
     search: debSearch || undefined,
     maxPrice: PRICE_RANGES[priceRangeIdx].max ?? undefined,
   });
 
-  // ── Derived: category counts from current price+search filtered set ───────
   const categoryCounts = useMemo<Record<number, number>>(() => {
     if (!rawItems) return {};
     return rawItems.reduce<Record<number, number>>((acc, item) => {
@@ -112,36 +103,27 @@ export default function MenuPage() {
     }, {});
   }, [rawItems]);
 
-  // ── Apply all client-side filters + sort ────────────────────────────────
   const filteredItems = useMemo(() => {
     if (!rawItems) return [];
     let out = rawItems;
 
-    // Category
     if (activeCategory !== null) {
       out = out.filter((item) => item.categoryId === activeCategory);
     }
 
-    // Dietary
     if (activeDietary.length > 0) {
       out = out.filter((item) =>
         activeDietary.every((d) => item.dietary.includes(d))
       );
     }
 
-    // Sort
     out = [...out].sort((a, b) => {
       switch (sortKey) {
-        case "rating":
-          return (b.rating ?? 0) - (a.rating ?? 0);
-        case "price-asc":
-          return a.price - b.price;
-        case "price-desc":
-          return b.price - a.price;
-        case "prep-asc":
-          return (a.prepTimeMinutes ?? 999) - (b.prepTimeMinutes ?? 999);
-        default: // popular
-          return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0);
+        case "rating":     return (b.rating ?? 0) - (a.rating ?? 0);
+        case "price-asc":  return a.price - b.price;
+        case "price-desc": return b.price - a.price;
+        case "prep-asc":   return (a.prepTimeMinutes ?? 999) - (b.prepTimeMinutes ?? 999);
+        default:           return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0);
       }
     });
 
@@ -185,13 +167,10 @@ export default function MenuPage() {
         <div className="container mx-auto px-4 sm:px-6">
           <motion.div {...sectionReveal} className="text-center mb-8">
             <h1 className="text-3xl sm:text-5xl font-serif font-bold mb-3">
-              {t("Our Menu", "قائمة الطعام")}
+              {tx(menu.ourMenu)}
             </h1>
             <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
-              {t(
-                "Fresh, homemade meals from our talented chefs — delivered to your door.",
-                "وجبات طازجة ومنزلية من أمهر طهاتنا، تصلك حتى بابك."
-              )}
+              {tx(menu.heroDesc)}
             </p>
           </motion.div>
 
@@ -204,7 +183,7 @@ export default function MenuPage() {
           >
             <Search className={`absolute top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4 pointer-events-none ${isRtl ? "right-4" : "left-4"}`} />
             <Input
-              placeholder={t("Search dishes, chefs...", "ابحث عن طبق أو شيف...")}
+              placeholder={tx(menu.searchPlaceholder)}
               className={`h-12 rounded-full bg-background shadow-sm border-border text-sm ${isRtl ? "pr-11 pl-11" : "pl-11 pr-11"}`}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -238,7 +217,6 @@ export default function MenuPage() {
           transition={{ duration: 0.42, delay: 0.08, ease: ease.out }}
           className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mb-5"
         >
-          {/* All tab */}
           <button
             onClick={() => selectCategory(null)}
             className={`relative shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
@@ -255,7 +233,7 @@ export default function MenuPage() {
               />
             )}
             <span className="relative z-10 flex items-center gap-1.5">
-              {t("All", "الكل")}
+              {tx(menu.all)}
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-normal ${
                 activeCategory === null
                   ? "bg-primary-foreground/20 text-primary-foreground"
@@ -317,7 +295,6 @@ export default function MenuPage() {
           transition={{ duration: 0.38, delay: 0.14, ease: ease.out }}
           className="flex flex-wrap items-center gap-2 mb-5"
         >
-          {/* Filters toggle */}
           <button
             onClick={() => { setFiltersOpen(!filtersOpen); setSortOpen(false); }}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border transition-all ${
@@ -327,7 +304,7 @@ export default function MenuPage() {
             }`}
           >
             <SlidersHorizontal className="h-4 w-4" />
-            {t("Filters", "تصفية")}
+            {tx(menu.filters)}
             <AnimatePresence>
               {(activeDietary.length > 0 || priceRangeIdx > 0) && (
                 <motion.span
@@ -345,7 +322,6 @@ export default function MenuPage() {
             </motion.span>
           </button>
 
-          {/* Price quick chips */}
           {PRICE_RANGES.slice(1).map((range, i) => (
             <button
               key={i}
@@ -360,10 +336,8 @@ export default function MenuPage() {
             </button>
           ))}
 
-          {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Clear all */}
           <AnimatePresence>
             {activeFilterCount > 0 && (
               <motion.button
@@ -380,7 +354,6 @@ export default function MenuPage() {
             )}
           </AnimatePresence>
 
-          {/* Sort dropdown */}
           <div className="relative">
             <button
               onClick={() => { setSortOpen(!sortOpen); setFiltersOpen(false); }}
@@ -394,7 +367,7 @@ export default function MenuPage() {
               <span className="hidden sm:inline">
                 {isRtl ? activeSortLabel?.labelAr : activeSortLabel?.labelEn}
               </span>
-              <span className="sm:hidden">{t("Sort", "ترتيب")}</span>
+              <span className="sm:hidden">{tx(menu.sort)}</span>
               <motion.span animate={{ rotate: sortOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                 <ChevronDown className="h-3.5 w-3.5" />
               </motion.span>
@@ -440,7 +413,7 @@ export default function MenuPage() {
             >
               <div className="bg-muted/40 border border-border rounded-2xl p-4">
                 <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
-                  {t("Dietary Preference", "التفضيل الغذائي")}
+                  {tx(menu.dietaryPref)}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {DIETARY_OPTIONS.map((opt, i) => (
@@ -481,16 +454,15 @@ export default function MenuPage() {
               ) : (
                 <>
                   <span className="font-semibold text-foreground">{filteredItems.length}</span>
-                  &nbsp;{t("dishes found", "طبق متاح")}
+                  &nbsp;{tx(menu.dishesFound)}
                   {activeFilterCount > 0 && (
-                    <span className="text-primary font-medium">&nbsp;{t("(filtered)", "(بعد التصفية)")}</span>
+                    <span className="text-primary font-medium">&nbsp;{tx(menu.filtered)}</span>
                   )}
                 </>
               )}
             </motion.div>
           </AnimatePresence>
 
-          {/* Cart shortcut */}
           <AnimatePresence>
             {totalItems > 0 && (
               <motion.button
@@ -502,7 +474,7 @@ export default function MenuPage() {
                 className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-bold shadow-md hover:bg-primary/85 transition-colors"
               >
                 <ShoppingCart className="w-4 h-4" />
-                {totalItems} {t("in cart", "في السلة")}
+                {totalItems} {tx(menu.inCart)}
               </motion.button>
             )}
           </AnimatePresence>
@@ -527,15 +499,15 @@ export default function MenuPage() {
             className="text-center py-20 bg-muted/30 rounded-3xl border border-dashed border-border"
           >
             <div className="text-5xl mb-4">🍽️</div>
-            <h3 className="text-xl font-bold mb-2">{t("No dishes found", "لم يتم العثور على أطباق")}</h3>
+            <h3 className="text-xl font-bold mb-2">{tx(menu.noDishesFound)}</h3>
             <p className="text-muted-foreground mb-6 text-sm">
-              {t("Try adjusting your filters or search.", "جرب تغيير التصفية أو كلمة البحث.")}
+              {tx(menu.tryAdjusting)}
             </p>
             <button
               onClick={clearAll}
               className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/85 transition-colors"
             >
-              {t("Clear Filters", "مسح التصفية")}
+              {tx(menu.clearFilters)}
             </button>
           </motion.div>
         ) : (
@@ -568,8 +540,6 @@ export default function MenuPage() {
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           loading="lazy"
                         />
-
-                        {/* Hover overlay — appears on group-hover */}
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300" />
 
                         {/* Add to cart button — slides up on hover */}
@@ -584,18 +554,18 @@ export default function MenuPage() {
                                 chefName: item.chefName, chefNameAr: item.chefNameAr,
                               });
                               toast({
-                                title: t("Added to cart!", "أُضيف إلى السلة!"),
-                                description: `${isRtl ? item.nameAr : item.name} · ${item.price} ${t("EGP", "ج.م")}`,
+                                title: tx(common.addedToCart),
+                                description: `${isRtl ? item.nameAr : item.name} · ${item.price} ${tx(common.egp)}`,
                               });
                             }}
                             className="flex items-center gap-2 bg-primary text-primary-foreground font-bold text-sm px-5 py-2.5 rounded-full shadow-lg hover:bg-primary/85 transition-colors active:scale-95"
                           >
                             <Plus className="w-4 h-4" />
-                            {t("Add to Cart", "أضف للسلة")}
+                            {tx(common.addToCart)}
                           </button>
                         </div>
 
-                        {/* Cart qty badge on image (when in cart) */}
+                        {/* Cart qty badge on image */}
                         <AnimatePresence>
                           {cartQty > 0 && (
                             <motion.div
@@ -634,24 +604,24 @@ export default function MenuPage() {
                         {/* Badges */}
                         {item.isFeatured && (
                           <span className={`absolute top-3 ${isRtl ? "right-3" : "left-3"} bg-primary text-primary-foreground text-[11px] font-bold px-2.5 py-1 rounded-full shadow`}>
-                            {t("Popular", "الأكثر طلباً")}
+                            {tx(menu.popular)}
                           </span>
                         )}
                         {item.dietary.includes("vegetarian") && (
                           <span className={`absolute top-3 ${isRtl ? "left-3" : "right-3"} bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full`}>
-                            {t("Veg", "نباتي")}
+                            {tx(menu.veg)}
                           </span>
                         )}
                       </div>
 
-                      {/* ── Card body — navigates to detail ───────────────── */}
+                      {/* ── Card body ─────────────────────────────────────── */}
                       <Link href={`/menu/${item.id}`} className="flex flex-col flex-1 p-4 hover:no-underline">
                         <div className="flex items-start justify-between gap-2 mb-1.5">
                           <h3 className="font-bold text-base leading-snug text-card-foreground">
                             {isRtl ? item.nameAr : item.name}
                           </h3>
                           <span className="font-bold text-primary whitespace-nowrap text-sm shrink-0">
-                            {item.price} {t("EGP", "ج.م")}
+                            {item.price} {tx(common.egp)}
                           </span>
                         </div>
                         <p className="text-muted-foreground text-sm line-clamp-2 mb-3 flex-1">
@@ -672,7 +642,7 @@ export default function MenuPage() {
                             {item.prepTimeMinutes != null && (
                               <span className="flex items-center gap-0.5">
                                 <Clock className="h-3 w-3" />
-                                {item.prepTimeMinutes}{t("m", "د")}
+                                {item.prepTimeMinutes}{tx(menu.minShort)}
                               </span>
                             )}
                           </div>
@@ -696,11 +666,6 @@ export default function MenuPage() {
           </>
         )}
       </div>
-
-      {/* Close sort dropdown on outside click */}
-      {sortOpen && (
-        <div className="fixed inset-0 z-20" onClick={() => setSortOpen(false)} />
-      )}
     </PageWrapper>
   );
 }
