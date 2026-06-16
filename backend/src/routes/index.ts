@@ -7,6 +7,7 @@ import testimonialsRouter from "./testimonials";
 import subscriptionsRouter from "./subscriptions";
 import contactRouter from "./contact";
 import statsRouter from "./stats";
+import mcpRouter from "./mcp";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(testimonialsRouter);
 router.use(subscriptionsRouter);
 router.use(contactRouter);
 router.use(statsRouter);
+router.use(mcpRouter);
 
 export default router;
