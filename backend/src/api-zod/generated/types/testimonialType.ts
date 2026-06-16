@@ -4,13 +4,15 @@
  * Api
  * Get Mumm — Homemade Food Delivery API
  * OpenAPI spec version: 0.1.0
+ *
+ * NOTE: This is the PRIMARY enum for testimonial types.
+ * ListTestimonialsType is deprecated - use this instead.
  */
 
 export type TestimonialType = typeof TestimonialType[keyof typeof TestimonialType];
 
-
 export const TestimonialType = {
-  customer: 'customer',
-  office: 'office',
-  chef: 'chef',
+  customer: "customer",
+  office: "office",
+  chef: "chef",
 } as const;

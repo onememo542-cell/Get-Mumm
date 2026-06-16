@@ -3,6 +3,7 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { setupErrorHandler } from "./middlewares/error-handler";
 
 const app: Express = express();
 
@@ -25,6 +26,7 @@ app.use(
     },
   }),
 );
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -34,5 +36,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", router);
+
+// Setup error handling middleware (must be last)
+setupErrorHandler(app);
 
 export default app;

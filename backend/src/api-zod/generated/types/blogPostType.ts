@@ -4,12 +4,14 @@
  * Api
  * Get Mumm — Homemade Food Delivery API
  * OpenAPI spec version: 0.1.0
+ *
+ * NOTE: This is the PRIMARY enum for blog post types.
+ * ListBlogPostsType is deprecated - use this instead.
  */
 
 export type BlogPostType = typeof BlogPostType[keyof typeof BlogPostType];
 
-
 export const BlogPostType = {
-  blog: 'blog',
-  recipe: 'recipe',
+  blog: "blog",
+  recipe: "recipe",
 } as const;

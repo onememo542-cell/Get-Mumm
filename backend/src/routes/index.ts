@@ -11,6 +11,37 @@ import mcpRouter from "./mcp";
 
 const router: IRouter = Router();
 
+// Root API info endpoint
+router.get("/", (_req, res) => {
+  res.json({
+    message: "Get Mumm API",
+    version: "1.0.0",
+    status: "running",
+    endpoints: {
+      health: "/api/healthz",
+      menu: {
+        categories: "GET /api/menu/categories",
+        items: "GET /api/menu/items",
+        featured: "GET /api/menu/items/featured",
+        item: "GET /api/menu/items/:id",
+      },
+      chefs: {
+        list: "GET /api/chefs",
+        single: "GET /api/chefs/:id",
+      },
+      blog: {
+        posts: "GET /api/blog/posts",
+        post: "GET /api/blog/posts/:slug",
+      },
+      testimonials: "GET /api/testimonials",
+      subscriptions: "GET /api/subscriptions",
+      contact: "POST /api/contact",
+      officeInquiry: "POST /api/office-inquiry",
+      stats: "GET /api/stats/summary",
+    },
+  });
+});
+
 router.use(healthRouter);
 router.use(menuRouter);
 router.use(chefsRouter);

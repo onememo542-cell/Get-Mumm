@@ -4,27 +4,43 @@
  * Api
  * Get Mumm — Homemade Food Delivery API
  * OpenAPI spec version: 0.1.0
+ *
+ * TYPE ORGANIZATION & DEPRECATIONS
+ * =================================
+ *
+ * PRIMARY ENUMS (Use these):
+ * - BlogPostType (blog, recipe)
+ * - TestimonialType (customer, office, chef)
+ *
+ * DEPRECATED (Avoid, use primary instead):
+ * ⚠️ ListBlogPostsType → use BlogPostType
+ * ⚠️ ListTestimonialsType → use TestimonialType
+ *
+ * Nullable handling is done in Query schema, not in enum.
  */
 
-export * from './blogPost';
-export * from './blogPostType';
-export * from './category';
-export * from './chef';
-export * from './contactInput';
-export * from './contactResponse';
-export * from './healthStatus';
-export * from './listBlogPostsParams';
-export * from './listBlogPostsType';
-export * from './listMenuItemsDietary';
-export * from './listMenuItemsParams';
-export * from './listTestimonialsParams';
-export * from './listTestimonialsType';
-export * from './menuItem';
-export * from './officeInquiryInput';
-export * from './officeInquiryInputFrequency';
-export * from './siteSummary';
-export * from './subscriptionPlan';
-export * from './subscriptionPlanPeriod';
-export * from './subscriptionPlanTargetAudience';
-export * from './testimonial';
-export * from './testimonialType';
+export * from "./blogPost";
+export * from "./blogPostType";
+// @deprecated - use BlogPostType
+export * from "./listBlogPostsType";
+export * from "./category";
+export * from "./chef";
+export * from "./contactInput";
+export * from "./contactResponse";
+export * from "./healthStatus";
+export * from "./listBlogPostsParams";
+export * from "./listMenuItemsDietary";
+export * from "./listMenuItemsParams";
+export * from "./listTestimonialsParams";
+// @deprecated - use TestimonialType
+export * from "./listTestimonialsType";
+export * from "./menuItem";
+export * from "./officeInquiryInput";
+export * from "./officeInquiryInputFrequency";
+export * from "./siteSummary";
+export * from "./subscriptionPlan";
+export * from "./subscriptionPlanPeriod";
+export * from "./subscriptionPlanTargetAudience";
+export * from "./testimonial";
+export * from "./testimonialType";
+

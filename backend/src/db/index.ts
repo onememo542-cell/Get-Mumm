@@ -10,7 +10,28 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle(pool, { schema });
+// Create pool with timeouts to handle IPv6 connection issues
+let poolInstance: pg.Pool | null = null;
+
+function getPool(): pg.Pool {
+  if (!poolInstance) {
+    poolInstance = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      connectionTimeoutMillis: 3000,
+      idleTimeoutMillis: 10000,
+      max: 2,
+    });
+
+    poolInstance.on('error', (err) => {
+      console.error('Pool error:', err);
+    });
+  }
+  return poolInstance;
+}
+
+// Create drizzle instance (lazy via getPool)
+export const db = drizzle(() => getPool(), { schema });
+
+export { getPool as pool };
 
 export * from "./schema";
