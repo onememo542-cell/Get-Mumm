@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useGetSiteSummary } from "@workspace/api-client-react";
+import { useGetSiteSummary } from "@/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { Heart, Users, Utensils, ShieldCheck, Award } from "lucide-react";

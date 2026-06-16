@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useListSubscriptionPlans } from "@workspace/api-client-react";
+import { useListSubscriptionPlans } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Check, CheckCircle2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";

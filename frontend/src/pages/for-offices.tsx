@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { sectionReveal, sectionStagger, sectionItem } from "@/lib/motion";
 import { WaveDivider } from "@/components/ui/WaveDivider";
-import { useSubmitOfficeInquiry } from "@workspace/api-client-react";
+import { useSubmitOfficeInquiry } from "@/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";

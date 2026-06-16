@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useListChefs } from "@workspace/api-client-react";
+import { useListChefs } from "@/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Star, Search, X, UtensilsCrossed } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";

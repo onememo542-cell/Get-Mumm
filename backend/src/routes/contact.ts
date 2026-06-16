@@ -1,9 +1,9 @@
 import { Router, type IRouter } from "express";
-import { db, contactsTable, officeInquiriesTable } from "@workspace/db";
+import { db, contactsTable, officeInquiriesTable } from "../db";
 import {
   SubmitContactBody,
   SubmitOfficeInquiryBody,
-} from "@workspace/api-zod";
+} from "../api-zod";
 
 const router: IRouter = Router();
 

@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCart } from "@/contexts/CartContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useListMenuItems, useListCategories } from "@workspace/api-client-react";
+import { useListMenuItems, useListCategories } from "@/api";
 import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

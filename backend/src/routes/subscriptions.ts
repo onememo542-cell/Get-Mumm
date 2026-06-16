@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
-import { db, subscriptionPlansTable } from "@workspace/db";
-import { ListSubscriptionPlansResponse } from "@workspace/api-zod";
+import { db, subscriptionPlansTable } from "../db";
+import { ListSubscriptionPlansResponse } from "../api-zod";
 
 const router: IRouter = Router();
 

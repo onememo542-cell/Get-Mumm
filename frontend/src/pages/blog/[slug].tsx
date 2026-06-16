@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useGetBlogPost, getGetBlogPostQueryKey } from "@workspace/api-client-react";
+import { useGetBlogPost, getGetBlogPostQueryKey } from "@/api";
 import { useParams, Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Clock, ArrowLeft, ArrowRight } from "lucide-react";

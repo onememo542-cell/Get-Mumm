@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCart } from "@/contexts/CartContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useGetMenuItem, useListMenuItems, getGetMenuItemQueryKey } from "@workspace/api-client-react";
+import { useGetMenuItem, useListMenuItems, getGetMenuItemQueryKey } from "@/api";
 import { useParams, Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";

@@ -1,11 +1,11 @@
 import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
-import { db, chefsTable } from "@workspace/db";
+import { db, chefsTable } from "../db";
 import {
   ListChefsResponse,
   GetChefParams,
   GetChefResponse,
-} from "@workspace/api-zod";
+} from "../api-zod";
 
 const router: IRouter = Router();
 

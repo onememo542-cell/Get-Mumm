@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useListBlogPosts } from "@workspace/api-client-react";
+import { useListBlogPosts } from "@/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import { Clock, Search, X, BookOpen, ChefHat } from "lucide-react";

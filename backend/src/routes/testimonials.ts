@@ -1,10 +1,10 @@
 import { Router, type IRouter } from "express";
 import { eq, type SQL } from "drizzle-orm";
-import { db, testimonialsTable } from "@workspace/db";
+import { db, testimonialsTable } from "../db";
 import {
   ListTestimonialsResponse,
   ListTestimonialsQueryParams,
-} from "@workspace/api-zod";
+} from "../api-zod";
 
 const router: IRouter = Router();
 

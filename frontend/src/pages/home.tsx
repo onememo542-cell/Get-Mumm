@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useGetFeaturedItems, useListCategories, useListTestimonials } from "@workspace/api-client-react";
+import { useGetFeaturedItems, useListCategories, useListTestimonials } from "@/api";
 import { Button } from "@/components/ui/button";
 import { WaveDivider } from "@/components/ui/WaveDivider";
 import { useSEO } from "@/hooks/useSEO";
@@ -137,28 +137,7 @@ export default function Home() {
           </svg>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-28 left-1/2 -translate-x-1/2 z-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.4, duration: 0.6 }}
-        >
-          <motion.div
-            className="w-6 h-10 rounded-full border-2 border-foreground/25 flex items-start justify-center pt-1.5 mx-auto"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-          >
-            <motion.div
-              className="w-1 h-2.5 bg-primary rounded-full"
-              animate={{ y: [0, 12, 0] }}
-              transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-            />
-          </motion.div>
-          <p className="text-[10px] font-medium text-muted-foreground mt-2 uppercase tracking-widest">
-            {tx(home.scroll)}
-          </p>
-        </motion.div>
+
       </section>
 
       {/* ─── Food Carousel ─────────────────────────────────────────────── */}
