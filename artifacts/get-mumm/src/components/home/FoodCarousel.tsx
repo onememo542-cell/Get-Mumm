@@ -55,13 +55,13 @@ const ITEM_TRANSITION = [
 function roleStyle(role: "center" | "left" | "right" | "back", mobile: boolean): React.CSSProperties {
   switch (role) {
     case "center": return {
-      transform: `translateX(-50%) scale(${mobile ? 1.18 : 1.55})`,
+      transform: `translateX(-50%) scale(${mobile ? 1.05 : 1.12})`,
       filter: "none",
       opacity: 1,
       zIndex: 20,
       left: "50%",
-      height: mobile ? "52%" : "82%",
-      bottom: mobile ? "16%" : 0,
+      height: mobile ? "44%" : "66%",
+      bottom: mobile ? "18%" : "4%",
     };
     case "left": return {
       transform: "translateX(-50%) scale(1)",
@@ -210,11 +210,11 @@ export function FoodCarousel() {
           </AnimatePresence>
         </div>
 
-        {/* ── Section label – top ─────────────────────────────────────────── */}
+        {/* ── Section label – centered top ────────────────────────────────── */}
         <div style={{
-          position: "absolute", top: 24,
-          [isRtl ? "right" : "left"]: 24,
-          zIndex: 60,
+          position: "absolute", top: 28,
+          left: "50%", transform: "translateX(-50%)",
+          zIndex: 60, whiteSpace: "nowrap",
         }}>
           <span style={{
             color: "rgba(255,255,255,0.82)", fontSize: 11,
