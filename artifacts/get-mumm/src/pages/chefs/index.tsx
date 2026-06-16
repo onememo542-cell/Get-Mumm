@@ -130,54 +130,64 @@ export default function ChefsPage() {
 
       <div className="container mx-auto px-4 sm:px-6 py-10">
 
-        {/* Specialty chips */}
+        {/* Specialty chips
+             Outer div owns the scroll + negative-margin bleed.
+             Inner div owns padding + flex so trailing padding is inside
+             the scroll content (CSS ignores trailing padding on the
+             scroll container itself, which caused right-edge clipping). */}
         {!isLoading && allSpecialties.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="-mx-4 sm:-mx-6 px-4 sm:px-6 flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mb-6"
+            className="-mx-4 sm:-mx-6 overflow-x-auto no-scrollbar mb-6"
             data-testid="filter-specialties"
           >
-            <button
-              onClick={() => setActiveSpecialty(null)}
-              className={`relative shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
-                activeSpecialty === null
-                  ? "border-primary text-primary-foreground"
-                  : "border-border text-muted-foreground hover:border-primary hover:text-primary bg-background"
-              }`}
-              data-testid="filter-specialty-all"
-            >
-              {activeSpecialty === null && (
-                <motion.span
-                  layoutId="specialty-pill"
-                  className="absolute inset-0 bg-primary rounded-full"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                />
-              )}
-              <span className="relative z-10">{t("All Specialties", "كل التخصصات")}</span>
-            </button>
-            {allSpecialties.map((spec) => (
+            <div className="flex items-center gap-2 px-4 sm:px-6 pb-2">
               <button
-                key={spec}
-                onClick={() => setActiveSpecialty(activeSpecialty === spec ? null : spec)}
+                onClick={() => setActiveSpecialty(null)}
                 className={`relative shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
-                  activeSpecialty === spec
+                  activeSpecialty === null
                     ? "border-primary text-primary-foreground"
                     : "border-border text-muted-foreground hover:border-primary hover:text-primary bg-background"
                 }`}
-                data-testid={`filter-specialty-${spec}`}
+                data-testid="filter-specialty-all"
               >
-                {activeSpecialty === spec && (
+                {activeSpecialty === null && (
                   <motion.span
                     layoutId="specialty-pill"
                     className="absolute inset-0 bg-primary rounded-full"
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
-                <span className="relative z-10">{spec}</span>
+                <span className="relative z-10">{t("All Specialties", "كل التخصصات")}</span>
               </button>
-            ))}
+
+              {allSpecialties.map((spec) => (
+                <button
+                  key={spec}
+                  onClick={() => setActiveSpecialty(activeSpecialty === spec ? null : spec)}
+                  className={`relative shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
+                    activeSpecialty === spec
+                      ? "border-primary text-primary-foreground"
+                      : "border-border text-muted-foreground hover:border-primary hover:text-primary bg-background"
+                  }`}
+                  data-testid={`filter-specialty-${spec}`}
+                >
+                  {activeSpecialty === spec && (
+                    <motion.span
+                      layoutId="specialty-pill"
+                      className="absolute inset-0 bg-primary rounded-full"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative z-10">{spec}</span>
+                </button>
+              ))}
+
+              {/* Trailing spacer — guarantees last chip is never clipped */}
+              <span className="shrink-0 w-4 sm:w-6" aria-hidden />
+            </div>
           </motion.div>
         )}
 
