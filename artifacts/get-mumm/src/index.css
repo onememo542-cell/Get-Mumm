@@ -162,28 +162,27 @@
   }
 }
 
-/* ─── Custom Scrollbar — tracks the active theme automatically ────────── */
-/* Uses --foreground at low opacity so it's subtle on any bg, light or dark */
+/* ─── Scrollbar ───────────────────────────────────────────────────────────
+   color-mix resolves --color-foreground (already a full hsl() value from
+   @theme) to the correct shade for the active mode — no raw HSL tuples,
+   no opacity mismatches between WebKit and Firefox.
+   ──────────────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar        { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track  { background: transparent; }
-
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--foreground) / 0.14);
-  border-radius: 10px;
+::-webkit-scrollbar-thumb  {
+  background    : color-mix(in srgb, var(--color-foreground) 15%, transparent);
+  border-radius : 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--foreground) / 0.30);
+  background: color-mix(in srgb, var(--color-foreground) 30%, transparent);
 }
 
-/* Firefox */
+/* Firefox — same token, same percentages, no separate block needed */
 * {
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--foreground) / 0.16) transparent;
+  scrollbar-color: color-mix(in srgb, var(--color-foreground) 15%, transparent) transparent;
 }
 
-/* Hide scrollbar for horizontal filter strips */
+/* ─── Hide scrollbar (horizontal filter strips) ──────────────────────── */
 .no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+.no-scrollbar { scrollbar-width: none; }
