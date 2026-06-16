@@ -13,6 +13,7 @@ import { useState, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useSEO } from "@/hooks/useSEO";
 import { motion, AnimatePresence } from "framer-motion";
+import { menu, common, nav } from "@/locales";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -39,7 +40,7 @@ function DietaryBadge({ diet, isRtl }: { diet: string; isRtl: boolean }) {
 
 export default function MenuItemPage() {
   const { id } = useParams();
-  const { t, isRtl } = useLanguage();
+  const { tx, isRtl } = useLanguage();
   const { toast } = useToast();
   const { addItem, openCart } = useCart();
   const [quantity, setQuantity] = useState(1);
@@ -91,10 +92,10 @@ export default function MenuItemPage() {
       <PageWrapper>
         <div className="container mx-auto px-4 py-32 text-center">
           <ChefHat className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-3xl font-bold mb-2">{t("Dish not found", "لم يتم العثور على الطبق")}</h2>
-          <p className="text-muted-foreground mb-6">{t("It may have been removed from our menu.", "ربما تم إزالته من قائمتنا.")}</p>
+          <h2 className="text-3xl font-bold mb-2">{tx(menu.dishNotFound)}</h2>
+          <p className="text-muted-foreground mb-6">{tx(menu.dishRemoved)}</p>
           <Link href="/menu">
-            <Button className="rounded-full px-8">{t("Back to Menu", "العودة للقائمة")}</Button>
+            <Button className="rounded-full px-8">{tx(menu.backToMenu)}</Button>
           </Link>
         </div>
       </PageWrapper>
@@ -114,8 +115,8 @@ export default function MenuItemPage() {
       });
     }
     toast({
-      title: t("Added to cart!", "أُضيف إلى السلة!"),
-      description: `${quantity}× ${isRtl ? item.nameAr : item.name} · ${item.price * quantity} ${t("EGP", "ج.م")}`,
+      title: tx(common.addedToCart),
+      description: `${quantity}× ${isRtl ? item.nameAr : item.name} · ${item.price * quantity} ${tx(common.egp)}`,
     });
     openCart();
   };
@@ -127,9 +128,9 @@ export default function MenuItemPage() {
       <div className="bg-muted/40 border-b border-border mt-16 sm:mt-20">
         <div className="container mx-auto px-4 sm:px-6 py-3">
           <nav className={`flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap ${isRtl ? "flex-row-reverse" : ""}`}>
-            <Link href="/" className="hover:text-foreground transition-colors">{t("Home", "الرئيسية")}</Link>
+            <Link href="/" className="hover:text-foreground transition-colors">{tx(nav.home)}</Link>
             <ChevronRight className="w-3 h-3 shrink-0" />
-            <Link href="/menu" className="hover:text-foreground transition-colors">{t("Menu", "القائمة")}</Link>
+            <Link href="/menu" className="hover:text-foreground transition-colors">{tx(nav.menu)}</Link>
             <ChevronRight className="w-3 h-3 shrink-0" />
             <span className="text-foreground font-medium truncate max-w-[200px]">
               {isRtl ? item.nameAr : item.name}
@@ -157,13 +158,13 @@ export default function MenuItemPage() {
               />
               {item.isFeatured && (
                 <span className={`absolute top-5 ${isRtl ? "right-5" : "left-5"} bg-primary text-primary-foreground text-xs font-bold px-3.5 py-1.5 rounded-full shadow-md`}>
-                  {t("Popular", "الأكثر طلباً")}
+                  {tx(menu.popular)}
                 </span>
               )}
               {!item.isAvailable && (
                 <div className="absolute inset-0 bg-background/70 backdrop-blur-sm flex items-center justify-center rounded-3xl">
                   <span className="bg-destructive text-destructive-foreground font-bold px-6 py-2.5 rounded-full text-sm shadow-lg">
-                    {t("Sold Out", "نفذت الكمية")}
+                    {tx(menu.soldOut)}
                   </span>
                 </div>
               )}
@@ -202,7 +203,7 @@ export default function MenuItemPage() {
                   <p className="font-semibold leading-tight group-hover:text-primary transition-colors">
                     {isRtl ? item.chefNameAr : item.chefName}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">{t("Home Chef", "طاهية منزلية")}</p>
+                  <p className="text-[11px] text-muted-foreground">{tx(menu.homeChef)}</p>
                 </div>
               </Link>
 
@@ -216,7 +217,7 @@ export default function MenuItemPage() {
               {item.prepTimeMinutes && (
                 <div className="flex items-center gap-1.5 bg-muted text-muted-foreground px-3 py-1.5 rounded-full">
                   <Clock className="w-3.5 h-3.5" />
-                  <span className="text-sm font-medium">{item.prepTimeMinutes} {t("min", "دقيقة")}</span>
+                  <span className="text-sm font-medium">{item.prepTimeMinutes} {tx(menu.min)}</span>
                 </div>
               )}
             </div>
@@ -229,7 +230,7 @@ export default function MenuItemPage() {
             {/* Price */}
             <div className="flex items-end gap-2 py-5 border-y border-border">
               <span className="text-5xl font-bold tabular-nums">{item.price}</span>
-              <span className="text-xl text-muted-foreground pb-1">{t("EGP", "ج.م")}</span>
+              <span className="text-xl text-muted-foreground pb-1">{tx(common.egp)}</span>
             </div>
 
             {/* Qty + Add to cart */}
@@ -274,8 +275,8 @@ export default function MenuItemPage() {
               >
                 <ShoppingBag className={`h-5 w-5 ${isRtl ? "ml-2.5" : "mr-2.5"}`} />
                 {item.isAvailable
-                  ? `${t("Add to Cart", "أضف للسلة")}${quantity > 1 ? ` (${quantity})` : ""}`
-                  : t("Sold Out", "نفذت الكمية")}
+                  ? `${tx(common.addToCart)}${quantity > 1 ? ` (${quantity})` : ""}`
+                  : tx(menu.soldOut)}
               </Button>
             </div>
 
@@ -289,7 +290,7 @@ export default function MenuItemPage() {
                   transition={{ duration: 0.2 }}
                   className="text-sm text-muted-foreground bg-muted/60 rounded-xl px-4 py-2.5 border border-border"
                 >
-                  {t("Total", "الإجمالي")}: <span className="font-bold text-foreground">{item.price * quantity} {t("EGP", "ج.م")}</span>
+                  {tx(common.total)}: <span className="font-bold text-foreground">{item.price * quantity} {tx(common.egp)}</span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -312,11 +313,11 @@ export default function MenuItemPage() {
                   {isRtl ? item.chefNameAr : item.chefName}
                 </p>
                 <h2 className="text-2xl font-serif font-bold">
-                  {t("More from this Chef", "المزيد من هذا الطاهي")}
+                  {tx(menu.moreFromChef)}
                 </h2>
               </div>
               <Link href="/menu" className={`text-sm font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1 ${isRtl ? "flex-row-reverse" : ""}`}>
-                {t("View all", "عرض الكل")}
+                {tx(menu.viewAll)}
                 {isRtl ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
               </Link>
             </div>
@@ -343,7 +344,7 @@ export default function MenuItemPage() {
                         <p className="font-bold text-sm leading-tight mb-1 line-clamp-1">
                           {isRtl ? rel.nameAr : rel.name}
                         </p>
-                        <p className="text-primary font-bold text-sm">{rel.price} {t("EGP", "ج.م")}</p>
+                        <p className="text-primary font-bold text-sm">{rel.price} {tx(common.egp)}</p>
                       </div>
                     </div>
                   </Link>

@@ -186,3 +186,11 @@
 /* ─── Hide scrollbar (horizontal filter strips) ──────────────────────── */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
+
+/* ─── Carousel image skeleton pulse ─────────────────────────────────────
+   Shown behind each circular dish image until onLoad fires.
+   ──────────────────────────────────────────────────────────────────────── */
+@keyframes carousel-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 0.20; }
+}

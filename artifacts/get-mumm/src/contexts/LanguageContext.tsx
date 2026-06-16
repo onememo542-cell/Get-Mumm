@@ -1,11 +1,15 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import type { I18nPair } from "@/locales";
 
 type Language = "en" | "ar";
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
+  /** Inline pair — use for dynamic or one-off strings. */
   t: (en: string, ar: string) => string;
+  /** Locale-file pair — use with centralized locale constants. */
+  tx: (pair: I18nPair) => string;
   isRtl: boolean;
 }
 
@@ -33,12 +37,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
   }, [language]);
 
-  const t = (en: string, ar: string) => {
-    return language === "en" ? en : ar;
-  };
+  const t = (en: string, ar: string) => (language === "en" ? en : ar);
+  const tx = ([en, ar]: I18nPair) => (language === "en" ? en : ar);
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, isRtl: language === "ar" }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, tx, isRtl: language === "ar" }}>
       {children}
     </LanguageContext.Provider>
   );

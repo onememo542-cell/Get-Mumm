@@ -72,7 +72,6 @@ function AnimatedRoutes() {
           animate="enter"
           exit="exit"
           className="flex-1 flex flex-col"
-          style={{ willChange: "opacity, transform, filter" }}
         >
           <Switch>
             <Route path="/" component={Home} />

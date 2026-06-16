@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { WaveDivider } from "@/components/ui/WaveDivider";
+import { nav } from "@/locales";
 
 const SOCIAL = [
   {
@@ -42,7 +43,7 @@ const SOCIAL = [
 ];
 
 export function Footer() {
-  const { t, isRtl } = useLanguage();
+  const { t, tx, isRtl } = useLanguage();
 
   return (
     <>
@@ -78,13 +79,13 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-bold text-base mb-4">{t("Quick Links", "روابط سريعة")}</h4>
+            <h4 className="font-bold text-base mb-4">{tx(nav.quickLinks)}</h4>
             <ul className="space-y-3">
               {[
-                ["/menu", t("Our Menu", "قائمة الطعام")],
-                ["/chefs", t("Meet Our Chefs", "طهاة ممم")],
-                ["/for-offices", t("For Offices", "للشركات")],
-                ["/subscriptions", t("Mumm Prime", "ممم برايم")],
+                ["/menu",          tx(nav.ourMenu)      ],
+                ["/chefs",         tx(nav.meetChefs)    ],
+                ["/for-offices",   tx(nav.forOffices)   ],
+                ["/subscriptions", tx(nav.mummPrime)    ],
               ].map(([href, label]) => (
                 <li key={href}>
                   <Link href={href} className="text-muted-foreground hover:text-primary transition-colors text-sm">
@@ -97,13 +98,13 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="font-bold text-base mb-4">{t("Company", "الشركة")}</h4>
+            <h4 className="font-bold text-base mb-4">{tx(nav.company)}</h4>
             <ul className="space-y-3">
               {[
-                ["/about", t("Our Story", "قصتنا")],
-                ["/blog", t("Blog & Recipes", "المدونة والوصفات")],
-                ["/partner", t("Become a Partner", "انضم كشريك")],
-                ["/delivery-areas", t("Delivery Areas", "مناطق التوصيل")],
+                ["/about",          tx(nav.ourStory)      ],
+                ["/blog",           tx(nav.blogRecipes)   ],
+                ["/partner",        tx(nav.becomePartner) ],
+                ["/delivery-areas", tx(nav.deliveryAreas) ],
               ].map(([href, label]) => (
                 <li key={href}>
                   <Link href={href} className="text-muted-foreground hover:text-primary transition-colors text-sm">
@@ -116,7 +117,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-bold text-base mb-4">{t("Contact", "تواصل معنا")}</h4>
+            <h4 className="font-bold text-base mb-4">{tx(nav.contactUs)}</h4>
             <ul className="space-y-3 text-sm">
               <li className="text-muted-foreground">
                 7, 161 Street, Maadi<br />
@@ -145,7 +146,7 @@ export function Footer() {
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M3.609 1.814L13.792 12 3.61 22.186a1.986 1.986 0 0 1-.505-1.309V3.123c0-.495.188-.95.504-1.309zM14.54 12.748l2.616 2.616-12.213 7.052 9.597-9.668zm.725-.725l4.575-2.641a1.217 1.217 0 0 1 1.157 2.12l-4.575 2.641-1.157-2.12zm-1.156-2.12L4.512 2.85l12.213 7.053-2.616 2.616z" />
                 </svg>
-                {t("Google Play", "جوجل بلاي")}
+                {tx(nav.googlePlay)}
               </a>
             </div>
           </div>
@@ -154,16 +155,16 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} Mumm. {t("All rights reserved.", "جميع الحقوق محفوظة.")}
+            © {new Date().getFullYear()} Mumm. {tx(nav.allRightsReserved)}
             {" · "}
-            <span className="text-primary/70 font-medium">{t("Founded 2015", "تأسست 2015")}</span>
+            <span className="text-primary/70 font-medium">{tx(nav.founded)}</span>
           </p>
           <div className="flex items-center gap-6">
             <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              {t("Privacy Policy", "سياسة الخصوصية")}
+              {tx(nav.privacyPolicy)}
             </Link>
             <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              {t("Terms of Service", "شروط الخدمة")}
+              {tx(nav.termsOfService)}
             </Link>
           </div>
         </div>

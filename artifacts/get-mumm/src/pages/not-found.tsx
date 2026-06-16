@@ -1,33 +1,18 @@
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ease, wordReveal } from "@/lib/motion";
+import { ease, wordReveal, animateStagger, animateFadeUp } from "@/lib/motion";
+import { errors } from "@/locales";
 
-const staggerContainer = {
-  hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.3,
-    },
-  },
+const floatAnimate = {
+  y: [0, -14, 0],
+  rotate: [-2, 2, -2],
 };
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: ease.out } },
-};
-
-const floatAnim = {
-  animate: {
-    y: [0, -14, 0],
-    rotate: [-2, 2, -2],
-    transition: {
-      duration: 4.5,
-      ease: "easeInOut",
-      repeat: Infinity,
-    },
-  },
+const floatTransition = {
+  duration: 4.5,
+  ease: "easeInOut" as const,
+  repeat: Infinity,
 };
 
 const WORDS_EN = ["Page", "Not", "Found"];
@@ -35,7 +20,7 @@ const WORDS_AR = ["الصفحة", "غير", "موجودة"];
 
 export default function NotFound() {
   const [, navigate] = useLocation();
-  const { t, isRtl } = useLanguage();
+  const { tx, isRtl } = useLanguage();
 
   return (
     <div
@@ -58,8 +43,8 @@ export default function NotFound() {
 
       {/* Floating bowl emoji */}
       <motion.div
-        variants={floatAnim}
-        animate="animate"
+        animate={floatAnimate}
+        transition={floatTransition}
         className="mb-8 select-none"
         style={{ fontSize: "clamp(3.5rem, 10vw, 6rem)", lineHeight: 1 }}
         aria-hidden
@@ -81,7 +66,6 @@ export default function NotFound() {
         >
           404
         </span>
-        {/* subtle shadow text */}
         <span
           className="absolute inset-0 font-serif block leading-none tracking-tight text-foreground/5 translate-x-1 translate-y-1 -z-10"
           style={{ fontSize: "clamp(7rem, 25vw, 16rem)", lineHeight: 0.85 }}
@@ -110,29 +94,26 @@ export default function NotFound() {
 
       {/* Body copy + CTA */}
       <motion.div
-        variants={staggerContainer}
+        variants={animateStagger}
         initial="hidden"
         animate="show"
         className="mt-8 flex flex-col items-center gap-6 text-center max-w-md"
       >
         <motion.p
-          variants={fadeUp}
+          variants={animateFadeUp}
           className="text-muted-foreground text-base sm:text-lg leading-relaxed"
         >
-          {t(
-            "Looks like this page wandered off — probably looking for a good meal. Let's get you back to the kitchen.",
-            "يبدو أن هذه الصفحة ضلّت طريقها — ربما كانت تبحث عن وجبة لذيذة. لنعُد إلى المطبخ معاً.",
-          )}
+          {tx(errors.notFoundBody)}
         </motion.p>
 
-        <motion.div variants={fadeUp} className="flex gap-3 flex-wrap justify-center">
+        <motion.div variants={animateFadeUp} className="flex gap-3 flex-wrap justify-center">
           <motion.button
             onClick={() => navigate("/")}
             className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-primary text-primary-foreground font-semibold text-sm shadow-lg hover:shadow-primary/30 transition-shadow"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            {t("← Back to Home", "← العودة للرئيسية")}
+            {tx(errors.backToHome)}
           </motion.button>
 
           <motion.button
@@ -141,7 +122,7 @@ export default function NotFound() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            {t("Browse Menu", "استعرض القائمة")}
+            {tx(errors.browseMenu)}
           </motion.button>
         </motion.div>
       </motion.div>

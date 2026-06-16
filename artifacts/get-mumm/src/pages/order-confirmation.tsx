@@ -7,6 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/button";
 import { ease } from "@/lib/motion";
+import { orders, common, cart } from "@/locales";
 
 const checkmarkVariants = {
   hidden: { pathLength: 0, opacity: 0 },
@@ -14,11 +15,10 @@ const checkmarkVariants = {
 };
 
 export default function OrderConfirmationPage() {
-  const { t, isRtl } = useLanguage();
+  const { tx, isRtl } = useLanguage();
   const { lastOrder } = useCart();
   const [, navigate] = useLocation();
 
-  // If someone lands here with no order, redirect to home
   useEffect(() => {
     if (!lastOrder) navigate("/");
   }, [lastOrder, navigate]);
@@ -79,20 +79,17 @@ export default function OrderConfirmationPage() {
               transition={{ duration: 0.45, delay: 0.4, ease: ease.out }}
             >
               <p className="text-green-500 font-bold text-sm uppercase tracking-wider mb-2">
-                {t("Order Confirmed!", "تم تأكيد طلبك!")}
+                {tx(orders.orderConfirmed)}
               </p>
-              <h1 className="text-3xl font-serif font-bold mb-1">{t("Thank you,", "شكراً لك،")}</h1>
+              <h1 className="text-3xl font-serif font-bold mb-1">{tx(orders.thankYou)}</h1>
               <h2 className="text-2xl font-serif font-semibold text-primary mb-3">{lastOrder.customerName}!</h2>
               <p className="text-muted-foreground text-sm mb-5">
-                {t(
-                  "Your homemade feast is being prepared with love.",
-                  "يُحضَّر وجبتك المنزلية بكل حب وعناية."
-                )}
+                {tx(orders.feastDesc)}
               </p>
 
               {/* Order ID */}
               <div className="inline-flex items-center gap-2 bg-muted px-4 py-2 rounded-full mb-6">
-                <span className="text-muted-foreground text-sm">{t("Order", "رقم الطلب")}</span>
+                <span className="text-muted-foreground text-sm">{tx(orders.orderNumber)}</span>
                 <span className="font-bold text-foreground text-sm">#{lastOrder.id}</span>
               </div>
 
@@ -100,13 +97,13 @@ export default function OrderConfirmationPage() {
               <div className="grid grid-cols-2 gap-3 mb-2">
                 <div className="bg-primary/8 border border-primary/20 rounded-2xl p-4">
                   <Clock className="w-6 h-6 text-primary mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground mb-0.5">{t("Estimated arrival", "الوصول المتوقع")}</p>
+                  <p className="text-xs text-muted-foreground mb-0.5">{tx(orders.estimatedArrival)}</p>
                   <p className="font-bold text-lg">{etaStr}</p>
-                  <p className="text-xs text-muted-foreground">{t("(45–60 minutes)", "(45–60 دقيقة)")}</p>
+                  <p className="text-xs text-muted-foreground">{tx(orders.eta)}</p>
                 </div>
                 <div className="bg-muted/50 border border-border rounded-2xl p-4">
                   <MapPin className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground mb-0.5">{t("Delivering to", "التوصيل إلى")}</p>
+                  <p className="text-xs text-muted-foreground mb-0.5">{tx(orders.deliveringTo)}</p>
                   <p className="font-bold text-sm leading-snug">{lastOrder.area}</p>
                   <p className="text-xs text-muted-foreground truncate">{lastOrder.street}</p>
                 </div>
@@ -123,7 +120,7 @@ export default function OrderConfirmationPage() {
           >
             <h3 className="font-bold mb-4 flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-primary" />
-              {t("Your Order", "طلبك")}
+              {tx(orders.yourOrder)}
             </h3>
             <div className="space-y-3">
               {lastOrder.items.map((item) => (
@@ -135,25 +132,25 @@ export default function OrderConfirmationPage() {
                     <p className="text-sm font-medium truncate">{isRtl ? item.nameAr : item.name}</p>
                     <p className="text-xs text-muted-foreground">× {item.qty}</p>
                   </div>
-                  <p className="text-sm font-semibold shrink-0">{(item.price * item.qty).toFixed(0)} {t("EGP", "ج.م")}</p>
+                  <p className="text-sm font-semibold shrink-0">{(item.price * item.qty).toFixed(0)} {tx(common.egp)}</p>
                 </div>
               ))}
             </div>
             <div className="border-t border-border mt-4 pt-4 space-y-1.5 text-sm">
               <div className="flex justify-between text-muted-foreground">
-                <span>{t("Subtotal", "المجموع الفرعي")}</span>
-                <span>{lastOrder.subtotal.toFixed(0)} {t("EGP", "ج.م")}</span>
+                <span>{tx(cart.subtotal)}</span>
+                <span>{lastOrder.subtotal.toFixed(0)} {tx(common.egp)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
-                <span>{t("Delivery", "التوصيل")}</span>
+                <span>{tx(common.delivery)}</span>
                 {lastOrder.deliveryFee === 0
-                  ? <span className="text-green-500 font-semibold">{t("Free", "مجاني")}</span>
-                  : <span>{lastOrder.deliveryFee} {t("EGP", "ج.م")}</span>
+                  ? <span className="text-green-500 font-semibold">{tx(common.free)}</span>
+                  : <span>{lastOrder.deliveryFee} {tx(common.egp)}</span>
                 }
               </div>
               <div className="flex justify-between font-bold">
-                <span>{t("Total paid", "المبلغ الإجمالي")}</span>
-                <span className="text-primary">{lastOrder.total.toFixed(0)} {t("EGP", "ج.م")}</span>
+                <span>{tx(orders.totalPaid)}</span>
+                <span className="text-primary">{lastOrder.total.toFixed(0)} {tx(common.egp)}</span>
               </div>
             </div>
           </motion.div>
@@ -167,14 +164,14 @@ export default function OrderConfirmationPage() {
           >
             <Link href={`/order/${lastOrder.id}`}>
               <Button className="w-full h-12 rounded-xl font-bold text-base flex items-center justify-center gap-2">
-                {t("Track My Order", "تتبع طلبي")}
+                {tx(orders.trackMyOrder)}
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
             <Link href="/">
               <Button variant="outline" className="w-full h-12 rounded-xl font-bold flex items-center justify-center gap-2">
                 <Home className="w-4 h-4" />
-                {t("Back to Home", "العودة للرئيسية")}
+                {tx(orders.backToHome)}
               </Button>
             </Link>
           </motion.div>
@@ -186,9 +183,9 @@ export default function OrderConfirmationPage() {
             transition={{ delay: 0.8 }}
             className="text-center text-sm text-muted-foreground mt-6"
           >
-            {t("Need help? ", "تحتاج مساعدة؟ ")}{" "}
+            {tx(orders.needHelp)}{" "}
             <a href="https://wa.me/201027671111" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
-              {t("WhatsApp us", "تواصل على واتساب")}
+              {tx(orders.whatsappUs)}
             </a>
           </motion.p>
         </div>

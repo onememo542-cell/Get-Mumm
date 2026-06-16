@@ -20,33 +20,28 @@ import {
   staggerGrid,
   cardVariant,
 } from "@/lib/motion";
+import { home, common } from "@/locales";
 
 export default function Home() {
-  const { t, isRtl } = useLanguage();
+  const { tx, isRtl } = useLanguage();
   const { data: featuredItems, isLoading: isFeaturedLoading } = useGetFeaturedItems();
   const { data: categories, isLoading: isCategoriesLoading } = useListCategories();
   const { data: testimonials, isLoading: isTestimonialsLoading } = useListTestimonials();
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   useSEO({
-    title: t("Homemade Meals Delivered with Love", "وجبات منزلية بنكهة الحب"),
-    description: t(
-      "Experience the warmth of a grandmother's kitchen, delivered fresh to your door in Cairo and Giza. Support local women and enjoy authentic Egyptian flavors.",
-      "استمتع بدفء مطبخ الجدة، يصلك طازجاً إلى باب منزلك في القاهرة والجيزة. ادعم النساء المحليات واستمتع بالنكهات المصرية الأصيلة."
-    ),
+    title: tx(home.heroTitle),
+    description: tx(home.heroDesc),
   });
 
-  const heroHeadline = t(
-    "Homemade Meals Delivered with Love",
-    "وجبات منزلية بنكهة الحب"
-  );
+  const heroHeadline = tx(home.heroTitle);
   const heroWords = heroHeadline.split(" ");
 
   const stats = [
-    { value: "200+", label: t("Active Kitchens", "مطبخ نشط") },
-    { value: "193K", label: t("Facebook Followers", "متابع على فيسبوك") },
-    { value: "80%", label: t("Repeat Customers", "عملاء متكررون") },
-    { value: "2015", label: t("Founded in Cairo", "تأسست في القاهرة") },
+    { value: "200+", label: tx(home.activeKitchens) },
+    { value: "193K", label: tx(home.fbFollowers) },
+    { value: "80%",  label: tx(home.repeatCustomers) },
+    { value: "2015", label: tx(home.foundedInCairo) },
   ];
 
   return (
@@ -90,10 +85,7 @@ export default function Home() {
             transition={fadeUpTransition(0.55)}
             className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            {t(
-              "Experience the warmth of a grandmother's kitchen, delivered fresh to your door in Cairo and Giza. Support local women and enjoy authentic Egyptian flavors.",
-              "استمتع بدفء مطبخ الجدة، يصلك طازجاً إلى باب منزلك في القاهرة والجيزة. ادعم النساء المحليات واستمتع بالنكهات المصرية الأصيلة."
-            )}
+            {tx(home.heroDesc)}
           </motion.p>
 
           <motion.div
@@ -107,7 +99,7 @@ export default function Home() {
                 size="lg"
                 className="w-full sm:w-auto text-base px-9 py-6 rounded-full bg-primary hover:bg-primary/85 text-primary-foreground shadow-xl font-bold"
               >
-                {t("Explore Menu", "تصفح المنيو")}
+                {tx(home.exploreMenu)}
               </Button>
             </Link>
             <Link href="/for-offices">
@@ -116,15 +108,38 @@ export default function Home() {
                 variant="outline"
                 className="w-full sm:w-auto text-base px-9 py-6 rounded-full border-2 bg-background/50 backdrop-blur-sm font-semibold"
               >
-                {t("For Offices", "للشركات")}
+                {tx(common.forOffices)}
               </Button>
             </Link>
           </motion.div>
         </div>
 
-        {/* Scroll indicator — direct child of section so bottom-8 is correct */}
+        {/* ── Wave at hero bottom ─── */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute", bottom: 0, left: 0, right: 0,
+            height: 96, zIndex: 5, pointerEvents: "none",
+            color: "var(--carousel-bg, #C44E22)",
+            transition: "color 650ms cubic-bezier(0.4,0,0.2,1)",
+          }}
+        >
+          <svg
+            viewBox="0 0 1440 96"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ position: "absolute", bottom: 0, left: 0, width: "100%", height: 96 }}
+          >
+            <path
+              d="M0,24 C120,72 240,4 360,32 C480,62 600,6 720,38 C840,70 960,8 1080,34 C1200,62 1340,10 1440,24 L1440,96 L0,96 Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        {/* Scroll indicator */}
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+          className="absolute bottom-28 left-1/2 -translate-x-1/2 z-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.4, duration: 0.6 }}
@@ -141,7 +156,7 @@ export default function Home() {
             />
           </motion.div>
           <p className="text-[10px] font-medium text-muted-foreground mt-2 uppercase tracking-widest">
-            {t("Scroll", "مرر")}
+            {tx(home.scroll)}
           </p>
         </motion.div>
       </section>
@@ -150,7 +165,29 @@ export default function Home() {
       <FoodCarousel />
 
       {/* ─── Stats Strip ───────────────────────────────────────────────── */}
-      <section className="bg-accent py-14 overflow-hidden">
+      <section className="relative bg-accent pt-28 pb-14 overflow-hidden">
+        <div
+          aria-hidden
+          style={{
+            position: "absolute", top: 0, left: 0, right: 0,
+            height: 96, zIndex: 5, pointerEvents: "none",
+            color: "var(--carousel-bg, #C44E22)",
+            transition: "color 650ms cubic-bezier(0.4,0,0.2,1)",
+          }}
+        >
+          <svg
+            viewBox="0 0 1440 96"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 96 }}
+          >
+            <path
+              d="M0,72 C120,24 240,96 360,60 C480,24 600,88 720,54 C840,20 960,84 1080,56 C1200,28 1340,82 1440,72 L1440,0 L0,0 Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
         <div className="container mx-auto px-4">
           <motion.div
             variants={sectionStagger}
@@ -184,16 +221,13 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <motion.div {...sectionReveal} className="text-center mb-14">
             <span className="inline-block bg-primary/10 text-primary font-semibold text-sm px-4 py-1.5 rounded-full mb-4">
-              {t("Chef's Picks", "اختيارات الطهاة")}
+              {tx(home.chefsPicks)}
             </span>
             <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-              {t("Featured Dishes", "الأطباق المميزة")}
+              {tx(home.featuredDishes)}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t(
-                "Taste the authenticity of our most loved homemade recipes.",
-                "تذوق أصالة وصفاتنا المنزلية الأكثر شعبية."
-              )}
+              {tx(home.featuredDesc)}
             </p>
           </motion.div>
 
@@ -251,7 +285,7 @@ export default function Home() {
                           <div className="flex justify-between items-start mb-2">
                             <h3 className="font-bold text-xl leading-tight">{isRtl ? item.nameAr : item.name}</h3>
                             <span className="font-bold text-primary whitespace-nowrap ml-2 bg-primary/10 px-2.5 py-1 rounded-xl text-sm">
-                              {item.price} {t("EGP", "ج.م")}
+                              {item.price} {tx(common.egp)}
                             </span>
                           </div>
                           <p className="text-muted-foreground text-sm line-clamp-2 mb-6 flex-1">
@@ -283,7 +317,7 @@ export default function Home() {
           <motion.div {...sectionReveal} className="text-center mt-12">
             <Link href="/menu">
               <Button variant="outline" size="lg" className="rounded-full px-8 font-semibold border-2 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
-                {t("View Full Menu", "عرض القائمة كاملة")}
+                {tx(home.viewFullMenu)}
                 {isRtl
                   ? <ArrowLeft className="mr-2 h-4 w-4" />
                   : <ArrowRight className="ml-2 h-4 w-4" />}
@@ -300,10 +334,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <motion.div {...sectionReveal} className="text-center mb-14">
             <span className="inline-block bg-primary/15 text-primary font-semibold text-sm px-4 py-1.5 rounded-full mb-4">
-              {t("All Categories", "جميع التصنيفات")}
+              {tx(home.allCategories)}
             </span>
             <h2 className="text-4xl md:text-5xl font-serif font-bold mb-2 text-accent-foreground">
-              {t("Browse by Category", "تصفح بالتصنيفات")}
+              {tx(home.browseByCategory)}
             </h2>
           </motion.div>
 
@@ -347,7 +381,7 @@ export default function Home() {
                           <h3 className="text-xl md:text-2xl font-bold font-serif mb-1 drop-shadow-sm">
                             {isRtl ? cat.nameAr : cat.name}
                           </h3>
-                          <p className="text-sm opacity-75">{cat.itemCount} {t("items", "أطباق")}</p>
+                          <p className="text-sm opacity-75">{cat.itemCount} {tx(home.items)}</p>
                         </div>
                       </motion.div>
                     </Link>
@@ -366,15 +400,14 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <motion.div {...sectionReveal} className="text-center mb-4">
             <span className="inline-block bg-primary/10 text-primary font-semibold text-sm px-4 py-1.5 rounded-full mb-4">
-              {t("Real Reviews", "آراء حقيقية")}
+              {tx(home.realReviews)}
             </span>
             <h2 className="text-4xl md:text-5xl font-serif font-bold mb-2">
-              {t("What They Say", "ماذا يقولون عنا")}
+              {tx(home.whatTheySay)}
             </h2>
           </motion.div>
 
           {isTestimonialsLoading ? (
-            /* Loading skeleton */
             <div className="flex items-center justify-center gap-4 py-16">
               {Array(3).fill(0).map((_, i) => (
                 <Skeleton key={i} className="h-[300px] w-[300px] rounded-2xl flex-shrink-0" />
@@ -417,7 +450,6 @@ export default function Home() {
                         onHoverStart={() => setHoveredIdx(i)}
                         onHoverEnd={() => setHoveredIdx(null)}
                       >
-                        {/* Glass outer shell */}
                         <div
                           className="absolute inset-0 rounded-2xl"
                           style={{
@@ -427,39 +459,30 @@ export default function Home() {
                             backdropFilter: "blur(12px)",
                           }}
                         />
-                        {/* Inner card */}
                         <div className="absolute inset-[14px] rounded-xl bg-card text-foreground shadow-2xl ring-1 ring-border overflow-hidden flex flex-col">
                           <div className="p-5 flex flex-col h-full">
-                            {/* Quote icon */}
                             <div className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-primary/10 ring-1 ring-primary/20 mb-3 flex-shrink-0">
                               <Quote className="h-4 w-4 text-primary" />
                             </div>
-                            {/* Quote text */}
                             <p className="text-sm leading-relaxed text-foreground flex-1 mb-3">
                               {isRtl ? testimonial.quoteAr : testimonial.quote}
                             </p>
-                            {/* Footer: avatar + name | stars */}
-                            <div className="pt-3 border-t border-border flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <img
-                                  src={testimonial.avatarUrl || "/chef2.png"}
-                                  alt={isRtl ? testimonial.nameAr : testimonial.name}
-                                  className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/20"
-                                />
-                                <div>
-                                  <p className="text-xs font-semibold leading-tight">
-                                    {isRtl ? testimonial.nameAr : testimonial.name}
-                                  </p>
-                                  {testimonial.role && (
-                                    <p className="text-xs text-muted-foreground leading-tight">
-                                      {isRtl ? testimonial.roleAr : testimonial.role}
-                                    </p>
-                                  )}
-                                </div>
+                            <div className="flex items-center gap-1 mb-3">
+                              {Array.from({ length: testimonial.rating }).map((_, j) => (
+                                <Star key={j} className="w-3.5 h-3.5 fill-primary text-primary" />
+                              ))}
+                            </div>
+                            <div className="flex items-center gap-2.5 mt-auto border-t border-border pt-3">
+                              <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0">
+                                {(isRtl ? testimonial.nameAr : testimonial.name).charAt(0)}
                               </div>
-                              <div className="flex items-center gap-1">
-                                <Star className="w-3.5 h-3.5 fill-primary text-primary" />
-                                <span className="text-xs font-semibold">{testimonial.rating}.0</span>
+                              <div className="min-w-0">
+                                <p className="text-xs font-semibold leading-tight truncate">
+                                  {isRtl ? testimonial.nameAr : testimonial.name}
+                                </p>
+                                <p className="text-[10px] text-muted-foreground truncate">
+                                  {isRtl ? testimonial.roleAr : testimonial.role}
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -470,47 +493,40 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* ── Mobile: vertical card stack ──────────────────────────── */}
-              <motion.div
-                className="md:hidden flex flex-col gap-5 mt-8"
-                variants={staggerGrid}
-                initial="hidden"
-                animate="show"
-              >
+              {/* ── Mobile: horizontal scroll ───────────────────────────── */}
+              <div className="md:hidden flex gap-4 overflow-x-auto no-scrollbar py-6 px-4 -mx-4">
                 {testimonials?.slice(0, 3).map((testimonial) => (
-                  <motion.div
+                  <div
                     key={testimonial.id}
-                    variants={cardVariant}
-                    className="bg-card rounded-2xl p-6 border border-border shadow-md"
+                    className="bg-card border border-border rounded-2xl p-5 flex-shrink-0 w-72 flex flex-col"
                   >
                     <div className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-primary/10 ring-1 ring-primary/20 mb-3">
                       <Quote className="h-4 w-4 text-primary" />
                     </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground mb-5">
+                    <p className="text-sm leading-relaxed flex-1 mb-3">
                       {isRtl ? testimonial.quoteAr : testimonial.quote}
                     </p>
-                    <div className="pt-3 border-t border-border flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={testimonial.avatarUrl || "/chef2.png"}
-                          alt={isRtl ? testimonial.nameAr : testimonial.name}
-                          className="h-9 w-9 rounded-full object-cover ring-2 ring-primary/20"
-                        />
-                        <div>
-                          <p className="text-sm font-bold">{isRtl ? testimonial.nameAr : testimonial.name}</p>
-                          {testimonial.role && (
-                            <p className="text-xs text-muted-foreground">{isRtl ? testimonial.roleAr : testimonial.role}</p>
-                          )}
-                        </div>
+                    <div className="flex items-center gap-1 mb-3">
+                      {Array.from({ length: testimonial.rating }).map((_, j) => (
+                        <Star key={j} className="w-3.5 h-3.5 fill-primary text-primary" />
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2.5 border-t border-border pt-3">
+                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0">
+                        {(isRtl ? testimonial.nameAr : testimonial.name).charAt(0)}
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-primary text-primary" />
-                        <span className="text-xs font-semibold">{testimonial.rating}.0</span>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold leading-tight truncate">
+                          {isRtl ? testimonial.nameAr : testimonial.name}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground truncate">
+                          {isRtl ? testimonial.roleAr : testimonial.role}
+                        </p>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
             </>
           )}
         </div>
@@ -518,31 +534,27 @@ export default function Home() {
 
       <WaveDivider bg="var(--color-background)" fill="var(--color-secondary)" />
 
-      {/* ─── For Offices Teaser ───────────────────────────────────────── */}
-      <section className="py-24 bg-secondary text-secondary-foreground overflow-hidden relative">
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <span className="inline-block bg-white/15 text-white font-semibold text-sm px-4 py-1.5 rounded-full mb-6">
-                {t("For Companies", "للشركات")}
+      {/* ─── Corporate CTA ────────────────────────────────────────────── */}
+      <section className="py-28 bg-secondary overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className={`grid lg:grid-cols-2 gap-16 items-center ${isRtl ? "lg:flex-row-reverse" : ""}`}>
+            <motion.div {...sectionReveal}>
+              <span className="inline-block bg-background text-foreground font-bold text-sm px-4 py-1.5 rounded-full mb-6 shadow-sm">
+                {tx(home.forCompanies)}
               </span>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-6">
-                {t("Elevate Your Office Lunch", "ارتقِ بغداء شركتك")}
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-secondary-foreground mb-6 leading-tight">
+                {tx(home.elevateOfficeLunch)}
               </h2>
-              <p className="text-lg opacity-90 mb-8 max-w-lg leading-relaxed">
-                {t(
-                  "Treat your team to real, healthy, homemade food. Flexible corporate subscriptions and catering options available.",
-                  "قدم لفريقك طعاماً حقيقياً وصحياً منزلي الصنع. باقات مرنة للشركات وخيارات تقديم طعام متنوعة."
-                )}
+              <p className="text-secondary-foreground/75 text-lg mb-8 leading-relaxed">
+                {tx(home.corporateDesc)}
               </p>
               <Link href="/for-offices">
-                <Button size="lg" className="rounded-full px-8 bg-white text-secondary hover:bg-white/90 font-bold shadow-lg">
-                  {t("Learn More", "اعرف المزيد")}
+                <Button
+                  size="lg"
+                  className="rounded-full px-9 h-14 text-base bg-background text-foreground hover:bg-background/90 shadow-lg font-bold flex items-center gap-2"
+                >
+                  {tx(common.learnMore)}
+                  {isRtl ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                 </Button>
               </Link>
             </motion.div>
@@ -570,16 +582,13 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <motion.div {...sectionReveal}>
             <span className="inline-block bg-primary/10 text-primary font-semibold text-sm px-4 py-1.5 rounded-full mb-6">
-              {t("Mobile App", "تطبيق الجوال")}
+              {tx(home.mobileApp)}
             </span>
             <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-              {t("Get the App", "حمل التطبيق")}
+              {tx(home.getTheApp)}
             </h2>
             <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
-              {t(
-                "Order your favorite homemade meals faster and track your delivery in real-time.",
-                "اطلب وجباتك المنزلية المفضلة بشكل أسرع وتتبع التوصيل في الوقت الفعلي."
-              )}
+              {tx(home.appDownloadDesc)}
             </p>
           </motion.div>
 
@@ -596,7 +605,7 @@ export default function Home() {
                   <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.19 2.31-.88 3.5-.8 1.48.06 2.65.65 3.37 1.72-2.91 1.78-2.45 5.56.35 6.78-.65 1.63-1.46 3.2-2.3 4.47M12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25" />
                 </svg>
                 <div className={isRtl ? "text-right" : "text-left"}>
-                  <div className="text-xs opacity-75">{t("Coming Soon", "قريباً")}</div>
+                  <div className="text-xs opacity-75">{tx(home.comingSoon)}</div>
                   <div className="font-bold text-lg leading-none">App Store</div>
                 </div>
               </Button>

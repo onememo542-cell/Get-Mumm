@@ -29,9 +29,17 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
 
+    <!-- Preload critical above-the-fold images -->
+    <link rel="preload" as="image" href="/koshari.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/mahshi.png" />
+
+    <!-- Prefetch secondary route chunks so navigation feels instant -->
+    <link rel="prefetch" href="/menu" as="document" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- font-display=swap prevents render-blocking while fonts download -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Cairo:wght@400;500;600;700&display=swap&font-display=swap" rel="stylesheet" />
 
     <script type="application/ld+json">
     {

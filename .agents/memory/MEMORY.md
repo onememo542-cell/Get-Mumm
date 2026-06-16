@@ -1,1 +1,4 @@
 - [Vite API Proxy Required](vite-proxy.md) — Without a Vite proxy, browser fetches to /api/* hit the SPA fallback and return HTML strings, causing .map errors.
+- [Framer Motion Variants Type Quirks](framer-motion-types.md) — wordReveal and similar helpers must return TargetAndTransition (not `object`); readonly arrays (as const) break animate prop; Variants ease must use `"easeInOut" as const`.
+- [Lib Declarations Must Be Built First](lib-build-order.md) — api-client-react and api-zod use composite TS project references; run `pnpm run typecheck:libs` before typechecking any artifact or errors about "Output file has not been built" appear.
+- [First-Load Optimization Patterns](first-load-optimizations.md) — AnimatePresence needs initial={false} to skip entry animation on first render; page transition blur filter causes FOUC and is expensive on mobile; hardcoded willChange forces permanent GPU layers.

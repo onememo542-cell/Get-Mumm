@@ -36,12 +36,9 @@ export default function BlogPage() {
 
   useEffect(() => { setCurrentPage(1); }, [filter, debouncedSearch]);
 
-  const { data: posts, isLoading, isError, error, status, fetchStatus } = useListBlogPosts(
+  const { data: posts, isLoading, isError, error } = useListBlogPosts(
     filter === "all" ? undefined : { type: filter }
   );
-
-  // Temporary debug logging
-  console.log("[BlogPage] query state:", { status, fetchStatus, isLoading, isError, postsCount: posts?.length, error: error?.message });
 
   const filteredPosts = useMemo(() => {
     if (!posts) return [];
@@ -53,7 +50,7 @@ export default function BlogPage() {
         p.titleAr.toLowerCase().includes(q) ||
         p.excerpt.toLowerCase().includes(q) ||
         p.author.toLowerCase().includes(q) ||
-        p.tags.some((tag) => tag.toLowerCase().includes(q))
+        (p.tags ?? []).some((tag) => tag.toLowerCase().includes(q))
     );
   }, [posts, debouncedSearch]);
 
@@ -288,9 +285,9 @@ export default function BlogPage() {
                           <p className="text-muted-foreground text-sm line-clamp-3 mb-4 flex-1">
                             {isRtl ? post.excerptAr : post.excerpt}
                           </p>
-                          {post.tags.length > 0 && (
+                          {(post.tags ?? []).length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mb-4">
-                              {post.tags.slice(0, 3).map((tag) => (
+                              {(post.tags ?? []).slice(0, 3).map((tag) => (
                                 <span key={tag} className="bg-primary/10 text-primary text-[11px] font-medium px-2 py-0.5 rounded-full">
                                   {tag}
                                 </span>
