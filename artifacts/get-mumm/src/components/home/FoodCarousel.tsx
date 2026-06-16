@@ -249,6 +249,12 @@ export function FoodCarousel() {
                 src={d.src}
                 alt={d.name}
                 draggable={false}
+                loading="eager"
+                /* Start invisible; fade in once the browser has decoded
+                   the image — prevents the blank-circle flash on first load */
+                onLoad={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.opacity = "1";
+                }}
                 style={{
                   width: "100%", height: "100%",
                   objectFit: "cover",
@@ -256,6 +262,8 @@ export function FoodCarousel() {
                   borderRadius: "50%",
                   userSelect: "none",
                   display: "block",
+                  opacity: 0,
+                  transition: "opacity 0.45s ease",
                   boxShadow: role(i) === "center"
                     ? "0 32px 80px rgba(0,0,0,0.40)"
                     : "0 8px 24px rgba(0,0,0,0.25)",

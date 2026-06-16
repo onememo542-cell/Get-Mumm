@@ -43,14 +43,18 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 10,
       retry: 2,
+      refetchOnWindowFocus: false,
     },
   },
 });
 
 function PageSpinner() {
   return (
-    <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+    <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] gap-5">
       <div className="w-9 h-9 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+      <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground select-none">
+        Get Mumm
+      </span>
     </div>
   );
 }

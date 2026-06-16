@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useGetSiteSummary } from "@workspace/api-client-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { Heart, Users, Utensils, ShieldCheck, Award } from "lucide-react";
 import { sectionReveal, sectionStagger, sectionItem, staggerGrid, cardVariant } from "@/lib/motion";
