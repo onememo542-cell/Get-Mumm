@@ -13,6 +13,7 @@ import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Home is kept eager — first paint is instant
 import Home from "@/pages/home";
@@ -117,7 +118,9 @@ function App() {
           <CartProvider>
             <TooltipProvider>
               <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-                <Router />
+                <ErrorBoundary>
+                  <Router />
+                </ErrorBoundary>
               </WouterRouter>
               <Toaster />
             </TooltipProvider>
