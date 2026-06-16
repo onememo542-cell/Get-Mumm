@@ -149,8 +149,6 @@ export default function Home() {
       {/* ─── Food Carousel ─────────────────────────────────────────────── */}
       <FoodCarousel />
 
-      <WaveDivider bg="var(--color-background)" fill="var(--color-accent)" />
-
       {/* ─── Stats Strip ───────────────────────────────────────────────── */}
       <section className="bg-accent py-14 overflow-hidden">
         <div className="container mx-auto px-4">

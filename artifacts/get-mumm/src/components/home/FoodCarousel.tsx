@@ -141,6 +141,27 @@ export function FoodCarousel() {
         transition: `background-color ${DUR}ms ${EASE}`,
       }}
     >
+      {/* ── Top wave: hero background (--color-background) waves down into carousel ── */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute", top: 0, left: 0, right: 0,
+          height: 96, zIndex: 30, pointerEvents: "none", overflow: "hidden",
+        }}
+      >
+        <svg
+          viewBox="0 0 1440 96"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 96 }}
+        >
+          <path
+            d="M0,72 C120,24 240,96 360,60 C480,24 600,88 720,54 C840,20 960,84 1080,56 C1200,28 1340,82 1440,72 L1440,0 L0,0 Z"
+            fill="var(--color-background)"
+          />
+        </svg>
+      </div>
+
       <div style={{ position: "relative", width: "100%", height: mobile ? "88vh" : "92vh", overflow: "hidden" }}>
 
         {/* ── Grain overlay ──────────────────────────────────────────────── */}
@@ -415,6 +436,28 @@ export function FoodCarousel() {
         </div>
 
       </div>
+
+      {/* ── Bottom wave: carousel bg waves down into accent section ── */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute", bottom: 0, left: 0, right: 0,
+          height: 96, zIndex: 30, pointerEvents: "none", overflow: "hidden",
+        }}
+      >
+        <svg
+          viewBox="0 0 1440 96"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ position: "absolute", bottom: 0, left: 0, width: "100%", height: 96 }}
+        >
+          <path
+            d="M0,24 C120,72 240,4 360,32 C480,62 600,6 720,38 C840,70 960,8 1080,34 C1200,62 1340,10 1440,24 L1440,96 L0,96 Z"
+            fill="var(--color-accent)"
+          />
+        </svg>
+      </div>
+
     </section>
   );
 }
