@@ -7,9 +7,13 @@
     "dev": "node --env-file=.env --import tsx --watch src/index.ts",
     "build": "node ./build.mjs",
     "start": "node --enable-source-maps ./dist/index.mjs",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "migrate": "node --env-file=.env --import tsx src/db/migrate.ts",
+    "seed": "node --env-file=.env --import tsx src/db/seed.ts",
+    "push": "node --env-file=.env node_modules/.bin/drizzle-kit push"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.108.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "drizzle-orm": "*",

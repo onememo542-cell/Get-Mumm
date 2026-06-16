@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -110,11 +110,12 @@ export function FoodCarousel() {
     return () => window.removeEventListener("resize", fn);
   }, []);
 
-  /* sync --carousel-bg CSS variable so hero + stats waves always match */
-  useEffect(() => {
+  /* sync --carousel-bg CSS variable so hero + stats waves always match.
+     useLayoutEffect runs synchronously before paint → zero color delay. */
+  useLayoutEffect(() => {
     document.documentElement.style.setProperty("--carousel-bg", DISHES[active].bg);
   }, [active]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.style.setProperty("--carousel-bg", DISHES[0].bg);
     return () => { document.documentElement.style.removeProperty("--carousel-bg"); };
   }, []);
