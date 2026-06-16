@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 
 export interface CartItem {
   id: number;
@@ -50,16 +50,45 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 const DELIVERY_FEE = 25;
 const FREE_DELIVERY_THRESHOLD = 150;
+const CART_STORAGE_KEY = "get-mumm:cart";
+const ORDER_STORAGE_KEY = "get-mumm:last-order";
+
+function readCartFromStorage(): CartEntry[] {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function readOrderFromStorage(): PlacedOrder | null {
+  try {
+    const raw = localStorage.getItem(ORDER_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartEntry[]>([]);
+  const [items, setItems] = useState<CartEntry[]>(readCartFromStorage);
   const [isOpen, setIsOpen] = useState(false);
-  const [lastOrder, setLastOrder] = useState<PlacedOrder | null>(null);
+  const [lastOrder, setLastOrderState] = useState<PlacedOrder | null>(readOrderFromStorage);
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
   const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
   const total = subtotal + deliveryFee;
   const totalItems = items.reduce((sum, i) => sum + i.qty, 0);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    } catch {}
+  }, [items]);
 
   const addItem = useCallback((item: CartItem) => {
     setItems((prev) => {
@@ -89,9 +118,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const clearCart = useCallback(() => setItems([]), []);
+  const clearCart = useCallback(() => {
+    setItems([]);
+    try { localStorage.removeItem(CART_STORAGE_KEY); } catch {}
+  }, []);
+
   const openCart  = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
+
+  const setLastOrder = useCallback((order: PlacedOrder) => {
+    setLastOrderState(order);
+    try {
+      localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
+    } catch {}
+  }, []);
 
   return (
     <CartContext.Provider value={{

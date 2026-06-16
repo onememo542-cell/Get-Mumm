@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { WaveDivider } from "@/components/ui/WaveDivider";
 
 const SOCIAL = [
   {
@@ -44,7 +45,9 @@ export function Footer() {
   const { t, isRtl } = useLanguage();
 
   return (
-    <footer className="bg-card border-t border-border pt-16 pb-8">
+    <>
+      <WaveDivider bg="var(--color-background)" fill="var(--color-card)" />
+      <footer className="bg-card pt-10 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
 
@@ -166,5 +169,6 @@ export function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }

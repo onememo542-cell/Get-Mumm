@@ -8,6 +8,8 @@ import { useState, useMemo, useEffect } from "react";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { motion, AnimatePresence } from "framer-motion";
 import { staggerGrid, cardVariant, sectionReveal } from "@/lib/motion";
+import { useSEO } from "@/hooks/useSEO";
+import { WaveDivider } from "@/components/ui/WaveDivider";
 
 const ITEMS_PER_PAGE = 6;
 type FilterType = "all" | "blog" | "recipe";
@@ -15,6 +17,14 @@ type FilterType = "all" | "blog" | "recipe";
 export default function BlogPage() {
   const { t, isRtl } = useLanguage();
   const [filter, setFilter] = useState<FilterType>("all");
+
+  useSEO({
+    title: t("Stories & Recipes", "قصص ووصفات"),
+    description: t(
+      "Discover Egypt's culinary heritage, learn from our chefs, and try our favorite homemade recipes.",
+      "اكتشف التراث الغني للطبخ المصري، تعلم من طهاتنا، وجرب وصفاتنا المنزلية المفضلة."
+    ),
+  });
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,9 +36,12 @@ export default function BlogPage() {
 
   useEffect(() => { setCurrentPage(1); }, [filter, debouncedSearch]);
 
-  const { data: posts, isLoading } = useListBlogPosts(
+  const { data: posts, isLoading, isError, error, status, fetchStatus } = useListBlogPosts(
     filter === "all" ? undefined : { type: filter }
   );
+
+  // Temporary debug logging
+  console.log("[BlogPage] query state:", { status, fetchStatus, isLoading, isError, postsCount: posts?.length, error: error?.message });
 
   const filteredPosts = useMemo(() => {
     if (!posts) return [];
@@ -61,7 +74,7 @@ export default function BlogPage() {
   return (
     <PageWrapper>
       {/* Header */}
-      <div className="bg-primary/8 pt-28 sm:pt-32 pb-10 border-b border-border">
+      <div className="bg-accent pt-28 sm:pt-32 pb-10">
         <div className="container mx-auto px-4 sm:px-6 text-center">
           <motion.div {...sectionReveal}>
             <h1 className="text-3xl sm:text-5xl font-serif font-bold mb-3">
@@ -141,6 +154,8 @@ export default function BlogPage() {
           </motion.div>
         </div>
       </div>
+
+      <WaveDivider bg="var(--color-accent)" fill="var(--color-background)" flip />
 
       <div className="container mx-auto px-4 sm:px-6 py-12">
         {/* Results count */}

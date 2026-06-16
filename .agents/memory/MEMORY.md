@@ -1,0 +1,1 @@
+- [Vite API Proxy Required](vite-proxy.md) — Without a Vite proxy, browser fetches to /api/* hit the SPA fallback and return HTML strings, causing .map errors.

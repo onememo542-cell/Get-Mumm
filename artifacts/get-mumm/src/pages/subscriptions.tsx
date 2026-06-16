@@ -4,6 +4,9 @@ import { useListSubscriptionPlans } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Check, CheckCircle2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
+import { sectionReveal } from "@/lib/motion";
+import { WaveDivider } from "@/components/ui/WaveDivider";
 
 export default function SubscriptionsPage() {
   const { t, isRtl } = useLanguage();
@@ -11,14 +14,18 @@ export default function SubscriptionsPage() {
 
   return (
     <PageWrapper>
-      <div className="bg-background pt-32 pb-20 border-b border-border text-center px-4">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-6">
-          {t("Food sorted, all week.", "طعامك مرتب طوال الأسبوع.")}
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          {t("Subscribe and save. Enjoy fresh, homemade meals delivered on your schedule.", "اشترك ووفر. استمتع بوجبات منزلية طازجة تصلك حسب جدولك.")}
-        </p>
+      <div className="bg-accent pt-32 pb-20 text-center px-4">
+        <motion.div {...sectionReveal}>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-6">
+            {t("Food sorted, all week.", "طعامك مرتب طوال الأسبوع.")}
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            {t("Subscribe and save. Enjoy fresh, homemade meals delivered on your schedule.", "اشترك ووفر. استمتع بوجبات منزلية طازجة تصلك حسب جدولك.")}
+          </p>
+        </motion.div>
       </div>
+
+      <WaveDivider bg="var(--color-accent)" fill="var(--color-background)" flip />
 
       <div className="container mx-auto px-4 py-24">
         {isLoading ? (

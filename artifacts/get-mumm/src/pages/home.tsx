@@ -3,9 +3,11 @@ import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useGetFeaturedItems, useListCategories, useListTestimonials } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { WaveDivider } from "@/components/ui/WaveDivider";
+import { useSEO } from "@/hooks/useSEO";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
-import { Star, ArrowRight, ArrowLeft } from "lucide-react";
+import { Star, ArrowRight, ArrowLeft, Quote } from "lucide-react";
+import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   wordReveal,
@@ -23,6 +25,15 @@ export default function Home() {
   const { data: featuredItems, isLoading: isFeaturedLoading } = useGetFeaturedItems();
   const { data: categories, isLoading: isCategoriesLoading } = useListCategories();
   const { data: testimonials, isLoading: isTestimonialsLoading } = useListTestimonials();
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  useSEO({
+    title: t("Homemade Meals Delivered with Love", "وجبات منزلية بنكهة الحب"),
+    description: t(
+      "Experience the warmth of a grandmother's kitchen, delivered fresh to your door in Cairo and Giza. Support local women and enjoy authentic Egyptian flavors.",
+      "استمتع بدفء مطبخ الجدة، يصلك طازجاً إلى باب منزلك في القاهرة والجيزة. ادعم النساء المحليات واستمتع بالنكهات المصرية الأصيلة."
+    ),
+  });
 
   const heroHeadline = t(
     "Homemade Meals Delivered with Love",
@@ -351,7 +362,7 @@ export default function Home() {
       {/* ─── Testimonials ─────────────────────────────────────────────── */}
       <section className="py-24 bg-background overflow-hidden">
         <div className="container mx-auto px-4">
-          <motion.div {...sectionReveal} className="text-center mb-14">
+          <motion.div {...sectionReveal} className="text-center mb-4">
             <span className="inline-block bg-primary/10 text-primary font-semibold text-sm px-4 py-1.5 rounded-full mb-4">
               {t("Real Reviews", "آراء حقيقية")}
             </span>
@@ -360,71 +371,153 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <AnimatePresence mode="wait">
-            {isTestimonialsLoading ? (
-              <motion.div
-                key="test-skeleton"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="grid md:grid-cols-3 gap-8"
+          {isTestimonialsLoading ? (
+            /* Loading skeleton */
+            <div className="flex items-center justify-center gap-4 py-16">
+              {Array(3).fill(0).map((_, i) => (
+                <Skeleton key={i} className="h-[300px] w-[300px] rounded-2xl flex-shrink-0" />
+              ))}
+            </div>
+          ) : (
+            <>
+              {/* ── Desktop: fanned stacked cards ───────────────────────── */}
+              <div
+                className="hidden md:flex items-center justify-center"
+                style={{ minHeight: 460, paddingTop: 48, paddingBottom: 48 }}
               >
-                {Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-64 rounded-3xl" />)}
-              </motion.div>
-            ) : (
+                <div className="relative flex items-center justify-center">
+                  {testimonials?.slice(0, 3).map((testimonial, i) => {
+                    const ROTATIONS = [-11, -5, 4];
+                    const isHov = hoveredIdx === i;
+                    const isOtherHov = hoveredIdx !== null && !isHov;
+                    const pushX = isOtherHov ? (i < (hoveredIdx ?? 0) ? -28 : 28) : 0;
+
+                    return (
+                      <motion.div
+                        key={testimonial.id}
+                        style={{
+                          position: "relative",
+                          width: 320,
+                          height: 320,
+                          margin: "0 -44px",
+                          zIndex: isHov ? 30 : 3 - i,
+                          cursor: "pointer",
+                          flexShrink: 0,
+                        }}
+                        animate={{
+                          rotate: isHov ? 0 : ROTATIONS[i],
+                          scale: isHov ? 1.09 : isOtherHov ? 0.87 : 1,
+                          opacity: isOtherHov ? 0.58 : 1,
+                          y: isHov ? -18 : 0,
+                          x: pushX,
+                        }}
+                        transition={{ type: "spring", stiffness: 340, damping: 30 }}
+                        onHoverStart={() => setHoveredIdx(i)}
+                        onHoverEnd={() => setHoveredIdx(null)}
+                      >
+                        {/* Glass outer shell */}
+                        <div
+                          className="absolute inset-0 rounded-2xl"
+                          style={{
+                            background: "linear-gradient(to bottom, rgba(255,255,255,0.13), transparent)",
+                            border: "1px solid rgba(0,0,0,0.06)",
+                            boxShadow: "0 28px 48px rgba(0,0,0,0.12)",
+                            backdropFilter: "blur(12px)",
+                          }}
+                        />
+                        {/* Inner card */}
+                        <div className="absolute inset-[14px] rounded-xl bg-card text-foreground shadow-2xl ring-1 ring-border overflow-hidden flex flex-col">
+                          <div className="p-5 flex flex-col h-full">
+                            {/* Quote icon */}
+                            <div className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-primary/10 ring-1 ring-primary/20 mb-3 flex-shrink-0">
+                              <Quote className="h-4 w-4 text-primary" />
+                            </div>
+                            {/* Quote text */}
+                            <p className="text-sm leading-relaxed text-foreground flex-1 mb-3">
+                              {isRtl ? testimonial.quoteAr : testimonial.quote}
+                            </p>
+                            {/* Footer: avatar + name | stars */}
+                            <div className="pt-3 border-t border-border flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <img
+                                  src={testimonial.avatarUrl || "/chef2.png"}
+                                  alt={isRtl ? testimonial.nameAr : testimonial.name}
+                                  className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/20"
+                                />
+                                <div>
+                                  <p className="text-xs font-semibold leading-tight">
+                                    {isRtl ? testimonial.nameAr : testimonial.name}
+                                  </p>
+                                  {testimonial.role && (
+                                    <p className="text-xs text-muted-foreground leading-tight">
+                                      {isRtl ? testimonial.roleAr : testimonial.role}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Star className="w-3.5 h-3.5 fill-primary text-primary" />
+                                <span className="text-xs font-semibold">{testimonial.rating}.0</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ── Mobile: vertical card stack ──────────────────────────── */}
               <motion.div
-                key="test-grid"
+                className="md:hidden flex flex-col gap-5 mt-8"
                 variants={staggerGrid}
                 initial="hidden"
                 animate="show"
-                className="grid md:grid-cols-3 gap-8"
               >
                 {testimonials?.slice(0, 3).map((testimonial) => (
                   <motion.div
                     key={testimonial.id}
                     variants={cardVariant}
-                    whileHover={{ y: -6 }}
-                    transition={{ type: "spring", stiffness: 280, damping: 22 }}
-                    className="bg-card rounded-[2rem] p-8 border border-card-border hover:border-primary/30 hover:shadow-xl transition-all duration-300"
+                    className="bg-card rounded-2xl p-6 border border-border shadow-md"
                   >
-                    <div className="flex gap-1 mb-5">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star key={i} className="w-5 h-5 fill-primary text-primary" />
-                      ))}
+                    <div className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-primary/10 ring-1 ring-primary/20 mb-3">
+                      <Quote className="h-4 w-4 text-primary" />
                     </div>
-                    <p className="text-base mb-8 italic text-muted-foreground leading-relaxed">
-                      "{isRtl ? testimonial.quoteAr : testimonial.quote}"
+                    <p className="text-sm leading-relaxed text-muted-foreground mb-5">
+                      {isRtl ? testimonial.quoteAr : testimonial.quote}
                     </p>
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={testimonial.avatarUrl || "/chef2.png"}
-                        alt={isRtl ? testimonial.nameAr : testimonial.name}
-                        className="w-12 h-12 rounded-full object-cover ring-2 ring-primary/30"
-                      />
-                      <div>
-                        <h4 className="font-bold text-sm">{isRtl ? testimonial.nameAr : testimonial.name}</h4>
-                        {testimonial.role && (
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            {isRtl ? testimonial.roleAr : testimonial.role}
-                          </p>
-                        )}
+                    <div className="pt-3 border-t border-border flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={testimonial.avatarUrl || "/chef2.png"}
+                          alt={isRtl ? testimonial.nameAr : testimonial.name}
+                          className="h-9 w-9 rounded-full object-cover ring-2 ring-primary/20"
+                        />
+                        <div>
+                          <p className="text-sm font-bold">{isRtl ? testimonial.nameAr : testimonial.name}</p>
+                          {testimonial.role && (
+                            <p className="text-xs text-muted-foreground">{isRtl ? testimonial.roleAr : testimonial.role}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-primary text-primary" />
+                        <span className="text-xs font-semibold">{testimonial.rating}.0</span>
                       </div>
                     </div>
                   </motion.div>
                 ))}
               </motion.div>
-            )}
-          </AnimatePresence>
+            </>
+          )}
         </div>
       </section>
 
       <WaveDivider bg="var(--color-background)" fill="var(--color-secondary)" />
 
       {/* ─── For Offices Teaser ───────────────────────────────────────── */}
-      <motion.section
-        {...sectionReveal}
-        className="py-24 bg-secondary text-secondary-foreground overflow-hidden relative"
-      >
+      <section className="py-24 bg-secondary text-secondary-foreground overflow-hidden relative">
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -466,7 +559,7 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       <WaveDivider bg="var(--color-secondary)" fill="var(--color-background)" flip />
 

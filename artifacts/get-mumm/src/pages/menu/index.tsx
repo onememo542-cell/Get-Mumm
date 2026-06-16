@@ -5,7 +5,9 @@ import { useListMenuItems, useListCategories } from "@workspace/api-client-react
 import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useSearch, useLocation } from "wouter";
+import { useSEO } from "@/hooks/useSEO";
+import { WaveDivider } from "@/components/ui/WaveDivider";
 import {
   Search, X, SlidersHorizontal, Star, Clock,
   ChevronDown, Plus, Minus, ShoppingCart, ArrowUpDown,
@@ -45,17 +47,43 @@ export default function MenuPage() {
   const { t, isRtl } = useLanguage();
   const { toast } = useToast();
   const { addItem, updateQty, items: cartItems, totalItems, openCart } = useCart();
+  const searchString = useSearch();
+  const [, navigate] = useLocation();
+
+  // Navigate to /menu with or without category param — keeps URL in sync
+  const selectCategory = (id: number | null) => {
+    navigate(id !== null ? `/menu?category=${id}` : "/menu");
+  };
+
+  useSEO({
+    title: t("Our Menu", "قائمة الطعام"),
+    description: t(
+      "Browse fresh homemade meals from our talented chefs — Egyptian cuisine delivered to your door in Cairo and Giza.",
+      "تصفح وجبات طازجة ومنزلية من أمهر طهاتنا — مطبخ مصري أصيل يصل إلى بابك في القاهرة والجيزة."
+    ),
+  });
 
   // ── Filter state ─────────────────────────────────────────────────────────
   const [search, setSearch]                 = useState("");
   const [debSearch, setDebSearch]           = useState("");
-  const [activeCategory, setActiveCategory] = useState<number | null>(null);
+  const [activeCategory, setActiveCategory] = useState<number | null>(() => {
+    const params = new URLSearchParams(searchString);
+    const cat = params.get("category");
+    return cat ? Number(cat) : null;
+  });
   const [activeDietary, setActiveDietary]   = useState<string[]>([]);
   const [priceRangeIdx, setPriceRangeIdx]   = useState(0);
   const [sortKey, setSortKey]               = useState("popular");
   const [currentPage, setCurrentPage]       = useState(1);
   const [filtersOpen, setFiltersOpen]       = useState(false);
   const [sortOpen, setSortOpen]             = useState(false);
+
+  // ── Sync category from URL param whenever the search string changes ──────
+  useEffect(() => {
+    const params = new URLSearchParams(searchString);
+    const cat = params.get("category");
+    setActiveCategory(cat ? Number(cat) : null);
+  }, [searchString]);
 
   // ── Debounce search ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -134,11 +162,11 @@ export default function MenuPage() {
 
   const clearAll = () => {
     setSearch(""); setDebSearch("");
-    setActiveCategory(null);
     setActiveDietary([]);
     setPriceRangeIdx(0);
     setSortKey("popular");
     setCurrentPage(1);
+    navigate("/menu");
   };
 
   const toggleDietary = (val: string) =>
@@ -153,7 +181,7 @@ export default function MenuPage() {
     <PageWrapper>
 
       {/* ── Hero header ─────────────────────────────────────────────────── */}
-      <div className="bg-primary/8 pt-28 sm:pt-32 pb-10 border-b border-border">
+      <div className="bg-accent pt-28 sm:pt-32 pb-10">
         <div className="container mx-auto px-4 sm:px-6">
           <motion.div {...sectionReveal} className="text-center mb-8">
             <h1 className="text-3xl sm:text-5xl font-serif font-bold mb-3">
@@ -199,6 +227,8 @@ export default function MenuPage() {
         </div>
       </div>
 
+      <WaveDivider bg="var(--color-accent)" fill="var(--color-background)" flip />
+
       <div className="container mx-auto px-4 sm:px-6 py-8">
 
         {/* ── Category tabs ───────────────────────────────────────────────── */}
@@ -210,7 +240,7 @@ export default function MenuPage() {
         >
           {/* All tab */}
           <button
-            onClick={() => setActiveCategory(null)}
+            onClick={() => selectCategory(null)}
             className={`relative shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
               activeCategory === null
                 ? "border-primary text-primary-foreground"
@@ -244,7 +274,7 @@ export default function MenuPage() {
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => setActiveCategory(isActive ? null : cat.id)}
+                    onClick={() => selectCategory(isActive ? null : cat.id)}
                     className={`relative shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
                       isActive
                         ? "border-primary text-primary-foreground"

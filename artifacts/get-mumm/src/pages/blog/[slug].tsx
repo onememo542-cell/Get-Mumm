@@ -5,10 +5,19 @@ import { useParams, Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Clock, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSEO } from "@/hooks/useSEO";
 
 export default function BlogPostPage() {
   const { slug } = useParams();
   const { t, isRtl } = useLanguage();
+
+  useSEO({
+    title: t("Stories & Recipes", "قصص ووصفات"),
+    description: t(
+      "Discover Egypt's culinary heritage and authentic homemade recipes.",
+      "اكتشف التراث الغني للطبخ المصري والوصفات المنزلية الأصيلة."
+    ),
+  });
 
   const { data: post, isLoading } = useGetBlogPost(slug || "", {
     query: { enabled: !!slug, queryKey: getGetBlogPostQueryKey(slug || "") }

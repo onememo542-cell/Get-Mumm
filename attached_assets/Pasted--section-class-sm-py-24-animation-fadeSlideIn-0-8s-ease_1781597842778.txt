@@ -1,0 +1,162 @@
+<section class="sm:py-24 [animation:fadeSlideIn_0.8s_ease-out_0.1s_both] animate-on-scroll animate pt-16 pb-16"
+  data-element-locator="html &gt; body:nth-of-type(1) &gt; div:nth-of-type(1) &gt; section:nth-of-type(5)">
+  <div class="mb-12 text-center">
+    <p class="text-xs uppercase text-neutral-500 tracking-widest mb-2 font-geist">
+      Featured Reviews
+    </p>
+    <h2 class="text-3xl sm:text-4xl font-geist tracking-tighter font-medium" style="">
+      Client Highlights
+    </h2>
+  </div>
+
+  <div class="relative flex items-center justify-center py-12 sm:py-20" style="min-height: 450px;">
+    <div class="container max-w-full"
+      style="position: relative; display: flex; justify-content: center; align-items: center; height: 100%;">
+      <div class="glass"
+        style="position: relative; width: 340px; height: 340px; background: linear-gradient(rgba(255, 255, 255, 0.1), transparent); border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 25px; display: flex; justify-content: center; align-items: center; border-radius: 1rem; margin: 0px -50px; backdrop-filter: blur(10px); transform: rotate(-10deg);">
+        <div
+          class="absolute inset-4 rounded-xl bg-white text-neutral-900 shadow-2xl ring-1 ring-neutral-200 overflow-hidden">
+          <div class="p-6">
+            <div
+              class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-neutral-100 ring-1 ring-neutral-200 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                class="h-4 w-4 text-neutral-700">
+                <path
+                  d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                  class=""></path>
+                <path
+                  d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                  class=""></path>
+              </svg>
+            </div>
+            <p class="text-sm leading-relaxed text-neutral-900 mb-4 font-geist">
+              Working with Jin was transformative. The design elevated our
+              brand and user experience to new heights. Their attention to
+              detail is unmatched.
+            </p>
+            <div class="pt-3 border-t border-neutral-200 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <img src="https://hoirqrkdgbmvpwutwuwj-all.supabase.co/storage/v1/object/public/assets/assets/3e3e1091-f8e8-4022-a02a-fa37a35c59a5_320w.jpg" alt="Portrait of smiling young man on white background" class="h-6 w-6 rounded-full object-cover">
+                <div class="">
+                  <div class="text-xs font-medium text-neutral-900 font-geist">
+                    Alex Rivera
+                  </div>
+                  <div class="text-xs text-neutral-500 font-geist">
+                    CEO, GrowthLabs
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                  class="text-amber-400">
+                  <path
+                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
+                    class=""></path>
+                </svg>
+                <span class="text-xs font-medium font-geist">5.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass"
+        style="position: relative; width: 340px; height: 340px; background: linear-gradient(rgba(255, 255, 255, 0.08), transparent); border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 25px; display: flex; justify-content: center; align-items: center; border-radius: 1rem; margin: 0px -50px; backdrop-filter: blur(10px); transform: rotate(-6deg);">
+        <div
+          class="absolute inset-4 rounded-xl bg-white/90 text-neutral-900 shadow-xl ring-1 ring-neutral-200 backdrop-blur overflow-hidden">
+          <div class="p-6">
+            <div
+              class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-neutral-100 ring-1 ring-neutral-200 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                class="h-4 w-4 text-neutral-700">
+                <path
+                  d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                  class=""></path>
+                <path
+                  d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                  class=""></path>
+              </svg>
+            </div>
+            <p class="text-sm leading-relaxed text-neutral-900 mb-4 font-geist">
+              Jin's expertise in both UX and visual design made our
+              project seamless. They delivered beyond expectations and on
+              time every milestone.
+            </p>
+            <div class="pt-3 border-t border-neutral-200 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <img src="https://hoirqrkdgbmvpwutwuwj-all.supabase.co/storage/v1/object/public/assets/assets/e7074207-4b47-49d2-b86b-6ca1abd5d849_320w.jpg" alt="Moody studio portrait of elegant woman" class="h-6 w-6 rounded-full object-cover">
+                <div>
+                  <div class="text-xs font-medium text-neutral-900 font-geist">
+                    Nina Patel
+                  </div>
+                  <div class="text-xs text-neutral-500 font-geist">
+                    Director, PixelCraft
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                  class="text-amber-400">
+                  <path
+                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
+                    class=""></path>
+                </svg>
+                <span class="text-xs font-medium font-geist">5.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass"
+        style="position: relative; width: 340px; height: 340px; background: linear-gradient(rgba(255, 255, 255, 0.06), transparent); border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 25px; display: flex; justify-content: center; align-items: center; border-radius: 1rem; margin: 0px -50px; backdrop-filter: blur(10px); transform: rotate(0deg);">
+        <div
+          class="absolute inset-4 rounded-xl bg-white/80 text-neutral-900 shadow-lg ring-1 ring-neutral-200 backdrop-blur overflow-hidden">
+          <div class="p-6">
+            <div
+              class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-neutral-100 ring-1 ring-neutral-200 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                class="h-4 w-4 text-neutral-700">
+                <path
+                  d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                  class=""></path>
+                <path
+                  d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+                  class=""></path>
+              </svg>
+            </div>
+            <p class="text-sm leading-relaxed text-neutral-900 mb-4 font-geist">
+              Exceptional designer with a strategic mindset. Jin helped us
+              rethink our entire product experience from the ground up.
+            </p>
+            <div class="pt-3 border-t border-neutral-200 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <img src="https://hoirqrkdgbmvpwutwuwj-all.supabase.co/storage/v1/object/public/assets/assets/986db8ed-1c5d-42fb-8c1d-4b3716d2e317_320w.jpg" alt="Dramatic Black-and-White Male Portrait" class="h-6 w-6 rounded-full object-cover">
+                <div>
+                  <div class="text-xs font-medium text-neutral-900 font-geist">
+                    Marcus Webb
+                  </div>
+                  <div class="text-xs text-neutral-500 font-geist">
+                    VP Product, Velocity
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                  class="text-amber-400">
+                  <path
+                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
+                    class=""></path>
+                </svg>
+                <span class="text-xs font-medium font-geist">5.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

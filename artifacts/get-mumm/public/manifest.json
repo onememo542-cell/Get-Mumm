@@ -1,12 +1,22 @@
 {
-  "name": "Get Mumm",
+  "name": "Get Mumm — Homemade Meals",
   "short_name": "Get Mumm",
-  "description": "Homemade Meals Delivered with Love",
-  "start_url": "/",
+  "description": "Homemade meals delivered with love in Cairo and Giza",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#ed8936",
+  "lang": "en",
+  "categories": ["food", "lifestyle", "shopping"],
   "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
     {
       "src": "/favicon.svg",
       "sizes": "192x192",
@@ -17,5 +27,15 @@
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/opengraph.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Get Mumm homepage"
+    }
+  ],
+  "prefer_related_applications": false
 }

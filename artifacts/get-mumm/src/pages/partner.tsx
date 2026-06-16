@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
+import { WaveDivider } from "@/components/ui/WaveDivider";
 import { Button } from "@/components/ui/button";
 import { HeartHandshake, TrendingUp, Clock, ShieldCheck, Users, BadgeCheck } from "lucide-react";
 import { motion } from "framer-motion";
@@ -153,8 +154,10 @@ export default function PartnerPage() {
         </div>
       </section>
 
+      <WaveDivider bg="var(--color-background)" fill="var(--color-card)" />
+
       {/* Perks */}
-      <section className="py-24 bg-card border-y border-border">
+      <section className="py-24 bg-card">
         <div className="container mx-auto px-4 max-w-6xl">
           <motion.div {...sectionReveal} className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-serif font-bold mb-3">

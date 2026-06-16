@@ -93,7 +93,6 @@ export default function ForOfficesPage() {
     <PageWrapper>
       {/* Hero */}
       <section className="relative pt-32 pb-20 overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-primary/5 z-0" />
         <div className="container mx-auto px-4 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
           <motion.div {...fadeInUp}>
             <span className="inline-block bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-bold mb-6">

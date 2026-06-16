@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCart } from "@/contexts/CartContext";
 import { PageWrapper, fadeInUp, staggerContainer, staggerItem } from "@/components/layout/PageWrapper";
 import { useGetMenuItem, getGetMenuItemQueryKey } from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
@@ -7,16 +8,27 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Minus, Plus, ShoppingBag, Clock, Star } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useSEO } from "@/hooks/useSEO";
 
 export default function MenuItemPage() {
   const { id } = useParams();
   const { t, isRtl } = useLanguage();
   const { toast } = useToast();
+  const { addItem, openCart } = useCart();
   const [quantity, setQuantity] = useState(1);
 
   const { data: item, isLoading } = useGetMenuItem(Number(id), {
     query: { enabled: !!id, queryKey: getGetMenuItemQueryKey(Number(id)) }
   });
+
+  useSEO(
+    item
+      ? {
+          title: isRtl ? item.nameAr : item.name,
+          description: isRtl ? item.descriptionAr : item.description,
+        }
+      : {}
+  );
 
   if (isLoading) {
     return (
@@ -146,13 +158,25 @@ export default function MenuItemPage() {
                 className="flex-1 rounded-full h-14 text-lg font-bold shadow-lg"
                 disabled={!item.isAvailable}
                 onClick={() => {
+                  for (let i = 0; i < quantity; i++) {
+                    addItem({
+                      id: item.id,
+                      name: item.name,
+                      nameAr: item.nameAr,
+                      price: item.price,
+                      imageUrl: item.imageUrl || "/koshari.png",
+                      chefName: item.chefName,
+                      chefNameAr: item.chefNameAr,
+                    });
+                  }
                   toast({
-                    title: t("Added to cart", "تمت الإضافة للسلة"),
-                    description: `${quantity}x ${isRtl ? item.nameAr : item.name}`,
+                    title: t("Added to cart!", "أُضيف إلى السلة!"),
+                    description: `${quantity}× ${isRtl ? item.nameAr : item.name} · ${item.price * quantity} ${t("EGP", "ج.م")}`,
                   });
+                  openCart();
                 }}
               >
-                <ShoppingBag className="mr-2 h-5 w-5" />
+                <ShoppingBag className={`h-5 w-5 ${isRtl ? "ml-2" : "mr-2"}`} />
                 {item.isAvailable ? t("Add to Cart", "أضف للسلة") : t("Sold Out", "نفذت الكمية")}
               </Button>
             </div>
