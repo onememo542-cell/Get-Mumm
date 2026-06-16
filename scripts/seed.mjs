@@ -3,18 +3,23 @@
  * Database seed script — run after `pnpm --filter db push`
  * Usage: node scripts/seed.mjs
  */
-import { execSync } from "child_process";
+import pg from "pg";
 
 const db = process.env.DATABASE_URL;
 if (!db) throw new Error("DATABASE_URL is not set");
 
-function sql(query) {
-  execSync(`psql "${db}" -c ${JSON.stringify(query)}`, { stdio: "inherit" });
+const pool = new pg.Pool({ connectionString: db });
+
+async function sql(query) {
+  await pool.query(query);
 }
 
-console.log("🌱 Seeding database...");
+async function runSeed() {
+  console.log("🌱 Seeding database...");
 
-sql(`
+
+
+  await sql(`
 INSERT INTO categories (name, name_ar, slug, description, description_ar, image_url, item_count)
 VALUES
   ('Family Dining', 'مائدة العائلة', 'family-dining', 'Hearty dishes perfect for the whole family', 'أطباق دسمة مثالية للعائلة كلها', '/family_dining.png', 0),
@@ -25,7 +30,7 @@ ON CONFLICT (slug) DO NOTHING;
 `);
 console.log("✓ Categories");
 
-sql(`
+  await sql(`
 INSERT INTO chefs (name, name_ar, bio, bio_ar, image_url, specialties, specialties_ar, rating, joined_year, item_count)
 VALUES
   ('Nadia Hassan', 'نادية حسن', 'A third-generation home cook from Zamalek. Her koshari and molokhia are legendary among regulars.', 'طاهية منزلية من الجيل الثالث من الزمالك.', '/chef1.png', ARRAY['Egyptian Classics', 'Family Meals'], ARRAY['الكلاسيكيات المصرية', 'وجبات العائلة'], 4.9, 2017, 12),
@@ -35,7 +40,7 @@ ON CONFLICT DO NOTHING;
 `);
 console.log("✓ Chefs");
 
-sql(`
+  await sql(`
 INSERT INTO menu_items (name, name_ar, description, description_ar, price, category_id, category_name, category_name_ar, image_url, dietary, chef_name, chef_name_ar, rating, prep_time_minutes, is_featured, is_available)
 SELECT v.name, v.name_ar, v.description, v.description_ar, v.price, c.id, c.name, c.name_ar, v.image_url, v.dietary, v.chef_name, v.chef_name_ar, v.rating, v.prep_time_minutes, v.is_featured, true
 FROM (VALUES
@@ -57,7 +62,7 @@ ON CONFLICT DO NOTHING;
 `);
 console.log("✓ Menu items");
 
-sql(`
+  await sql(`
 INSERT INTO testimonials (name, name_ar, quote, quote_ar, rating, avatar_url, role, role_ar)
 VALUES
   ('Ahmed Kamal', 'أحمد كمال', 'Get Mumm changed how our office eats! We order every Tuesday and the whole team loves the variety.', 'غيّر Get Mumm طريقة أكل مكتبنا! نطلب كل ثلاثاء ويعشق الفريق التنوع.', 5, '/chef1.png', 'Office Manager at TechCairo', 'مدير مكتب في تك كايرو'),
@@ -67,7 +72,7 @@ ON CONFLICT DO NOTHING;
 `);
 console.log("✓ Testimonials");
 
-sql(`
+  await sql(`
 INSERT INTO blog_posts (title, title_ar, slug, excerpt, excerpt_ar, content, content_ar, author, author_ar, image_url, read_time_minutes, type, tags, published_at)
 VALUES
   ('The History of Koshari', 'تاريخ الكشري', 'history-of-koshari', 'From humble street food to national icon.', 'من أكلة شعبية متواضعة إلى أيقونة وطنية.', '<p>Koshari is more than just a dish — it is a symbol of Egyptian culture and ingenuity.</p>', '<p>الكشري أكثر من مجرد طبق — إنه رمز للثقافة المصرية.</p>', 'Nadia Hassan', 'نادية حسن', '/koshari.png', 5, 'blog', ARRAY['koshari','history','egyptian-food'], NOW() - INTERVAL '7 days'),
@@ -77,7 +82,7 @@ ON CONFLICT (slug) DO NOTHING;
 `);
 console.log("✓ Blog posts");
 
-sql(`
+  await sql(`
 INSERT INTO subscription_plans (name, name_ar, description, description_ar, price, period, target_audience, features, features_ar, is_popular)
 VALUES
   ('Individual', 'فردي', 'Perfect for one person who wants healthy homemade meals daily.', 'مثالي لشخص واحد يريد وجبات منزلية صحية يوميًا.', 420, 'monthly', 'individual', ARRAY['5 meals per week','Choose your dishes','Free delivery','Flexible schedule'], ARRAY['5 وجبات في الأسبوع','اختر أطباقك','توصيل مجاني','جدول مرن'], false),
@@ -85,14 +90,23 @@ VALUES
   ('Office', 'مؤسسي', 'Daily catering for teams of 10-50 people, delivered fresh.', 'تقديم طعام يومي للفرق من 10 إلى 50 شخصًا.', 6500, 'monthly', 'office', ARRAY['Custom team size','Dedicated account manager','Invoicing & reports','Free delivery','Nutritional info'], ARRAY['حجم فريق مخصص','مدير حساب مخصص','فواتير وتقارير','توصيل مجاني','معلومات غذائية'], false)
 ON CONFLICT DO NOTHING;
 `);
-console.log("✓ Subscription plans");
+  console.log("✓ Subscription plans");
 
-sql(`
-UPDATE categories c
-SET item_count = (
-  SELECT COUNT(*) FROM menu_items m WHERE m.category_id = c.id AND m.is_available = true
-);
-`);
-console.log("✓ Category counts updated");
+  await sql(`
+  UPDATE categories c
+  SET item_count = (
+    SELECT COUNT(*) FROM menu_items m WHERE m.category_id = c.id AND m.is_available = true
+  );
+  `);
+  console.log("✓ Category counts updated");
 
-console.log("✅ Database seeded successfully!");
+  console.log("✅ Database seeded successfully!");
+  
+  await pool.end();
+}
+
+runSeed().catch(err => {
+  console.error("Failed to seed database:", err);
+  pool.end();
+  process.exit(1);
+});

@@ -1,0 +1,24 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"],
+    "paths": {
+      "@workspace/db": ["../shared/db"],
+      "@workspace/db/schema": ["../shared/db/src/schema/index.ts"],
+      "@workspace/api-zod": ["../shared/api-zod"]
+    }
+  },
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../shared/db"
+    },
+    {
+      "path": "../shared/api-zod"
+    }
+  ]
+}
