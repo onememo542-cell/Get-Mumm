@@ -22,7 +22,7 @@ export class ChefsService {
   /**
    * Get single chef by ID
    */
-  async getChefById(id: string) {
+  async getChefById(id: number) {
     return this.chefsRepository.getChefById(id);
   }
 }

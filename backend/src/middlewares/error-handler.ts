@@ -3,10 +3,10 @@
  * Centralized error processing with consistent response format
  */
 
-import { Express, Request, Response, NextFunction } from 'express';
-import { ApiException, ValidationError, DatabaseError } from '../lib/errors';
-import { logger } from '../lib/logger';
-import { ZodError } from 'zod';
+import { Express, Request, Response, NextFunction } from "express";
+import { ApiException } from "../lib/errors";
+import { logger } from "../lib/logger";
+import { ZodError } from "zod";
 
 interface ErrorResponse {
   error: string;
@@ -25,13 +25,18 @@ function formatErrorResponse(
   code?: string,
   details?: unknown,
 ): ErrorResponse {
-  return {
+  const response: ErrorResponse = {
     error: message,
     code,
     statusCode,
-    ...(process.env.NODE_ENV === 'development' && details && { details }),
     timestamp: new Date().toISOString(),
   };
+
+  if (process.env.NODE_ENV === "development" && details !== undefined) {
+    response.details = details;
+  }
+
+  return response;
 }
 
 /**
@@ -62,15 +67,15 @@ export function setupErrorHandler(app: Express): void {
     // Handle Zod validation errors
     if (err instanceof ZodError) {
       logger.warn(
-        { requestId, errorCount: err.errors.length },
-        'Validation error',
+        { requestId, errorCount: err.issues.length },
+        "Validation error",
       );
 
       return res.status(400).json(
         formatErrorResponse(
           400,
-          'Validation failed',
-          'VALIDATION_ERROR',
+          "Validation failed",
+          "VALIDATION_ERROR",
           err.flatten(),
         ),
       );
@@ -79,7 +84,7 @@ export function setupErrorHandler(app: Express): void {
     // Handle generic errors
     if (err instanceof Error) {
       // Log stack trace in development
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV === "development") {
         logger.error(
           { requestId, stack: err.stack },
           `[${err.name}] ${err.message}`,
@@ -94,20 +99,20 @@ export function setupErrorHandler(app: Express): void {
       return res.status(500).json(
         formatErrorResponse(
           500,
-          'Internal server error',
-          'INTERNAL_ERROR',
-          process.env.NODE_ENV === 'development' ? { message: err.message } : undefined,
+          "Internal server error",
+          "INTERNAL_ERROR",
+          process.env.NODE_ENV === "development" ? { message: err.message } : undefined,
         ),
       );
     }
 
     // Handle unknown errors
-    logger.error({ requestId, error: err }, 'Unknown error type');
-    res.status(500).json(
+    logger.error({ requestId, error: err }, "Unknown error type");
+    return res.status(500).json(
       formatErrorResponse(
         500,
-        'Internal server error',
-        'UNKNOWN_ERROR',
+        "Internal server error",
+        "UNKNOWN_ERROR",
       ),
     );
   });
@@ -117,8 +122,8 @@ export function setupErrorHandler(app: Express): void {
     res.status(404).json(
       formatErrorResponse(
         404,
-        'Route not found',
-        'NOT_FOUND',
+        "Route not found",
+        "NOT_FOUND",
       ),
     );
   });

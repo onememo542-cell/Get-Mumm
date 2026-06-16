@@ -16,12 +16,13 @@ export class MenuRepository extends BaseRepository {
   async getCategories() {
     return this.findMany(
       () => db.select().from(categoriesTable).orderBy(categoriesTable.name),
-      () =>
-        supabase
+      async () => {
+        const { data } = await supabase
           .from("categories")
           .select("*")
-          .order("name")
-          .then(({ data }) => data || []),
+          .order("name");
+        return data || [];
+      },
     );
   }
 
@@ -62,7 +63,7 @@ export class MenuRepository extends BaseRepository {
 
     const conditions = [eq(menuItemsTable.isAvailable, true)];
     if (categoryId != null) {
-      conditions.push(eq(menuItemsTable.categoryId, categoryId as string));
+      conditions.push(eq(menuItemsTable.categoryId, categoryId));
     }
     if (maxPrice != null) {
       conditions.push(lte(menuItemsTable.price, maxPrice));
@@ -100,7 +101,7 @@ export class MenuRepository extends BaseRepository {
   /**
    * Get single menu item by ID
    */
-  async getMenuItemById(id: string) {
+  async getMenuItemById(id: number) {
     return this.findOne(
       async () => {
         const [result] = await db

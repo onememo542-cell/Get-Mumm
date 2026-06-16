@@ -40,14 +40,18 @@ export class ContactRepository extends BaseRepository {
           message: input.message,
           subject: input.subject,
         }),
-      () =>
-        supabase.from("contacts").insert({
+      async () => {
+        const { error } = await supabase.from("contacts").insert({
           name: input.name,
           email: input.email,
           phone: input.phone,
           message: input.message,
           subject: input.subject,
-        }),
+        });
+        if (error) {
+          throw error;
+        }
+      },
     );
   }
 
@@ -67,8 +71,8 @@ export class ContactRepository extends BaseRepository {
           frequency: input.frequency,
           message: input.message,
         }),
-      () =>
-        supabase.from("office_inquiries").insert({
+      async () => {
+        const { error } = await supabase.from("office_inquiries").insert({
           company_name: input.companyName,
           contact_name: input.contactName,
           email: input.email,
@@ -77,7 +81,11 @@ export class ContactRepository extends BaseRepository {
           delivery_area: input.deliveryArea,
           frequency: input.frequency,
           message: input.message,
-        }),
+        });
+        if (error) {
+          throw error;
+        }
+      },
     );
   }
 }

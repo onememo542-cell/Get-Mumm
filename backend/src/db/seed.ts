@@ -1,11 +1,14 @@
-import { db, pool } from "./index.js";
+import { db, getPoolForMigrations } from "./index.js";
 import {
   categoriesTable,
   chefsTable,
   menuItemsTable,
   testimonialsTable,
 } from "./schema/index.js";
-import { eq, sql } from "drizzle-orm";
+import type { Category } from "./schema/categories.js";
+import type { Chef } from "./schema/chefs.js";
+import type { MenuItem } from "./schema/menu_items.js";
+import { eq } from "drizzle-orm";
 
 async function main() {
   console.log("🌱 Seeding Get Mumm database…");
@@ -76,7 +79,7 @@ async function main() {
   ]).returning();
 
   console.log(`  ✓ Inserted ${cats.length} categories`);
-  const c = Object.fromEntries(cats.map((x) => [x.slug, x]));
+  const c = Object.fromEntries(cats.map((x: Category) => [x.slug, x]));
 
   /* ── Chefs ───────────────────────────────────────────────────────────
      Use real chef portrait images (chef1.png / chef2.png), not dish photos.
@@ -135,7 +138,7 @@ async function main() {
   ]).returning();
 
   console.log(`  ✓ Inserted ${chefs.length} chefs`);
-  const chef = Object.fromEntries(chefs.map((x) => [x.name, x]));
+  const chef = Object.fromEntries(chefs.map((x: Chef) => [x.name, x]));
 
   /* ── Menu Items ──────────────────────────────────────────────────────
      Every item gets the image that most accurately represents that dish.
@@ -399,11 +402,11 @@ async function main() {
 
   /* ── Update itemCount on chefs and categories ────────────────────── */
   for (const ch of chefs) {
-    const count = items.filter((i) => i.chefName === ch.name).length;
+    const count = items.filter((i: MenuItem) => i.chefName === ch.name).length;
     await db.update(chefsTable).set({ itemCount: count }).where(eq(chefsTable.id, ch.id));
   }
   for (const cat of cats) {
-    const count = items.filter((i) => i.categoryId === cat.id).length;
+    const count = items.filter((i: MenuItem) => i.categoryId === cat.id).length;
     await db.update(categoriesTable).set({ itemCount: count }).where(eq(categoriesTable.id, cat.id));
   }
   console.log("  ✓ Updated itemCount on chefs and categories");
@@ -497,6 +500,7 @@ async function main() {
 
   console.log(`  ✓ Inserted ${testimonials.length} testimonials`);
 
+  const pool = getPoolForMigrations();
   await pool.end();
   console.log("\n✅ Database seeded successfully!\n");
 }

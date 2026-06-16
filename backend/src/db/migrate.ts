@@ -5,7 +5,7 @@
  * Run with:
  *   node --env-file=.env --import tsx src/db/migrate.ts
  */
-import { pool } from "./index.js";
+import { getPoolForMigrations } from "./index.js";
 import { readdir, readFile } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -14,6 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MIGRATIONS_DIR = path.resolve(process.cwd(), "migrations");
 
 async function run() {
+  const pool = getPoolForMigrations();
   const client = await pool.connect();
   try {
     console.log("🔄 Running migrations from:", MIGRATIONS_DIR);
@@ -33,7 +34,7 @@ async function run() {
     for (const file of files) {
       const alreadyApplied = await client.query(
         "SELECT 1 FROM _migrations WHERE filename = $1",
-        [file]
+        [file],
       );
       if (alreadyApplied.rowCount && alreadyApplied.rowCount > 0) {
         console.log(`  ⏭  Skipping (already applied): ${file}`);
@@ -45,7 +46,7 @@ async function run() {
       await client.query(sql);
       await client.query(
         "INSERT INTO _migrations (filename) VALUES ($1)",
-        [file]
+        [file],
       );
       console.log(`  ✓  Applied: ${file}`);
     }

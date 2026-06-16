@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <PageWrapper>
       {/* ─── Hero ──────────────────────────────────────────────────────── */}
-      <section className="relative min-h-[94vh] flex items-center justify-center overflow-hidden bg-background">
+      <section className="relative z-0 min-h-[85vh] flex items-center justify-center overflow-hidden bg-background">
         {/* Background image */}
         <div className="absolute inset-0 z-0">
           <motion.img
@@ -61,7 +61,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
         </div>
 
-        <div className="container relative z-10 mx-auto px-4 text-center mt-16">
+        <div className="container relative z-10 mx-auto px-4 text-center mt-16 pb-8">
           {/* Word-by-word headline reveal */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-foreground mb-6 leading-tight">
             {heroWords.map((word, i) => (
@@ -83,90 +83,46 @@ export default function Home() {
             {...fadeUp}
             animate={fadeUp.animate}
             transition={fadeUpTransition(0.55)}
-            className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed"
+            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
           >
             {tx(home.heroDesc)}
           </motion.p>
-
-          <motion.div
-            {...fadeUp}
-            animate={fadeUp.animate}
-            transition={fadeUpTransition(0.72)}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <Link href="/menu">
-              <Button
-                size="lg"
-                className="w-full sm:w-auto text-base px-9 py-6 rounded-full bg-primary hover:bg-primary/85 text-primary-foreground shadow-xl font-bold"
-              >
-                {tx(home.exploreMenu)}
-              </Button>
-            </Link>
-            <Link href="/for-offices">
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto text-base px-9 py-6 rounded-full border-2 bg-background/50 backdrop-blur-sm font-semibold"
-              >
-                {tx(common.forOffices)}
-              </Button>
-            </Link>
-          </motion.div>
         </div>
-
-        {/* ── Wave at hero bottom ─── */}
-        <div
-          aria-hidden
-          style={{
-            position: "absolute", bottom: 0, left: 0, right: 0,
-            height: 96, zIndex: 5, pointerEvents: "none",
-            color: "var(--carousel-bg, #C44E22)",
-            transition: "color 650ms cubic-bezier(0.4,0,0.2,1)",
-          }}
-        >
-          <svg
-            viewBox="0 0 1440 96"
-            preserveAspectRatio="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ position: "absolute", bottom: 0, left: 0, width: "100%", height: 96 }}
-          >
-            <path
-              d="M0,24 C120,72 240,4 360,32 C480,62 600,6 720,38 C840,70 960,8 1080,34 C1200,62 1340,10 1440,24 L1440,96 L0,96 Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-
-
       </section>
 
-      {/* ─── Food Carousel ─────────────────────────────────────────────── */}
-      <FoodCarousel />
+      {/* Hero CTAs — own layer above carousel wave, below nothing */}
+      <motion.div
+        {...fadeUp}
+        animate={fadeUp.animate}
+        transition={fadeUpTransition(0.72)}
+        className="relative z-50 container mx-auto px-4 -mt-6 mb-2 flex flex-col sm:flex-row items-center justify-center gap-4"
+      >
+        <Link href="/menu">
+          <Button
+            size="lg"
+            className="w-full sm:w-auto text-base px-9 py-6 rounded-full bg-primary hover:bg-primary/85 text-primary-foreground shadow-xl font-bold"
+          >
+            {tx(home.exploreMenu)}
+          </Button>
+        </Link>
+        <Link href="/for-offices">
+          <Button
+            size="lg"
+            variant="outline"
+            className="w-full sm:w-auto text-base px-9 py-6 rounded-full border-2 bg-background/50 backdrop-blur-sm font-semibold"
+          >
+            {tx(common.forOffices)}
+          </Button>
+        </Link>
+      </motion.div>
+
+      {/* ─── Food Carousel — pulled up so top wave blends into hero ───── */}
+      <div className="relative z-30 -mt-16">
+        <FoodCarousel />
+      </div>
 
       {/* ─── Stats Strip ───────────────────────────────────────────────── */}
       <section className="relative bg-accent pt-28 pb-14 overflow-hidden">
-        <div
-          aria-hidden
-          style={{
-            position: "absolute", top: 0, left: 0, right: 0,
-            height: 96, zIndex: 5, pointerEvents: "none",
-            color: "var(--carousel-bg, #C44E22)",
-            transition: "color 650ms cubic-bezier(0.4,0,0.2,1)",
-          }}
-        >
-          <svg
-            viewBox="0 0 1440 96"
-            preserveAspectRatio="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 96 }}
-          >
-            <path
-              d="M0,72 C120,24 240,96 360,60 C480,24 600,88 720,54 C840,20 960,84 1080,56 C1200,28 1340,82 1440,72 L1440,0 L0,0 Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-
         <div className="container mx-auto px-4">
           <motion.div
             variants={sectionStagger}

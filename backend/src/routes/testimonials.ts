@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { TestimonialsService } from "../services";
 import { asyncHandler } from "../middlewares/async-handler";
-import { validateQuery } from "../middlewares/validation";
+import { validateQuery, getValidatedQuery } from "../middlewares/validation";
 import {
   ListTestimonialsResponse,
   ListTestimonialsQueryParams,
@@ -17,7 +17,9 @@ router.get(
   "/testimonials",
   validateQuery(ListTestimonialsQueryParams),
   asyncHandler(async (req, res) => {
-    const testimonials = await testimonialsService.getTestimonials(req.query as any);
+    const testimonials = await testimonialsService.getTestimonials(
+      getValidatedQuery(req),
+    );
     res.json(ListTestimonialsResponse.parse(testimonials));
   }),
 );

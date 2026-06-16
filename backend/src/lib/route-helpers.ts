@@ -3,10 +3,9 @@
  * Provides common patterns for building consistent API endpoints
  */
 
-import { Request, Response } from 'express';
-import { ZodSchema } from 'zod';
-import { executeDbQueryMany, executeDbQuerySingle } from './db-service';
-import { validateSchema } from '../middlewares/validation';
+import { Response } from "express";
+import { ZodSchema } from "zod";
+import { executeDbQueryMany, executeDbQuerySingle } from "./db-service";
 
 interface ListQueryOptions<T> {
   drizzleQuery: () => Promise<T[]>;
@@ -58,11 +57,11 @@ export async function handleSingleQuery<T>(
  * Build a WHERE clause condition for Drizzle
  * Helps avoid repetitive condition building in routes
  */
-export function buildConditions<T>(
+export function buildConditions(
   filters: Record<string, unknown>,
-  schemaMap: Record<string, (value: unknown) => any>,
-): any[] {
-  const conditions: any[] = [];
+  schemaMap: Record<string, (value: unknown) => unknown>,
+): unknown[] {
+  const conditions: unknown[] = [];
 
   for (const [key, value] of Object.entries(filters)) {
     if (value != null && schemaMap[key]) {
@@ -80,19 +79,19 @@ export function buildConditions<T>(
 export function buildSupabaseFilters(
   query: any,
   filters: Record<string, unknown>,
-  filterMap: Record<string, { column: string; operator?: 'eq' | 'lte' | 'gte' | 'ilike' } >,
+  filterMap: Record<string, { column: string; operator?: "eq" | "lte" | "gte" | "ilike" } >,
 ): any {
   for (const [key, value] of Object.entries(filters)) {
     if (value != null && filterMap[key]) {
-      const { column, operator = 'eq' } = filterMap[key];
+      const { column, operator = "eq" } = filterMap[key];
 
-      if (operator === 'eq') {
+      if (operator === "eq") {
         query = query.eq(column, value);
-      } else if (operator === 'lte') {
+      } else if (operator === "lte") {
         query = query.lte(column, value);
-      } else if (operator === 'gte') {
+      } else if (operator === "gte") {
         query = query.gte(column, value);
-      } else if (operator === 'ilike') {
+      } else if (operator === "ilike") {
         query = query.ilike(column, `%${value}%`);
       }
     }

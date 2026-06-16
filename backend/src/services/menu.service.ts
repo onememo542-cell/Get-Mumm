@@ -37,7 +37,7 @@ export class MenuService {
   /**
    * Get single menu item
    */
-  async getMenuItemById(id: string) {
+  async getMenuItemById(id: number) {
     return this.menuRepository.getMenuItemById(id);
   }
 }

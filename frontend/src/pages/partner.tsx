@@ -154,13 +154,13 @@ export default function PartnerPage() {
         </div>
       </section>
 
-      <WaveDivider bg="var(--color-background)" fill="var(--color-card)" />
+      <WaveDivider bg="var(--color-background)" fill="var(--color-accent)" />
 
       {/* Perks */}
-      <section className="py-24 bg-card">
+      <section className="py-24 bg-accent">
         <div className="container mx-auto px-4 max-w-6xl">
           <motion.div {...sectionReveal} className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-3">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-3 text-accent-foreground">
               {t("Why Partner with Mumm?", "لماذا تشاركين مع ممم؟")}
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
@@ -194,6 +194,8 @@ export default function PartnerPage() {
         </div>
       </section>
 
+      <WaveDivider bg="var(--color-accent)" fill="var(--color-background)" flip />
+
       {/* How it Works */}
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -225,6 +227,8 @@ export default function PartnerPage() {
         </div>
       </section>
 
+      <WaveDivider bg="var(--color-background)" fill="var(--color-primary)" />
+
       {/* Final CTA */}
       <motion.section
         {...sectionReveal}
@@ -254,6 +258,8 @@ export default function PartnerPage() {
           </div>
         </div>
       </motion.section>
+
+      <WaveDivider bg="var(--color-primary)" fill="var(--color-background)" flip />
     </PageWrapper>
   );
 }

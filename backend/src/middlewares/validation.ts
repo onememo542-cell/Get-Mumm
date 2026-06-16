@@ -2,9 +2,31 @@
  * Request validation middleware - Centralized validation with async-handler support
  */
 
-import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { ZodSchema } from 'zod';
-import { ValidationError } from '../lib/errors';
+import { Request, Response, NextFunction, RequestHandler } from "express";
+import { ZodSchema } from "zod";
+import { ValidationError } from "../lib/errors";
+
+declare global {
+  namespace Express {
+    interface Request {
+      validatedQuery?: unknown;
+      validatedParams?: unknown;
+      validatedBody?: unknown;
+    }
+  }
+}
+
+export function getValidatedQuery<T>(req: Request): T {
+  return req.validatedQuery as T;
+}
+
+export function getValidatedParams<T>(req: Request): T {
+  return req.validatedParams as T;
+}
+
+export function getValidatedBody<T>(req: Request): T {
+  return req.validatedBody as T;
+}
 
 /**
  * Generic validation helper - can be used in middleware or route handlers
@@ -26,7 +48,7 @@ export function validateSchema<T>(
  */
 export function validateBody(schema: ZodSchema): RequestHandler {
   return (req: Request, _res: Response, next: NextFunction) => {
-    req.body = validateSchema(req.body, schema, 'request body');
+    req.validatedBody = validateSchema(req.body, schema, "request body");
     next();
   };
 }
@@ -36,7 +58,7 @@ export function validateBody(schema: ZodSchema): RequestHandler {
  */
 export function validateQuery(schema: ZodSchema): RequestHandler {
   return (req: Request, _res: Response, next: NextFunction) => {
-    req.query = validateSchema(req.query, schema, 'query parameters') as any;
+    req.validatedQuery = validateSchema(req.query, schema, "query parameters");
     next();
   };
 }
@@ -46,7 +68,7 @@ export function validateQuery(schema: ZodSchema): RequestHandler {
  */
 export function validateParams(schema: ZodSchema): RequestHandler {
   return (req: Request, _res: Response, next: NextFunction) => {
-    req.params = validateSchema(req.params, schema, 'route parameters') as any;
+    req.validatedParams = validateSchema(req.params, schema, "route parameters");
     next();
   };
 }

@@ -12,6 +12,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Animatable carousel color — keeps hero wave, carousel bg, and stats wave in sync */
+@property --carousel-bg {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #C44E22;
+}
+
 /* ─── Design Tokens ────────────────────────────────────────────────────────
    Single source of truth — all font stacks and color aliases live here.
    Components reference semantic tokens only (text-primary, font-sans, etc.)
@@ -103,6 +110,9 @@
   --ring:   52 96% 48%;
 
   --radius: 0.75rem;
+
+  --carousel-bg: #C44E22;
+  transition: --carousel-bg 650ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ─── Dark Mode ───────────────────────────────────────────────────────────

@@ -28,7 +28,7 @@ export class ChefsRepository extends BaseRepository {
   /**
    * Get single chef by ID
    */
-  async getChefById(id: string) {
+  async getChefById(id: number) {
     return this.findOne(
       async () => {
         const [result] = await db

@@ -3,7 +3,7 @@
  * Also supports combined async + validation operations
  */
 
-import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from "express";
 
 /**
  * Wrap async route handlers to catch errors

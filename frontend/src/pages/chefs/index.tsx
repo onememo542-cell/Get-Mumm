@@ -130,23 +130,19 @@ export default function ChefsPage() {
 
       <div className="container mx-auto px-4 sm:px-6 py-10">
 
-        {/* Specialty chips
-             Outer div owns the scroll + negative-margin bleed.
-             Inner div owns padding + flex so trailing padding is inside
-             the scroll content (CSS ignores trailing padding on the
-             scroll container itself, which caused right-edge clipping). */}
+        {/* Specialty chips — wrap on all breakpoints so nothing is clipped */}
         {!isLoading && allSpecialties.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="-mx-4 sm:-mx-6 overflow-x-auto no-scrollbar mb-6"
+            className="mb-6"
             data-testid="filter-specialties"
           >
-            <div className="flex items-center gap-2 px-4 sm:px-6 pb-2">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-2.5">
               <button
                 onClick={() => setActiveSpecialty(null)}
-                className={`relative shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
+                className={`relative shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors whitespace-nowrap ${
                   activeSpecialty === null
                     ? "border-primary text-primary-foreground"
                     : "border-border text-muted-foreground hover:border-primary hover:text-primary bg-background"
@@ -167,7 +163,7 @@ export default function ChefsPage() {
                 <button
                   key={spec}
                   onClick={() => setActiveSpecialty(activeSpecialty === spec ? null : spec)}
-                  className={`relative shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
+                  className={`relative shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors whitespace-nowrap ${
                     activeSpecialty === spec
                       ? "border-primary text-primary-foreground"
                       : "border-border text-muted-foreground hover:border-primary hover:text-primary bg-background"
@@ -184,9 +180,6 @@ export default function ChefsPage() {
                   <span className="relative z-10">{spec}</span>
                 </button>
               ))}
-
-              {/* Trailing spacer — guarantees last chip is never clipped */}
-              <span className="shrink-0 w-4 sm:w-6" aria-hidden />
             </div>
           </motion.div>
         )}

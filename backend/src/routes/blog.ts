@@ -1,7 +1,12 @@
 import { Router, type IRouter } from "express";
 import { BlogService } from "../services";
 import { asyncHandler } from "../middlewares/async-handler";
-import { validateQuery, validateParams } from "../middlewares/validation";
+import {
+  validateQuery,
+  validateParams,
+  getValidatedQuery,
+  getValidatedParams,
+} from "../middlewares/validation";
 import {
   ListBlogPostsResponse,
   GetBlogPostParams,
@@ -19,7 +24,7 @@ router.get(
   "/blog/posts",
   validateQuery(ListBlogPostsQueryParams),
   asyncHandler(async (req, res) => {
-    const posts = await blogService.getBlogPosts(req.query as any);
+    const posts = await blogService.getBlogPosts(getValidatedQuery(req));
     res.json(ListBlogPostsResponse.parse(posts));
   }),
 );
@@ -31,7 +36,7 @@ router.get(
   "/blog/posts/:slug",
   validateParams(GetBlogPostParams),
   asyncHandler(async (req, res) => {
-    const { slug } = req.params as any;
+    const { slug } = getValidatedParams<{ slug: string }>(req);
     const post = await blogService.getBlogPostBySlug(slug);
     res.json(GetBlogPostResponse.parse(post));
   }),

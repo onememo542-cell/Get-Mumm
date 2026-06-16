@@ -3,6 +3,10 @@
     "node": true,
     "es2021": true
   },
+  "ignorePatterns": [
+    "src/api-zod/generated/**",
+    "src/api-spec/**"
+  ],
   "extends": [
     "eslint:recommended"
   ],

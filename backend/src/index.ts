@@ -1,5 +1,9 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import {
+  registerShutdownHandlers,
+  registerShutdownHook,
+} from "./db/shutdown";
 
 const rawPort = process.env["PORT"];
 
@@ -15,11 +19,37 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-app.listen(port, (err) => {
+const server = app.listen(port, (err) => {
   if (err) {
-    logger.error({ err }, "Error listening on port");
+    const code = (err as NodeJS.ErrnoException).code;
+
+    if (code === "EADDRINUSE") {
+      logger.error(
+        { port, err },
+        `Port ${port} is already in use. Stop the other process with: Get-NetTCPConnection -LocalPort ${port} | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }`,
+      );
+    } else {
+      logger.error({ err }, "Error listening on port");
+    }
+
     process.exit(1);
   }
 
   logger.info({ port }, "Server listening");
 });
+
+registerShutdownHook(
+  () =>
+    new Promise<void>((resolve, reject) => {
+      server.close((closeErr) => {
+        if (closeErr) {
+          reject(closeErr);
+          return;
+        }
+        logger.info({ port }, "HTTP server closed");
+        resolve();
+      });
+    }),
+);
+
+registerShutdownHandlers();

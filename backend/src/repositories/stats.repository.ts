@@ -22,7 +22,7 @@ export class StatsRepository extends BaseRepository {
    * Get site summary with chef and menu item counts
    */
   async getSiteSummary(): Promise<SiteSummary> {
-    const [chefsCount, itemsCount] = await Promise.all([
+    const [chefsCount, _itemsCount] = await Promise.all([
       this.execute(
         async () => {
           const [result] = await db
