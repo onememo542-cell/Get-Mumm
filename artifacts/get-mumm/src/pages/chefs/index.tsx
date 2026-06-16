@@ -22,12 +22,16 @@ export default function ChefsPage() {
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  // Store specialty as its English value so it survives language switches
   const [activeSpecialty, setActiveSpecialty] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(timer);
   }, [search]);
+
+  // Reset specialty filter when language switches (Arabic↔English values differ)
+  useEffect(() => { setActiveSpecialty(null); }, [isRtl]);
 
   const allSpecialties = useMemo(() => {
     if (!chefs) return [];
