@@ -1,9 +1,10 @@
 /* ─── Google Fonts ─────────────────────────────────────────────────────────
-   Playfair Display  → display/serif headings
-   Cairo             → Arabic body text (and Latin fallback)
-   Body sans-serif   → system UI stack — zero network cost, native on every OS
+   Cairo — single font for both Arabic and Latin across the whole app.
+   Covers Arabic script natively; Latin glyphs share the same geometric,
+   rounded character so EN + AR feel like one unified brand voice.
+   Weights 300 → 900 give body, UI, and bold display from one import.
    ──────────────────────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Cairo:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -46,16 +47,14 @@
   --color-destructive-foreground: hsl(var(--destructive-foreground));
 
   /* ── Font stacks ─────────────────────────────────────────────────────
-     --font-sans    EN body — pure system UI, zero network cost
-     --font-serif   Display headings — Playfair Display
-     --font-arabic  AR body — Cairo (best cross-platform Arabic),
-                    falls back to same system stack as EN
+     Cairo is the single typeface for the entire app — both EN and AR.
+     --font-sans    EN body + UI
+     --font-serif   Display headings (bold/black weight in components)
+     --font-arabic  AR body + headings — same family, native Arabic glyphs
      ──────────────────────────────────────────────────────────────────── */
-  --font-sans:   -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                 Helvetica, Arial, sans-serif;
-  --font-serif:  'Playfair Display', Georgia, "Times New Roman", serif;
-  --font-arabic: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 Roboto, Helvetica, Arial, sans-serif;
+  --font-sans:   'Cairo', sans-serif;
+  --font-serif:  'Cairo', sans-serif;
+  --font-arabic: 'Cairo', sans-serif;
 
   /* ── Border radius ──────────────────────────────────────────────────── */
   --radius-sm: 0.25rem;
