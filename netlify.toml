@@ -10,8 +10,8 @@
   # Publish directory where Vite outputs production build
   publish = "dist/public"
   
-  # Node version to use
-  node_version = "20.14.0"
+  # Node version to use - MUST be 20.19+ or 22.12+ for Vite 8
+  node_version = "20.19.0"
 
 [build.environment]
   # Environment variables for build time
