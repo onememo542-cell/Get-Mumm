@@ -5,7 +5,7 @@ import {
   registerShutdownHook,
 } from "./db/shutdown";
 
-// For local development
+// For local development only
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 if (isDevelopment) {
@@ -51,4 +51,5 @@ if (isDevelopment) {
 }
 
 // Export app for Vercel serverless environment
+// IMPORTANT: Always export app, even in production (Vercel calls it as a function)
 export default app;

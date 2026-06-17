@@ -16,10 +16,14 @@
 [build.environment]
   # Environment variables for build time
   NODE_ENV = "production"
-  VITE_API_URL = "$VITE_API_URL"  # Set in Netlify UI
+  # API URL must be set in Netlify UI or use default
+  VITE_API_URL = "https://get-mumm.vercel.app"
+  # Supabase variables must be set in Netlify UI
   VITE_SUPABASE_URL = "$VITE_SUPABASE_URL"
   VITE_SUPABASE_ANON_KEY = "$VITE_SUPABASE_ANON_KEY"
   BASE_PATH = "/"
+  # Disable service worker by default to avoid message port errors
+  VITE_ENABLE_SW = "false"
 
 # Note: API calls go directly to Vercel backend via VITE_API_URL
 # No redirect needed - frontend calls backend directly
