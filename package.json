@@ -5,6 +5,8 @@
   "scripts": {
     "dev:api": "pnpm --prefix backend run dev",
     "dev:app": "pnpm --prefix frontend run dev",
-    "install:all": "pnpm --prefix backend install && pnpm --prefix frontend install"
+    "install:all": "pnpm --prefix backend install && pnpm --prefix frontend install",
+    "build": "pnpm --prefix backend run build",
+    "vercel-build": "pnpm --prefix backend install && pnpm --prefix backend run build"
   }
 }

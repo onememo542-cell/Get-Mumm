@@ -1,6 +1,13 @@
 {
   "version": 2,
   "name": "get-mumm-backend",
-  "buildCommand": "cd backend && pnpm install && pnpm build",
-  "outputDirectory": "api"
+  "functions": {
+    "api/index.mjs": {
+      "includeFiles": "backend/dist/**",
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index.mjs" }
+  ]
 }
