@@ -80,22 +80,6 @@ jobs:
           fi
           echo "Backend built successfully to: backend/dist/index.mjs"
   
-  deploy-backend:
-    needs: test-and-build
-    runs-on: ubuntu-latest
-    if: success()
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Deploy to Vercel
-        run: |
-          npm install -g vercel
-          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-  
   deploy-frontend:
     needs: test-and-build
     runs-on: ubuntu-latest
@@ -120,7 +104,7 @@ jobs:
         timeout-minutes: 1
   
   notify:
-    needs: [deploy-backend, deploy-frontend]
+    needs: [test-and-build, deploy-frontend]
     runs-on: ubuntu-latest
     if: always()
     
@@ -128,9 +112,8 @@ jobs:
       - name: Check deployment status
         run: |
           if [ "${{ job.status }}" == "success" ]; then
-            echo "✅ Deployment completed successfully!"
-            echo "Backend: Check Vercel dashboard"
-            echo "Frontend: Check Netlify dashboard"
+            echo "✅ Frontend deployed to Netlify!"
+            echo "✅ Backend will auto-deploy via Vercel GitHub integration"
           else
             echo "❌ Deployment failed. Check logs above."
             exit 1
