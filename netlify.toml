@@ -1,0 +1,49 @@
+# Netlify Configuration for Frontend Deployment
+
+[build]
+  # Install dependencies in the frontend directory
+  command = "cd frontend && pnpm install && pnpm build"
+  
+  # Publish directory where Vite outputs production build
+  publish = "frontend/dist/public"
+  
+  # Node version to use
+  node_version = "20.14.0"
+
+[build.environment]
+  # Environment variables for build time
+  NODE_ENV = "production"
+  VITE_API_URL = "$VITE_API_URL"  # Set in Netlify UI
+  VITE_SUPABASE_URL = "$VITE_SUPABASE_URL"
+  VITE_SUPABASE_ANON_KEY = "$VITE_SUPABASE_ANON_KEY"
+  BASE_PATH = "/"
+
+# Note: API calls go directly to Vercel backend via VITE_API_URL
+# No redirect needed - frontend calls backend directly
+
+# SPA (Single Page App) routing - redirect 404s to index.html for Wouter routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache control for static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# No cache for HTML
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

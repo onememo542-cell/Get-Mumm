@@ -1,0 +1,137 @@
+name: Deploy to Netlify & Vercel
+
+on:
+  push:
+    branches:
+      - main
+      - production
+  workflow_dispatch:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.14.0]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.14.0'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      
+      - name: Install backend dependencies
+        run: cd backend && pnpm install
+      
+      - name: Install frontend dependencies
+        run: cd frontend && pnpm install
+      
+      - name: Lint backend
+        run: cd backend && pnpm lint:check
+        continue-on-error: true
+      
+      - name: Type check backend
+        run: cd backend && pnpm typecheck
+      
+      - name: Type check frontend
+        run: cd frontend && pnpm typecheck
+      
+      - name: Build backend
+        run: cd backend && pnpm build
+      
+      - name: Build frontend
+        run: cd frontend && pnpm build
+      
+      - name: Check frontend build output
+        run: |
+          if [ ! -d "frontend/dist/public" ]; then
+            echo "Error: Frontend dist directory not found"
+            exit 1
+          fi
+          echo "Frontend built successfully to: frontend/dist/public"
+      
+      - name: Check backend build output
+        run: |
+          if [ ! -f "backend/dist/index.mjs" ]; then
+            echo "Error: Backend dist file not found"
+            exit 1
+          fi
+          echo "Backend built successfully to: backend/dist/index.mjs"
+  
+  deploy-backend:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy to Vercel
+        run: |
+          npm install -g vercel
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  
+  deploy-frontend:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: './frontend/dist/public'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from GitHub Actions'
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 1
+  
+  notify:
+    needs: [deploy-backend, deploy-frontend]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Check deployment status
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Deployment completed successfully!"
+            echo "Backend: Check Vercel dashboard"
+            echo "Frontend: Check Netlify dashboard"
+          else
+            echo "❌ Deployment failed. Check logs above."
+            exit 1
+          fi

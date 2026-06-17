@@ -27,7 +27,17 @@ app.use(
   }),
 );
 
-app.use(cors());
+// Configure CORS for production
+const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
+app.use(
+  cors({
+    origin: corsOrigin,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    maxAge: 86400, // 24 hours
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
