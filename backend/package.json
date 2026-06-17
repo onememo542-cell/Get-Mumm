@@ -43,8 +43,5 @@
     "thread-stream": "3.1.0",
     "tsx": "*",
     "typescript": "^5.0.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
   }
 }
