@@ -4,25 +4,16 @@
   "builds": [
     {
       "src": "backend/package.json",
-      "use": "@vercel/node@3.x",
-      "config": {
-        "zeroConfig": true,
-        "maxDuration": 30
-      }
+      "use": "@vercel/node@3.x"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "backend/dist/index.mjs"
+      "dest": "backend/src/index.ts"
     }
   ],
   "env": {
-    "NODE_ENV": "production",
-    "PORT": "3000"
-  },
-  "buildCommand": "cd backend && pnpm install && pnpm build",
-  "startCommand": "node backend/dist/index.mjs",
-  "outputDirectory": "backend/dist",
-  "framework": "express"
+    "NODE_ENV": "production"
+  }
 }
