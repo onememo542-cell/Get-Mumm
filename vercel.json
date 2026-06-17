@@ -1,22 +1,6 @@
 {
   "version": 2,
   "name": "get-mumm-backend",
-  "builds": [
-    {
-      "src": "backend/index.ts",
-      "use": "@vercel/node@3.x",
-      "config": {
-        "zeroConfig": true
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "backend/index.ts"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "buildCommand": "cd backend && pnpm install && pnpm build",
+  "public": false
 }
