@@ -29,6 +29,10 @@ export default function Home() {
   const { data: testimonials, isLoading: isTestimonialsLoading } = useListTestimonials();
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
+  const featuredList = Array.isArray(featuredItems) ? featuredItems : [];
+  const categoryList = Array.isArray(categories) ? categories : [];
+  const testimonialList = Array.isArray(testimonials) ? testimonials : [];
+
   useSEO({
     title: tx(home.heroTitle),
     description: tx(home.heroDesc),
@@ -191,7 +195,7 @@ export default function Home() {
                 animate="show"
                 className="grid grid-cols-1 md:grid-cols-3 gap-8"
               >
-                {featuredItems?.slice(0, 3).map((item) => (
+                {featuredList.slice(0, 3).map((item) => (
                   <motion.div key={item.id} variants={cardVariant}>
                     <Link href={`/menu/${item.id}`}>
                       <motion.div
@@ -297,7 +301,7 @@ export default function Home() {
                 animate="show"
                 className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
               >
-                {categories?.slice(0, 4).map((cat) => (
+                {categoryList.slice(0, 4).map((cat) => (
                   <motion.div key={cat.id} variants={cardVariant}>
                     <Link href={`/menu?category=${cat.id}`}>
                       <motion.div
@@ -356,7 +360,7 @@ export default function Home() {
                 style={{ minHeight: 460, paddingTop: 48, paddingBottom: 48 }}
               >
                 <div className="relative flex items-center justify-center">
-                  {testimonials?.slice(0, 3).map((testimonial, i) => {
+                  {testimonialList.slice(0, 3).map((testimonial, i) => {
                     const ROTATIONS = [-11, -5, 4];
                     const isHov = hoveredIdx === i;
                     const isOtherHov = hoveredIdx !== null && !isHov;
@@ -430,7 +434,7 @@ export default function Home() {
 
               {/* ── Mobile: horizontal scroll ───────────────────────────── */}
               <div className="md:hidden flex gap-4 overflow-x-auto no-scrollbar py-6 px-4 -mx-4">
-                {testimonials?.slice(0, 3).map((testimonial) => (
+                {testimonialList.slice(0, 3).map((testimonial) => (
                   <div
                     key={testimonial.id}
                     className="bg-card border border-border rounded-2xl p-5 flex-shrink-0 w-72 flex flex-col"

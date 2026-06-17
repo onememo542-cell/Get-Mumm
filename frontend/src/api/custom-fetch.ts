@@ -134,6 +134,15 @@ function looksLikeJson(text: string): boolean {
   return trimmed.startsWith("{") || trimmed.startsWith("[");
 }
 
+function looksLikeHtml(text: string): boolean {
+  const trimmed = text.trimStart().toLowerCase();
+  return trimmed.startsWith("<!doctype") || trimmed.startsWith("<html");
+}
+
+function isApiRequestUrl(url: string): boolean {
+  return /\/api(?:\/|$)/.test(url);
+}
+
 function getStringField(value: unknown, key: string): string | undefined {
   if (!value || typeof value !== "object") return undefined;
 
@@ -367,5 +376,15 @@ export async function customFetch<T = unknown>(
     throw new ApiError(response, errorData, requestInfo);
   }
 
-  return (await parseSuccessBody(response, responseType, requestInfo)) as T;
+  const data = await parseSuccessBody(response, responseType, requestInfo);
+
+  if (
+    isApiRequestUrl(requestInfo.url) &&
+    typeof data === "string" &&
+    looksLikeHtml(data)
+  ) {
+    throw new ResponseParseError(response, data, new Error("Expected JSON API response but received HTML"), requestInfo);
+  }
+
+  return data as T;
 }
