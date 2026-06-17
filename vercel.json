@@ -3,17 +3,19 @@
   "name": "get-mumm-backend",
   "builds": [
     {
-      "src": "backend/package.json",
-      "use": "@vercel/node@3.x"
+      "src": "backend/index.ts",
+      "use": "@vercel/node@3.x",
+      "config": {
+        "zeroConfig": true
+      }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "backend/src/index.ts"
+      "dest": "backend/index.ts"
     }
   ],
-  "outputDirectory": "backend/dist",
   "env": {
     "NODE_ENV": "production"
   }
