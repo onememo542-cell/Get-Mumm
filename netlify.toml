@@ -1,11 +1,14 @@
 # Netlify Configuration for Frontend Deployment
 
 [build]
-  # Install dependencies in the frontend directory
-  command = "cd frontend && pnpm install && pnpm build"
+  # Base directory - Netlify will be in this directory during build
+  base = "frontend"
+  
+  # Build command (no need to cd frontend, already there)
+  command = "pnpm install && pnpm build"
   
   # Publish directory where Vite outputs production build
-  publish = "frontend/dist/public"
+  publish = "dist/public"
   
   # Node version to use
   node_version = "20.14.0"
