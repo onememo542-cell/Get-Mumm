@@ -2,5 +2,5 @@
   "version": 2,
   "name": "get-mumm-backend",
   "buildCommand": "cd backend && pnpm install && pnpm build",
-  "public": false
+  "outputDirectory": "api"
 }

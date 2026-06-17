@@ -7,31 +7,11 @@
 import app from '../backend/dist/index.mjs';
 
 /**
- * Main handler for Vercel
+ * Main handler for Vercel Serverless Function
+ * Vercel will call this function for each incoming request
  */
-export default async (req, res) => {
-  // Set headers for streaming
-  res.setHeader('Connection', 'keep-alive');
-  
-  try {
-    // Pass request through Express app
-    return new Promise((resolve, reject) => {
-      app(req, res, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-  } catch (error) {
-    console.error('Handler error:', error);
-    
-    if (!res.headersSent) {
-      res.status(500).json({
-        error: 'Internal Server Error',
-        message: error.message,
-      });
-    }
-  }
-};
+export default function handler(req, res) {
+  // Call the Express app to handle the request
+  app(req, res);
+}
+
