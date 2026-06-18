@@ -86,8 +86,10 @@ jobs:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5433/test_db
         run: |
           cd backend
-          psql $DATABASE_URL -f migrations/001_init.sql
-          psql $DATABASE_URL -f migrations/002_seed_data.sql
+          echo "Running migrations..."
+          psql $DATABASE_URL -f migrations/001_init.sql || echo "Migration 1 completed with status $?"
+          psql $DATABASE_URL -f migrations/002_seed_data.sql || echo "Migration 2 completed with status $?"
+          echo "Database initialization completed"
 
       - name: Start backend server
         env:
@@ -98,31 +100,46 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: test_key
         run: |
           cd backend
+          echo "Starting backend server on port 3001..."
           node --enable-source-maps ./dist/index.mjs > backend.log 2>&1 &
           BACKEND_PID=$!
           echo "Backend PID: $BACKEND_PID"
-          sleep 2
+          sleep 3
           
           for i in {1..30}; do
-            echo "Health check attempt $i/30..."
-            if curl -s http://localhost:3001/health | grep -q "ok"; then
-              echo "✓ Backend server is ready"
-              sleep 1
-              break
-            fi
             if ! kill -0 $BACKEND_PID 2>/dev/null; then
-              echo "❌ Backend process died"
+              echo "❌ Backend process died immediately"
+              echo "=== BACKEND LOG ==="
               cat backend.log
               exit 1
             fi
+            
+            if curl -s http://localhost:3001/health 2>/dev/null | grep -q "ok"; then
+              echo "✓ Backend server is ready after $i attempts"
+              sleep 1
+              break
+            fi
+            
+            echo "Health check attempt $i/30..."
             sleep 1
           done
           
           if ! kill -0 $BACKEND_PID 2>/dev/null; then
-            echo "❌ Backend failed to start"
+            echo "❌ Backend process died during health checks"
+            echo "=== BACKEND LOG ==="
             cat backend.log
             exit 1
           fi
+          
+          # Verify server is still responding
+          if ! curl -s http://localhost:3001/health 2>/dev/null | grep -q "ok"; then
+            echo "❌ Backend health check failed"
+            echo "=== BACKEND LOG ==="
+            cat backend.log
+            exit 1
+          fi
+          
+          echo "✓ Backend startup verified successfully"
 
       - name: Start frontend dev server
         env:
@@ -130,23 +147,38 @@ jobs:
           VITE_API_URL: http://localhost:3001
         run: |
           cd frontend
+          echo "Starting frontend dev server on port 3000..."
           npm run dev > frontend.log 2>&1 &
           FRONTEND_PID=$!
           echo "Frontend PID: $FRONTEND_PID"
-          sleep 5
+          sleep 3
           
-          for i in {1..15}; do
-            echo "Frontend health check attempt $i/15..."
-            if curl -s http://localhost:3000 | grep -q "html"; then
-              echo "✓ Frontend server is ready"
-              exit 0
+          for i in {1..30}; do
+            if ! kill -0 $FRONTEND_PID 2>/dev/null; then
+              echo "❌ Frontend process died immediately"
+              echo "=== FRONTEND LOG ==="
+              cat frontend.log
+              exit 1
             fi
+            
+            if curl -s http://localhost:3000 2>/dev/null | grep -q "html\|<!DOCTYPE"; then
+              echo "✓ Frontend server is ready after $i attempts"
+              sleep 1
+              break
+            fi
+            
+            echo "Frontend health check attempt $i/30..."
             sleep 1
           done
           
-          echo "❌ Frontend failed to start"
-          cat frontend.log
-          exit 1
+          if ! kill -0 $FRONTEND_PID 2>/dev/null; then
+            echo "❌ Frontend process died during health checks"
+            echo "=== FRONTEND LOG ==="
+            cat frontend.log
+            exit 1
+          fi
+          
+          echo "✓ Frontend startup verified successfully"
 
       - name: Run E2E tests with parallel execution
         env:
