@@ -1,16 +1,19 @@
-import app from '../backend/dist/index.mjs';
+// Import the built Express app
+import appModule from '../backend/dist/index.mjs';
 
-// Create a handler that Express can use in serverless
-export default async (req, res) => {
-  // Set necessary headers for streaming responses
-  res.setHeader('Content-Type', 'application/json');
-  
-  // Call Express app as middleware
-  try {
-    app(req, res);
-  } catch (error) {
-    console.error('Handler error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+// Get the Express app instance (it's the default export)
+const app = appModule;
+
+/**
+ * Vercel Serverless Handler
+ * Express middleware doesn't natively work as a serverless handler,
+ * but Express apps created with express() can be invoked directly
+ * with Node.js http.ServerRequest and http.ServerResponse objects
+ */
+export default (req, res) => {
+  // Call the Express app directly with request and response
+  // This works because Express internally handles the middleware chain
+  app(req, res);
 };
+
 
