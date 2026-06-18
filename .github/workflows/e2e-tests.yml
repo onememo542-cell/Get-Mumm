@@ -90,9 +90,16 @@ jobs:
           PORT: 3001
         run: |
           cd backend
-          npm run start &
+          node --enable-source-maps ./dist/index.mjs &
           sleep 5
-          curl -f http://localhost:3001/health || exit 1
+          for i in {1..10}; do
+            if curl -f http://localhost:3001/health; then
+              echo "Backend server is ready"
+              break
+            fi
+            echo "Waiting for backend... ($i/10)"
+            sleep 1
+          done
 
       - name: Run E2E tests with parallel execution
         env:
