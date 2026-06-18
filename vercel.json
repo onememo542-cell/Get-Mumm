@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "npm install && npm run build",
+  "buildCommand": "cd backend && npm install && npm run build",
   "outputDirectory": "backend/dist",
   "functions": {
-    "api/index.mjs": {
+    "backend/dist/index.mjs": {
       "runtime": "nodejs20.x",
       "maxDuration": 30,
       "memory": 1024
@@ -12,7 +12,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/index.mjs"
+      "dest": "backend/dist/index.mjs"
     }
   ]
 }
