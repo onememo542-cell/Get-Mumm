@@ -19,7 +19,8 @@ if (isDevelopment) {
 
   const server = app.listen(port, (err) => {
     if (err) {
-      const code = (err as NodeJS.ErrnoException).code;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const code = (err as any).code;
       if (code === "EADDRINUSE") {
         logger.error(
           { port, err },
