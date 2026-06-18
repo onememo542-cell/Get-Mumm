@@ -68,6 +68,10 @@ jobs:
         run: |
           pnpm --filter backend build
 
+      - name: Build frontend
+        run: |
+          pnpm --filter frontend build
+
       - name: Wait for PostgreSQL
         run: |
           until pg_isready -h localhost -p 5433 -U test_user; do
@@ -98,6 +102,23 @@ jobs:
               break
             fi
             echo "Waiting for backend... ($i/10)"
+            sleep 1
+          done
+
+      - name: Start frontend dev server
+        env:
+          PORT: 3000
+          VITE_API_URL: http://localhost:3001
+        run: |
+          cd frontend
+          npm run dev &
+          sleep 5
+          for i in {1..10}; do
+            if curl -f http://localhost:3000; then
+              echo "Frontend server is ready"
+              break
+            fi
+            echo "Waiting for frontend... ($i/10)"
             sleep 1
           done
 
