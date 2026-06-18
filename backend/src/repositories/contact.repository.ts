@@ -32,16 +32,19 @@ export class ContactRepository extends BaseRepository {
    */
   async submitContact(input: ContactInput) {
     return this.execute(
-      () =>
-        db.insert(contactsTable).values({
+      async () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return db.insert(contactsTable).values({
           name: input.name,
           email: input.email,
           phone: input.phone,
           message: input.message,
           subject: input.subject,
-        }),
+        } as any);
+      },
       async () => {
-        const { error } = await supabase.from("contacts").insert({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error } = await (supabase.from("contacts") as any).insert({
           name: input.name,
           email: input.email,
           phone: input.phone,
@@ -60,8 +63,9 @@ export class ContactRepository extends BaseRepository {
    */
   async submitOfficeInquiry(input: OfficeInquiryInput) {
     return this.execute(
-      () =>
-        db.insert(officeInquiriesTable).values({
+      async () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return db.insert(officeInquiriesTable).values({
           companyName: input.companyName,
           contactName: input.contactName,
           email: input.email,
@@ -70,9 +74,11 @@ export class ContactRepository extends BaseRepository {
           deliveryArea: input.deliveryArea,
           frequency: input.frequency,
           message: input.message,
-        }),
+        } as any);
+      },
       async () => {
-        const { error } = await supabase.from("office_inquiries").insert({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error } = await (supabase.from("office_inquiries") as any).insert({
           company_name: input.companyName,
           contact_name: input.contactName,
           email: input.email,
@@ -89,3 +95,8 @@ export class ContactRepository extends BaseRepository {
     );
   }
 }
+
+
+
+
+
