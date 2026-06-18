@@ -15,6 +15,7 @@ import sys
 import os
 from pathlib import Path
 import asyncio
+import aiohttp
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -59,13 +60,9 @@ def pytest_collection_modifyitems(config, items):
 # Hook for Allure reporting
 def pytest_runtest_setup(item):
     """Setup for each test - add test metadata."""
-    if hasattr(item, 'module'):
+    if hasattr(item, 'obj') and item.obj and hasattr(item.obj, '__doc__'):
         test_module = item.module.__name__
         pytest.test_module = test_module
-        
-        # Allure title and description
-        if item.docstring:
-            item.add_marker(pytest.mark.description(item.docstring))
 
 
 # Event listeners for Allure
@@ -81,67 +78,50 @@ def pytest_runtest_makereport(item, call):
             rep.description = item.obj.__doc__
 
 
-# Database fixtures
+# Environment configuration fixture
 @pytest.fixture(scope="session")
-def db_connection_pool():
+def test_env():
     """
-    Session-scoped database connection pool.
-    Provides connection pooling for all tests in session.
+    Provides test environment configuration.
+    Loads from environment variables with sensible defaults.
     """
-    from tests.fixtures.database import get_connection_pool
-    
-    pool = get_connection_pool()
-    logger.info("Database connection pool created")
-    
-    yield pool
-    
-    # Cleanup
-    if hasattr(pool, 'close'):
-        pool.close()
-    logger.info("Database connection pool closed")
+    return {
+        "db_host": os.getenv("DB_HOST", "localhost"),
+        "db_port": int(os.getenv("DB_PORT", "5432")),
+        "db_name": os.getenv("DB_NAME", "get_mumm_test"),
+        "db_user": os.getenv("DB_USER", "postgres"),
+        "db_password": os.getenv("DB_PASSWORD", "password"),
+        "api_url": os.getenv("API_BASE_URL", "http://localhost:3001"),
+        "frontend_url": os.getenv("FRONTEND_BASE_URL", "http://localhost:3000"),
+    }
 
 
-@pytest.fixture(scope="function")
-async def db_transaction(db_connection_pool):
-    """
-    Function-scoped database transaction.
-    Creates a new transaction for each test and rolls back automatically.
-    """
-    from tests.fixtures.database import get_transaction
-    
-    transaction = get_transaction(db_connection_pool)
-    logger.info("Database transaction started")
-    
-    yield transaction
-    
-    # Cleanup - rollback to restore state
-    try:
-        transaction.rollback()
-        logger.info("Database transaction rolled back")
-    except Exception as e:
-        logger.error(f"Error rolling back transaction: {str(e)}")
+# Import database fixtures from fixtures module
+from tests.fixtures.database import db_connection_pool, db_transaction
 
 
-# API client fixtures
+# API client fixtures - import from fixtures module
+from tests.fixtures.api_client import APIClient, api_session, api_client as api_client_fixture, authenticated_api_client
+
+# Override api_client to work with environment
 @pytest.fixture(scope="function")
 async def api_client():
     """
     Function-scoped API client.
     Provides HTTP client for API testing with base URL and headers.
     """
-    from tests.fixtures.api_client import APIClient
-    
     base_url = os.getenv("API_BASE_URL", "http://localhost:3001")
-    client = APIClient(base_url=base_url)
     
-    logger.info(f"API client initialized with base URL: {base_url}")
+    connector = aiohttp.TCPConnector(limit=10, limit_per_host=5)
+    timeout = aiohttp.ClientTimeout(total=30)
     
-    yield client
-    
-    # Cleanup
-    if hasattr(client, 'close'):
-        await client.close()
-    logger.info("API client closed")
+    async with aiohttp.ClientSession(connector=connector, timeout=timeout) as session:
+        client = APIClient(base_url=base_url, session=session)
+        logger.info(f"API client initialized with base URL: {base_url}")
+        
+        yield client
+        
+        # Session cleanup is automatic with context manager
 
 
 # Playwright page object fixtures
@@ -234,37 +214,30 @@ async def page(browser):
     logger.info("Page and context closed")
 
 
-# Seeding fixtures
+# Seeding fixtures - import from fixtures module
+from tests.fixtures.database import seed_menu_items as _seed_menu_items, seed_chefs as _seed_chefs, seed_blog_posts as _seed_blog_posts
+
 @pytest.fixture(scope="function")
 async def seed_menu_items(db_transaction):
     """Seed menu items into database."""
-    from tests.fixtures.database import seed_menu_items
-    
-    items = await seed_menu_items(db_transaction)
-    logger.info(f"Seeded {len(items)} menu items")
-    
+    items = await _seed_menu_items(db_transaction)
+    logger.info(f"Seeded {len(items) if items else 0} menu items")
     return items
 
 
 @pytest.fixture(scope="function")
 async def seed_chefs(db_transaction):
     """Seed chefs into database."""
-    from tests.fixtures.database import seed_chefs
-    
-    chefs = await seed_chefs(db_transaction)
-    logger.info(f"Seeded {len(chefs)} chefs")
-    
+    chefs = await _seed_chefs(db_transaction)
+    logger.info(f"Seeded {len(chefs) if chefs else 0} chefs")
     return chefs
 
 
 @pytest.fixture(scope="function")
 async def seed_blog_posts(db_transaction):
     """Seed blog posts into database."""
-    from tests.fixtures.database import seed_blog_posts
-    
-    posts = await seed_blog_posts(db_transaction)
-    logger.info(f"Seeded {len(posts)} blog posts")
-    
+    posts = await _seed_blog_posts(db_transaction)
+    logger.info(f"Seeded {len(posts) if posts else 0} blog posts")
     return posts
 
 
@@ -326,38 +299,14 @@ except ImportError:
     logger.warning("Allure not available - skipping Allure reporting")
 
 
-def pytest_configure_allure(config):
-    """Configure Allure reporting."""
-    if not ALLURE_AVAILABLE:
-        return
-    
-    # Create allure results directory
-    allure_dir = Path("allure-results")
-    allure_dir.mkdir(exist_ok=True)
-    
-    # Create environment.properties for Allure report
-    from datetime import datetime
-    environment_properties = allure_dir / "environment.properties"
-    with open(environment_properties, "w") as f:
-        f.write("Browser=Chromium\n")
-        f.write("BrowserVersion=Latest\n")
-        f.write("OS=Linux\n")
-        f.write("Environment=Test\n")
-        f.write(f"Timestamp={datetime.now().isoformat()}\n")
-        f.write(f"Python Version={sys.version.split()[0]}\n")
-    
-    logger.info(f"Allure environment file created: {environment_properties}")
-
-
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport_allure(item, call):
+def pytest_runtest_makereport(item, call):
     """Hook to capture test outcomes and attach artifacts to Allure."""
-    if not ALLURE_AVAILABLE:
-        yield
-        return
-    
     outcome = yield
     report = outcome.get_result()
+    
+    if not ALLURE_AVAILABLE:
+        return
     
     # Attach markers as labels
     for marker in item.iter_markers():
