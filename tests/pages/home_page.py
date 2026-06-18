@@ -153,3 +153,46 @@ class HomePage(BasePage):
         logger.info("Clicking main logo...")
         await self.click(self.MAIN_LOGO)
         await self.wait_for_navigation()
+
+    async def is_hero_visible(self) -> bool:
+        """
+        Check if hero section is visible.
+
+        Returns:
+            bool: True if hero is visible, False otherwise
+        """
+        logger.info("Checking if hero section is visible...")
+        return await self.is_visible(self.HERO_SECTION)
+
+    async def verify_navigation_links_present(self) -> bool:
+        """
+        Verify that all required navigation links are present.
+
+        Returns:
+            bool: True if all links present, False otherwise
+        """
+        logger.info("Verifying all navigation links are present...")
+        menu_visible = await self.is_visible(self.MENU_LINK)
+        chefs_visible = await self.is_visible(self.CHEFS_LINK)
+        blog_visible = await self.is_visible(self.BLOG_LINK)
+        contact_visible = await self.is_visible(self.CONTACT_BUTTON)
+        
+        all_visible = menu_visible and chefs_visible and blog_visible and contact_visible
+        logger.info(f"Navigation links present: {all_visible}")
+        return all_visible
+
+    async def get_page_title(self) -> str:
+        """
+        Get the page title/heading.
+
+        Returns:
+            str: Page title text
+        """
+        logger.info("Getting page title...")
+        try:
+            title = await self.page.title()
+            logger.info(f"Page title: {title}")
+            return title
+        except Exception as e:
+            logger.error(f"Could not retrieve page title: {str(e)}")
+            return ""

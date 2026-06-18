@@ -244,3 +244,160 @@ class MenuPage(BasePage):
         """
         logger.info("Getting page info...")
         return await self.get_text(self.PAGE_INFO)
+
+
+    async def get_menu_items_count(self) -> int:
+        """
+        Get count of menu items currently displayed.
+
+        Returns:
+            int: Number of menu items
+        """
+        logger.info("Getting menu items count...")
+        item_elements = self.page.locator(self.MENU_ITEM)
+        count = await item_elements.count()
+        logger.info(f"Menu items count: {count}")
+        return count
+
+    async def get_first_menu_item_name(self) -> str:
+        """
+        Get the name of the first menu item.
+
+        Returns:
+            str: First menu item name
+        """
+        logger.info("Getting first menu item name...")
+        items = self.page.locator(self.MENU_ITEM)
+        if await items.count() > 0:
+            first_item = items.first
+            name = await first_item.locator(".menu-item-name").text_content()
+            logger.info(f"First menu item: {name}")
+            return (name or "").strip()
+        return ""
+
+    async def get_first_menu_item_price(self) -> str:
+        """
+        Get the price of the first menu item.
+
+        Returns:
+            str: First menu item price
+        """
+        logger.info("Getting first menu item price...")
+        items = self.page.locator(self.MENU_ITEM)
+        if await items.count() > 0:
+            first_item = items.first
+            price = await first_item.locator(".menu-item-price").text_content()
+            logger.info(f"First menu item price: {price}")
+            return (price or "").strip()
+        return ""
+
+    async def get_all_menu_item_names(self) -> list:
+        """
+        Get names of all menu items currently displayed.
+
+        Returns:
+            list: List of menu item names
+        """
+        logger.info("Getting all menu item names...")
+        items = await self.get_menu_items()
+        names = [item["name"] for item in items if item.get("name")]
+        logger.info(f"Retrieved {len(names)} menu item names")
+        return names
+
+    async def search_menu_items(self, search_term: str) -> None:
+        """
+        Search menu items (alias for search_items).
+
+        Args:
+            search_term: Term to search for
+        """
+        await self.search_items(search_term)
+
+    async def filter_by_category(self, category: str) -> None:
+        """
+        Filter menu items by category (alias for apply_category_filter).
+
+        Args:
+            category: Category to filter by
+        """
+        await self.apply_category_filter(category)
+
+    async def clear_filters(self) -> None:
+        """
+        Clear all active filters and search.
+
+        Raises:
+            Exception: If clear operation fails
+        """
+        logger.info("Clearing all filters...")
+        await self.clear_search()
+        # Reset category filter to show all
+        try:
+            await self.select_option(self.CATEGORY_FILTER, "")
+            await self.page.wait_for_load_state("networkidle")
+        except Exception as e:
+            logger.warning(f"Could not reset category filter: {str(e)}")
+        logger.info("All filters cleared")
+
+    async def get_results_count_text(self) -> str:
+        """
+        Get the results count display text.
+
+        Returns:
+            str: Results count text (may be empty if not displayed)
+        """
+        logger.info("Getting results count text...")
+        try:
+            text = await self.get_text(self.PAGE_INFO)
+            logger.info(f"Results count text: {text}")
+            return text
+        except Exception as e:
+            logger.debug(f"Could not retrieve results count: {str(e)}")
+            return ""
+
+    async def has_no_results_message(self) -> bool:
+        """
+        Check if 'no results' message is displayed.
+
+        Returns:
+            bool: True if no results message is visible
+        """
+        logger.info("Checking for no results message...")
+        no_results_selectors = [
+            ":has-text('No results')",
+            ":has-text('No items')",
+            ":has-text('Nothing found')",
+            "[class*='no-results']"
+        ]
+        for selector in no_results_selectors:
+            if await self.is_visible(selector):
+                logger.info("No results message found")
+                return True
+        logger.info("No results message not found")
+        return False
+
+    async def go_to_next_page(self) -> bool:
+        """
+        Go to next page if available.
+
+        Returns:
+            bool: True if successfully navigated to next page
+        """
+        return await self.next_page()
+
+    async def click_menu_item(self, index: int = 0) -> None:
+        """
+        Click on a menu item by index.
+
+        Args:
+            index: Index of menu item to click (default: 0)
+        """
+        logger.info(f"Clicking menu item at index {index}...")
+        items = self.page.locator(self.MENU_ITEM)
+        if await items.count() > index:
+            item = items.nth(index)
+            await item.click()
+            await self.wait_for_navigation()
+            logger.info(f"Clicked menu item at index {index}")
+        else:
+            logger.error(f"Menu item at index {index} not found")
