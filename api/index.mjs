@@ -3,26 +3,27 @@
  * This file handles all requests and routes them to the Express backend
  */
 
-// Import the bundled Express app
 import app from '../backend/dist/index.mjs';
 
 /**
  * Main handler for Vercel Serverless Function
- * Vercel will call this function for each incoming request
+ * Wraps the Express app to work with Vercel's serverless runtime
  */
 export default function handler(req, res) {
-  // Ensure proper CORS headers for Vercel
-  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'https://get-mumm.netlify.app');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  // Set proper response headers
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, DELETE, PATCH, POST, PUT, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
   
-  // Handle OPTIONS requests
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
   
-  // Call the Express app to handle the request
+  // Invoke the Express app as a serverless function handler
+  // The Express app has already been built and bundled in backend/dist/index.mjs
   return app(req, res);
 }
 
