@@ -101,12 +101,13 @@ jobs:
           timeout 30 node --enable-source-maps ./dist/index.mjs > backend.log 2>&1 &
           BACKEND_PID=$!
           echo "Backend PID: $BACKEND_PID"
-          sleep 3
+          sleep 5
           
           for i in {1..15}; do
             echo "Health check attempt $i/15..."
-            if curl -s http://localhost:3001/health; then
+            if curl -s http://localhost:3001/health | grep -q "ok"; then
               echo "✓ Backend server is ready"
+              sleep 2
               exit 0
             fi
             sleep 1
