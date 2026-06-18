@@ -10,7 +10,15 @@
   },
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api(.*)",
+      "destination": "/api/handler.mjs"
+    },
+    {
+      "source": "/health",
+      "destination": "/api/handler.mjs"
+    },
+    {
+      "source": "/",
       "destination": "/api/handler.mjs"
     }
   ]
