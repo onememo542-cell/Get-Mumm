@@ -66,11 +66,13 @@ jobs:
 
       - name: Build backend
         run: |
-          pnpm --filter backend build
+          cd backend
+          npm run build
 
       - name: Build frontend
         run: |
-          pnpm --filter frontend build
+          cd frontend
+          npm run build
 
       - name: Wait for PostgreSQL
         run: |
