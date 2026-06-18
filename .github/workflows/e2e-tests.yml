@@ -92,18 +92,27 @@ jobs:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5433/test_db
           NODE_ENV: test
           PORT: 3001
+          SUPABASE_URL: http://localhost:5433
+          SUPABASE_SERVICE_ROLE_KEY: test_key
         run: |
           cd backend
-          node --enable-source-maps ./dist/index.mjs &
-          sleep 5
-          for i in {1..10}; do
-            if curl -f http://localhost:3001/health; then
-              echo "Backend server is ready"
-              break
+          timeout 30 node --enable-source-maps ./dist/index.mjs > backend.log 2>&1 &
+          BACKEND_PID=$!
+          echo "Backend PID: $BACKEND_PID"
+          sleep 3
+          
+          for i in {1..15}; do
+            echo "Health check attempt $i/15..."
+            if curl -s http://localhost:3001/health; then
+              echo "✓ Backend server is ready"
+              exit 0
             fi
-            echo "Waiting for backend... ($i/10)"
             sleep 1
           done
+          
+          echo "❌ Backend failed to start"
+          cat backend.log
+          exit 1
 
       - name: Start frontend dev server
         env:
@@ -111,16 +120,23 @@ jobs:
           VITE_API_URL: http://localhost:3001
         run: |
           cd frontend
-          npm run dev &
+          npm run dev > frontend.log 2>&1 &
+          FRONTEND_PID=$!
+          echo "Frontend PID: $FRONTEND_PID"
           sleep 5
-          for i in {1..10}; do
-            if curl -f http://localhost:3000; then
-              echo "Frontend server is ready"
-              break
+          
+          for i in {1..15}; do
+            echo "Frontend health check attempt $i/15..."
+            if curl -s http://localhost:3000 | grep -q "html"; then
+              echo "✓ Frontend server is ready"
+              exit 0
             fi
-            echo "Waiting for frontend... ($i/10)"
             sleep 1
           done
+          
+          echo "❌ Frontend failed to start"
+          cat frontend.log
+          exit 1
 
       - name: Run E2E tests with parallel execution
         env:
