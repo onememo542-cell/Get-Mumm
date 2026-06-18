@@ -8,8 +8,11 @@ import subscriptionsRouter from "./subscriptions";
 import contactRouter from "./contact";
 import statsRouter from "./stats";
 import mcpRouter from "./mcp";
+import { BlogService } from "../services";
+import { asyncHandler } from "../middlewares/async-handler";
 
 const router: IRouter = Router();
+const blogService = new BlogService();
 
 // Root API info endpoint
 router.get("/", (_req, res) => {
@@ -42,6 +45,19 @@ router.get("/", (_req, res) => {
   });
 });
 
+// Compatibility endpoint for /api/blog (redirects to /api/blog/posts)
+router.get(
+  "/blog",
+  asyncHandler(async (req, res) => {
+    const posts = await blogService.getBlogPosts({});
+    res.json({
+      items: posts,
+      data: posts,
+      posts: posts,
+    });
+  }),
+);
+
 router.use(healthRouter);
 router.use(menuRouter);
 router.use(chefsRouter);
@@ -53,3 +69,4 @@ router.use(statsRouter);
 router.use(mcpRouter);
 
 export default router;
+
