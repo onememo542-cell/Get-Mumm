@@ -1,18 +1,17 @@
 {
   "version": 2,
   "buildCommand": "cd backend && npm install && npm run build",
-  "outputDirectory": "backend/dist",
+  "installCommand": "npm install",
+  "devCommand": "cd backend && npm run dev",
   "functions": {
-    "backend/dist/index.mjs": {
-      "runtime": "nodejs20.x",
-      "maxDuration": 30,
-      "memory": 1024
+    "api/handler.mjs": {
+      "runtime": "nodejs18.x"
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "backend/dist/index.mjs"
+      "source": "/(.*)",
+      "destination": "/api/handler.mjs"
     }
   ]
 }
