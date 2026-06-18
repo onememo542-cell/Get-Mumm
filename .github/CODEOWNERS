@@ -1,0 +1,19 @@
+# Code ownership and review requirements
+
+# Frontend
+/frontend/                          @Mostafa-SAID7
+
+# Backend
+/backend/                           @Mostafa-SAID7
+
+# Tests (all contributors)
+/tests/                             @Mostafa-SAID7
+
+# Configuration
+/.github/                           @Mostafa-SAID7
+/docker-compose*.yml                @Mostafa-SAID7
+/package.json                       @Mostafa-SAID7
+
+# Documentation
+/*.md                               @Mostafa-SAID7
+/docs/                              @Mostafa-SAID7

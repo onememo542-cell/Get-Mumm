@@ -81,23 +81,28 @@ This repository is split into two independent applications:
 
 ### E2E Testing Infrastructure
 
-Complete end-to-end testing with Pytest + Playwright:
+Complete end-to-end testing with **244+ tests** across UI, API, and Database layers.
 
 ```bash
+# Quick start
+pip install -r tests/requirements-test.txt
+playwright install chromium
+
 # Run all tests
-./scripts/run-tests-local.bat    # Windows
-./scripts/run-tests-local.sh     # Linux/Mac
+pytest tests/ -v
 
-# Run specific tests
-pytest tests/ui -v               # UI tests only
-pytest tests/api -v              # API tests only
-pytest tests/database -v         # Database tests only
+# Run specific category
+pytest -m ui tests/       # UI only
+pytest -m api tests/      # API only
+pytest -m database tests/ # Database only
 
-# Run with parallel workers
-pytest tests/ -n 4
+# Parallel execution
+pytest -n 4 tests/
 ```
 
-For comprehensive testing documentation, see [E2E Testing Guide](./docs/E2E_TESTING_README.md).
+📖 **Full guide:** [Testing Documentation](./docs/TESTING.md)
+
+Tests run automatically on GitHub Actions for all PRs and pushes to `main`/`develop`.
 
 ## 📁 Project Structure
 
@@ -119,6 +124,6 @@ get-mumm/
 
 ## 📚 Documentation
 
-- [E2E Testing Guide](./docs/E2E_TESTING_README.md) - Complete testing documentation
-- [E2E Implementation Summary](./docs/E2E_IMPLEMENTATION_SUMMARY.md) - Architecture details
-- [API Documentation](./backend/src/api-spec/openapi.yaml) - OpenAPI specification
+- [Testing Guide](./docs/TESTING.md) - How to run E2E tests
+- [Contributing](/.github/CONTRIBUTING.md) - Development guidelines
+- [API Spec](./backend/src/api-spec/openapi.yaml) - OpenAPI specification

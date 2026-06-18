@@ -13,7 +13,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ./backend/migrations:/docker-entrypoint-initdb.d:ro
+      - ../backend/migrations:/docker-entrypoint-initdb.d:ro
       - test-db-data:/var/lib/postgresql/data
     networks:
       - test-network
@@ -28,7 +28,7 @@ services:
   # Application backend server
   app-server:
     build:
-      context: ./backend
+      context: ../backend
       dockerfile: Dockerfile
       target: production
     container_name: get-mumm-app-server
