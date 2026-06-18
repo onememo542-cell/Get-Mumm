@@ -49,16 +49,16 @@ jobs:
         continue-on-error: true
       
       - name: Type check backend
-        run: pnpm --filter backend typecheck
+        run: cd backend && npm run typecheck
       
       - name: Type check frontend
-        run: pnpm --filter frontend typecheck
+        run: cd frontend && npm run typecheck
       
       - name: Build backend
-        run: pnpm --filter backend build
+        run: cd backend && npm run build
       
       - name: Build frontend
-        run: pnpm --filter frontend build
+        run: cd frontend && npm run build
       
       - name: Check frontend build output
         run: |
