@@ -77,10 +77,48 @@ This repository is split into two independent applications:
 - `/frontend`: The React application and UI.
 - `/backend`: The Express API and database schemas.
 
-## 🤝 Contributing
+## 🧪 Testing
 
-Contributions are welcome! Feel free to open an issue or submit a pull request.
+### E2E Testing Infrastructure
 
-## 📝 License
+Complete end-to-end testing with Pytest + Playwright:
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+```bash
+# Run all tests
+./scripts/run-tests-local.bat    # Windows
+./scripts/run-tests-local.sh     # Linux/Mac
+
+# Run specific tests
+pytest tests/ui -v               # UI tests only
+pytest tests/api -v              # API tests only
+pytest tests/database -v         # Database tests only
+
+# Run with parallel workers
+pytest tests/ -n 4
+```
+
+For comprehensive testing documentation, see [E2E Testing Guide](./docs/E2E_TESTING_README.md).
+
+## 📁 Project Structure
+
+```
+get-mumm/
+├── backend/                     # Express.js API
+├── frontend/                    # React 19 UI
+├── tests/                       # E2E tests (Pytest + Playwright)
+├── scripts/                     # Utility scripts
+│   ├── run-tests-local.bat/.sh  # Run tests
+│   ├── wait-for-services.sh     # Health checks
+│   └── pre-deploy.sh            # Pre-deployment
+├── docs/                        # Documentation
+├── .github/workflows/           # CI/CD workflows
+├── docker-compose.yml           # Production setup
+├── docker-compose.test.yml      # Testing setup
+└── package.json                 # Root monorepo config
+```
+
+## 📚 Documentation
+
+- [E2E Testing Guide](./docs/E2E_TESTING_README.md) - Complete testing documentation
+- [E2E Implementation Summary](./docs/E2E_IMPLEMENTATION_SUMMARY.md) - Architecture details
+- [API Documentation](./backend/src/api-spec/openapi.yaml) - OpenAPI specification
