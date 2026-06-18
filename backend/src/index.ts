@@ -5,10 +5,11 @@ import {
   registerShutdownHook,
 } from "./db/shutdown";
 
-// For local development only
-const isDevelopment = process.env.NODE_ENV !== "production";
+// Detect if running in serverless environment
+const isServerless = process.env.VERCEL === "1" || process.env.AWS_LAMBDA_FUNCTION_NAME;
 
-if (isDevelopment) {
+// For local development only (NOT in serverless)
+if (!isServerless && process.env.NODE_ENV !== "production") {
   // Local development: listen on PORT
   const rawPort = process.env["PORT"] || "8080";
   const port = Number(rawPort);
