@@ -98,24 +98,31 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: test_key
         run: |
           cd backend
-          timeout 30 node --enable-source-maps ./dist/index.mjs > backend.log 2>&1 &
+          node --enable-source-maps ./dist/index.mjs > backend.log 2>&1 &
           BACKEND_PID=$!
           echo "Backend PID: $BACKEND_PID"
-          sleep 5
+          sleep 2
           
-          for i in {1..15}; do
-            echo "Health check attempt $i/15..."
+          for i in {1..30}; do
+            echo "Health check attempt $i/30..."
             if curl -s http://localhost:3001/health | grep -q "ok"; then
               echo "✓ Backend server is ready"
-              sleep 2
-              exit 0
+              sleep 1
+              break
+            fi
+            if ! kill -0 $BACKEND_PID 2>/dev/null; then
+              echo "❌ Backend process died"
+              cat backend.log
+              exit 1
             fi
             sleep 1
           done
           
-          echo "❌ Backend failed to start"
-          cat backend.log
-          exit 1
+          if ! kill -0 $BACKEND_PID 2>/dev/null; then
+            echo "❌ Backend failed to start"
+            cat backend.log
+            exit 1
+          fi
 
       - name: Start frontend dev server
         env:
