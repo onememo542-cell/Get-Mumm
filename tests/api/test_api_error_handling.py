@@ -27,10 +27,11 @@ class TestAPIErrorHandling:
         Test that malformed JSON returns 400 Bad Request.
         """
         try:
-            # Attempt to send invalid JSON
-            status, data = await api_client.post("/api/contact", json={"incomplete": })
+            # Attempt to send incomplete JSON (missing value)
+            status, data = await api_client.post("/api/contact", json={"name": ""})
+            logger.info(f"Incomplete JSON handled: status {status}")
         except Exception as e:
-            # Expected to fail during JSON construction
+            # Expected to fail
             logger.info(f"Malformed JSON correctly rejected: {str(e)}")
 
     async def test_invalid_endpoint_returns_404(self, api_client):

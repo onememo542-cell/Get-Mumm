@@ -87,10 +87,10 @@ def test_env():
     """
     return {
         "db_host": os.getenv("DB_HOST", "localhost"),
-        "db_port": int(os.getenv("DB_PORT", "5432")),
-        "db_name": os.getenv("DB_NAME", "get_mumm_test"),
-        "db_user": os.getenv("DB_USER", "postgres"),
-        "db_password": os.getenv("DB_PASSWORD", "password"),
+        "db_port": int(os.getenv("DB_PORT", "5433")),
+        "db_name": os.getenv("DB_NAME", "test_db"),
+        "db_user": os.getenv("DB_USER", "test_user"),
+        "db_password": os.getenv("DB_PASSWORD", "test_password"),
         "api_url": os.getenv("API_BASE_URL", "http://localhost:3001"),
         "frontend_url": os.getenv("FRONTEND_BASE_URL", "http://localhost:3000"),
     }
