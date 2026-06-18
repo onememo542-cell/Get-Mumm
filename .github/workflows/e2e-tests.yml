@@ -45,7 +45,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Install Python dependencies
         run: |
@@ -58,13 +62,11 @@ jobs:
 
       - name: Install backend dependencies
         run: |
-          cd backend
-          npm ci || npm install
+          pnpm install
 
       - name: Build backend
         run: |
-          cd backend
-          npm run build
+          pnpm --filter backend build
 
       - name: Wait for PostgreSQL
         run: |
