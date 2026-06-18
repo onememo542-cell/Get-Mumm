@@ -1,13 +1,17 @@
 {
   "version": 2,
   "name": "get-mumm-backend",
+  "buildCommand": "cd backend && pnpm install && pnpm build",
+  "outputDirectory": "backend/dist",
+  "regions": ["sfo1"],
   "functions": {
-    "api/index.mjs": {
-      "includeFiles": "backend/dist/**",
-      "maxDuration": 30
+    "backend/dist/index.mjs": {
+      "maxDuration": 30,
+      "memory": 1024
     }
   },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index.mjs" }
-  ]
+  "env": {
+    "NODE_ENV": "production",
+    "LOG_LEVEL": "info"
+  }
 }

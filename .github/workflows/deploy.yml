@@ -42,35 +42,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       
-      - name: Install backend dependencies
-        run: cd backend && pnpm install
-      
-      - name: Install frontend dependencies
-        run: cd frontend && pnpm install
+      - name: Install all dependencies
+        run: pnpm install --recursive
       
       - name: Lint backend
-        run: cd backend && pnpm lint:check
+        run: pnpm --filter backend lint:check
         continue-on-error: true
       
       - name: Type check backend
-        run: cd backend && pnpm typecheck
+        run: pnpm --filter backend typecheck
       
       - name: Type check frontend
-        run: cd frontend && pnpm typecheck
+        run: pnpm --filter frontend typecheck
       
       - name: Build backend
-        run: cd backend && pnpm build
+        run: pnpm --filter backend build
       
       - name: Build frontend
-        run: cd frontend && pnpm build
+        run: pnpm --filter frontend build
       
       - name: Check frontend build output
         run: |
-          if [ ! -d "frontend/dist/public" ]; then
+          if [ ! -d "frontend/dist" ]; then
             echo "Error: Frontend dist directory not found"
             exit 1
           fi
-          echo "Frontend built successfully to: frontend/dist/public"
+          echo "Frontend built successfully to: frontend/dist"
       
       - name: Check backend build output
         run: |
@@ -91,7 +88,7 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.0
         with:
-          publish-dir: './frontend/dist/public'
+          publish-dir: './frontend/dist'
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: 'Deploy from GitHub Actions'

@@ -8,7 +8,7 @@
   command = "pnpm install && pnpm build"
   
   # Publish directory where Vite outputs production build
-  publish = "dist/public"
+  publish = "dist"
   
   # Node version to use - MUST be 20.19+ or 22.12+ for Vite 8
   node_version = "20.19.0"
