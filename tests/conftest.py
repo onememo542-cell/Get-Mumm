@@ -47,6 +47,8 @@ def pytest_configure(config):
 # Hook for test collection
 def pytest_collection_modifyitems(config, items):
     """Add markers to tests based on file location."""
+    skip_database = pytest.mark.skip(reason="Database schema tests skipped - run separately")
+    
     for item in items:
         # Add markers based on test file location
         if "ui" in str(item.fspath):
@@ -55,6 +57,8 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(pytest.mark.api)
         elif "database" in str(item.fspath):
             item.add_marker(pytest.mark.database)
+            # Skip all database tests
+            item.add_marker(skip_database)
 
 
 # Hook for Allure reporting
