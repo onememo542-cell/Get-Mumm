@@ -45,6 +45,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Get Mumm API is running" });
 });
 
+// Health check endpoint for Docker containers and load balancers
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 app.use("/api", router);
 
 // Setup error handling middleware (must be last)

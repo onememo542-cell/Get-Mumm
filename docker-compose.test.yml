@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # PostgreSQL test database
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: get-mumm-test-db
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      TZ: UTC
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./backend/migrations:/docker-entrypoint-initdb.d:ro
+      - test-db-data:/var/lib/postgresql/data
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d test_db"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  # Application backend server
+  app-server:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: get-mumm-app-server
+    environment:
+      DATABASE_URL: postgresql://test_user:test_password@postgres-test:5432/test_db
+      NODE_ENV: test
+      PORT: 3001
+      LOG_LEVEL: info
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+
+networks:
+  test-network:
+    driver: bridge
+    name: get-mumm-test-network
+
+volumes:
+  test-db-data:
+    name: get-mumm-test-db-volume

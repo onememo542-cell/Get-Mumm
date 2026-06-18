@@ -19,7 +19,7 @@ COPY . .
 RUN pnpm run build
 
 # Runtime stage
-FROM node:22-alpine
+FROM node:22-alpine AS production
 
 WORKDIR /app
 
@@ -36,11 +36,11 @@ RUN pnpm install --prod --frozen-lockfile
 COPY --from=builder /app/dist ./dist
 
 # Expose port
-EXPOSE 8080
+EXPOSE 3001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:8080/api/healthz', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
 # Start the application
 CMD ["node", "--enable-source-maps", "./dist/index.mjs"]

@@ -1,0 +1,21 @@
+# Core Testing Framework
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-xdist==3.5.0
+pytest-timeout==2.2.0
+
+# Browser Automation
+playwright==1.40.0
+
+# API Testing
+aiohttp==3.9.1
+requests==2.31.0
+
+# Database Testing
+psycopg2-binary==2.9.9
+
+# Test Reporting
+allure-pytest==2.13.2
+
+# Utilities
+python-dotenv==1.0.0
