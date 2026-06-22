@@ -1,0 +1,2 @@
+- [RequestLoggingMiddleware seek fix](request-logging-seek.md) — MemoryStream body swap requires Seek(0,Begin) before CopyToAsync or all API responses return empty bodies.
+- [Subscription enum text columns](subscription-enum-text.md) — SubscriptionType and SubscriptionStatus are stored as text in DB; requires HasConversion<string>() in DbContext or EF Core throws InvalidCastException.

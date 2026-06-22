@@ -172,6 +172,15 @@ public class GetMummDbContext : DbContext
             .IsUnique()
             .HasDatabaseName("idx_blog_posts_slug_unique");
 
+        // Store Subscription enums as text strings to match the existing DB schema
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.Type)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.Status)
+            .HasConversion<string>();
+
         // Index on Subscription.UserId for user lookups
         modelBuilder.Entity<Subscription>()
             .HasIndex(s => s.UserId)

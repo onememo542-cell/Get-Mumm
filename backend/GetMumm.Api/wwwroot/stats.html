@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Stats — Get Mumm API</title>
+  <meta name="description" content="Real-time system statistics for the Get Mumm API — chefs, dishes, posts, and more." />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/app.js" defer></script>
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #1a1207 0%, #2d1f08 100%);
+      color: #fff;
+      padding: 3.5rem 1.5rem 2.5rem;
+      text-align: center;
+    }
+    .dark .page-hero { background: linear-gradient(135deg, #0d0a05 0%, #1a1207 100%); }
+    .page-hero h1 { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 900; margin-bottom: .5rem; }
+    .page-hero h1 em { color: var(--primary); font-style: normal; }
+    .page-hero p { color: rgba(255,255,255,.72); max-width: 500px; margin: 0 auto; font-size: .95rem; }
+
+    .refresh-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .refresh-bar h3 { font-size: 1rem; font-weight: 700; }
+    .refresh-info { font-size: .8rem; color: var(--muted-fg); }
+
+    .btn-refresh {
+      padding: .4rem 1rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--fg);
+      font-size: .8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      transition: background .2s, border-color .2s;
+      font-family: var(--font);
+    }
+    .btn-refresh:hover { background: var(--muted); border-color: var(--primary); }
+    .btn-refresh.spinning .refresh-icon { animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .last-updated {
+      font-size: .78rem;
+      color: var(--muted-fg);
+      margin-top: .5rem;
+      text-align: right;
+    }
+
+    .api-explorer {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-top: 2rem;
+    }
+    .api-explorer-header {
+      background: var(--muted);
+      padding: .9rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .api-explorer-header h4 { font-size: .9rem; font-weight: 700; }
+    .api-explorer-body { padding: 1.25rem; overflow-x: auto; }
+    .api-result {
+      font-family: 'Courier New', monospace;
+      font-size: .8rem;
+      line-height: 1.7;
+      color: var(--fg);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .api-result.loading { color: var(--muted-fg); }
+    .api-result.error   { color: #e53e3e; }
+
+    .endpoint-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .25rem .75rem;
+      font-family: 'Courier New', monospace;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+    .dot-live {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    /* JSON syntax highlighting */
+    .json-key    { color: hsl(52,90%,38%); }
+    .dark .json-key    { color: hsl(52,90%,62%); }
+    .json-str    { color: #22863a; }
+    .dark .json-str    { color: #85e89d; }
+    .json-num    { color: #005cc5; }
+    .dark .json-num    { color: #79b8ff; }
+    .json-bool   { color: #e36209; }
+    .dark .json-bool   { color: #ffab70; }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <span class="logo-title">Get Mumm</span>
+      <span class="logo-sub">API Portal</span>
+    </a>
+    <nav class="header-nav">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/docs.html" class="nav-link">Docs</a>
+      <a href="/stats.html" class="nav-link">Stats</a>
+      <a href="/swagger" class="nav-link">Swagger</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-theme" aria-label="Toggle theme">🌙</button>
+      <a href="/swagger" class="btn-pill">Try API →</a>
+    </div>
+    <button class="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/docs.html" class="nav-link">Docs</a>
+    <a href="/stats.html" class="nav-link">Stats</a>
+    <a href="/swagger" class="nav-link">Swagger</a>
+  </nav>
+</header>
+
+<!-- ── Page Hero ──────────────────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="status-pill" id="hero-health-pill">
+    <span class="status-dot"></span>
+    Checking status…
+  </div>
+  <h1>Live <em>Stats</em></h1>
+  <p>Real-time data pulled directly from the API — refreshes automatically every 30 seconds.</p>
+</div>
+
+<!-- ── Stats ──────────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-inner">
+
+    <!-- Health -->
+    <div class="health-bar" id="health-bar">
+      <div class="health-indicator healthy" id="health-icon">⏳</div>
+      <div class="health-text">
+        <h3 id="health-title">Checking health…</h3>
+        <p id="health-msg">Connecting to API…</p>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div class="endpoint-pill"><span class="dot-live"></span>/api/health</div>
+      </div>
+    </div>
+
+    <!-- Refresh bar -->
+    <div class="refresh-bar">
+      <div>
+        <h3>Platform Metrics</h3>
+        <div class="refresh-info" id="refresh-info">Auto-refreshes every 30 s</div>
+      </div>
+      <button class="btn-refresh" id="btn-refresh" onclick="loadAll()">
+        <span class="refresh-icon">↻</span> Refresh now
+      </button>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👩‍🍳</div>
+        <div class="stat-val" id="s-chefs" data-target="0">—</div>
+        <div class="stat-label">Home Chefs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🍽️</div>
+        <div class="stat-val" id="s-items" data-target="0">—</div>
+        <div class="stat-label">Menu Items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-val" id="s-posts" data-target="0">—</div>
+        <div class="stat-label">Blog Posts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-val" id="s-reviews" data-target="0">—</div>
+        <div class="stat-label">Testimonials</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-val" id="s-plans" data-target="0">—</div>
+        <div class="stat-label">Meal Plans</div>
+      </div>
+    </div>
+
+    <p class="last-updated" id="last-updated"></p>
+
+    <!-- Live API Results -->
+    <h2 class="section-title" style="margin-top:2.5rem">Live API Responses</h2>
+    <p class="section-sub">Actual responses fetched from the running API right now.</p>
+
+    <div class="api-explorer">
+      <div class="api-explorer-header">
+        <h4>GET /api/stats</h4>
+        <div class="endpoint-pill"><span class="dot-live"></span> Live</div>
+      </div>
+      <div class="api-explorer-body">
+        <div class="api-result loading" id="result-stats">Loading…</div>
+      </div>
+    </div>
+
+    <div class="api-explorer" style="margin-top:1.25rem">
+      <div class="api-explorer-header">
+        <h4>GET /api/health</h4>
+        <div class="endpoint-pill"><span class="dot-live"></span> Live</div>
+      </div>
+      <div class="api-explorer-body">
+        <div class="api-result loading" id="result-health">Loading…</div>
+      </div>
+    </div>
+
+    <div class="api-explorer" style="margin-top:1.25rem">
+      <div class="api-explorer-header">
+        <h4>GET /api/menu/categories</h4>
+        <div class="endpoint-pill"><span class="dot-live"></span> Live</div>
+      </div>
+      <div class="api-explorer-body">
+        <div class="api-result loading" id="result-cats">Loading…</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="logo">
+          <span class="logo-title">Get Mumm</span>
+          <span class="logo-sub">API Portal</span>
+        </a>
+        <p>Homemade meals delivered with love across Cairo &amp; Giza.</p>
+      </div>
+      <div class="footer-col">
+        <h4>API</h4>
+        <a href="/swagger">Swagger UI</a>
+        <a href="/swagger/v1/swagger.json">OpenAPI Spec</a>
+        <a href="/api/health">Health Check</a>
+        <a href="/stats.html">Live Stats</a>
+      </div>
+      <div class="footer-col">
+        <h4>Endpoints</h4>
+        <a href="/api/menu/categories">Menu</a>
+        <a href="/api/chefs">Chefs</a>
+        <a href="/api/blog">Blog</a>
+        <a href="/api/testimonials">Testimonials</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/docs.html">API Reference</a>
+        <a href="/">Home</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© <span id="footer-year"></span> <strong>Get Mumm</strong> — Homemade Meals Delivered With Love 🧡</p>
+      <div class="footer-badges">
+        <span class="badge">Live Data</span>
+        <span class="badge">v1.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function syntaxHighlight(json) {
+  const str = JSON.stringify(json, null, 2);
+  return str
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
+      let cls = 'json-num';
+      if (/^"/.test(m)) { cls = /:$/.test(m) ? 'json-key' : 'json-str'; }
+      else if (/true|false/.test(m)) { cls = 'json-bool'; }
+      return `<span class="${cls}">${m}</span>`;
+    });
+}
+
+async function fetchAndShow(url, elId) {
+  const el = document.getElementById(elId);
+  if (!el) return null;
+  el.className = 'api-result loading';
+  el.textContent = 'Loading…';
+  try {
+    const r = await fetch(url);
+    const data = await r.json();
+    el.className = 'api-result';
+    el.innerHTML = syntaxHighlight(data);
+    return data;
+  } catch (e) {
+    el.className = 'api-result error';
+    el.textContent = 'Error: ' + e.message;
+    return null;
+  }
+}
+
+function animateNum(el, target, duration = 1200) {
+  const start = performance.now();
+  const update = now => {
+    const p = Math.min((now - start) / duration, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * e).toLocaleString();
+    if (p < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+
+async function loadAll() {
+  const btn = document.getElementById('btn-refresh');
+  if (btn) btn.classList.add('spinning');
+
+  // Health
+  const healthPill = document.getElementById('hero-health-pill');
+  const healthIcon = document.getElementById('health-icon');
+  const healthTitle = document.getElementById('health-title');
+  const healthMsg   = document.getElementById('health-msg');
+
+  try {
+    const r = await fetch('/api/health');
+    const h = await r.json();
+    const ok = r.ok && h.status === 'Healthy';
+    if (healthPill) healthPill.querySelector('.status-dot').style.background = ok ? '#4ade80' : '#f87171';
+    if (healthPill) healthPill.lastChild.textContent = ' ' + (ok ? 'API Healthy' : 'API Unhealthy');
+    if (healthIcon) { healthIcon.textContent = ok ? '✅' : '❌'; healthIcon.className = `health-indicator ${ok ? 'healthy' : 'unhealthy'}`; }
+    if (healthTitle) healthTitle.textContent = h.status || (ok ? 'Healthy' : 'Unhealthy');
+    if (healthMsg) healthMsg.textContent = h.message || '';
+    document.getElementById('result-health').className = 'api-result';
+    document.getElementById('result-health').innerHTML = syntaxHighlight(h);
+  } catch(e) {
+    if (healthIcon) { healthIcon.textContent = '❌'; healthIcon.className = 'health-indicator unhealthy'; }
+    if (healthTitle) healthTitle.textContent = 'Unreachable';
+    if (healthMsg) healthMsg.textContent = e.message;
+  }
+
+  // Stats
+  const stats = await fetchAndShow('/api/stats', 'result-stats');
+  if (stats) {
+    const map = {
+      's-chefs':   stats.chefCount        ?? stats.totalChefs,
+      's-items':   stats.menuItemCount     ?? stats.totalMenuItems,
+      's-posts':   stats.blogPostCount     ?? stats.totalBlogPosts,
+      's-reviews': stats.testimonialCount  ?? stats.totalTestimonials,
+      's-plans':   stats.subscriptionCount ?? stats.totalSubscriptions,
+    };
+    for (const [id, val] of Object.entries(map)) {
+      const el = document.getElementById(id);
+      if (el && typeof val === 'number') {
+        el.dataset.target = val;
+        animateNum(el, val);
+      }
+    }
+  }
+
+  // Categories
+  await fetchAndShow('/api/menu/categories', 'result-cats');
+
+  // Last updated
+  const lu = document.getElementById('last-updated');
+  if (lu) lu.textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+  const ri = document.getElementById('refresh-info');
+  if (ri) ri.textContent = 'Auto-refreshes every 30 s · Last: ' + new Date().toLocaleTimeString();
+
+  if (btn) btn.classList.remove('spinning');
+}
+
+// Initial load + auto-refresh
+document.addEventListener('DOMContentLoaded', () => {
+  loadAll();
+  setInterval(loadAll, 30000);
+});
+</script>
+</body>
+</html>
