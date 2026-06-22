@@ -1,4 +1,4 @@
-name: Deploy to Netlify & Vercel
+name: Deploy to Netlify & MonsterASP
 
 on:
   push:
@@ -49,8 +49,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
           
-      - name: Build backend
-        run: dotnet build backend/GetMumm.Api/GetMumm.Api.csproj -c Release
+      - name: Build and Publish backend
+        run: dotnet publish backend/GetMumm.Api/GetMumm.Api.csproj -c Release -o ./backend/publish
+
+      - name: Upload backend publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-publish
+          path: ./backend/publish
       
       - name: Type check frontend
         run: cd frontend && npm run typecheck
@@ -89,8 +95,29 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 1
   
+  deploy-backend:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: Download backend publish artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-publish
+          path: ./backend/publish
+
+      - name: FTP Deploy to MonsterASP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./backend/publish/
+          server-dir: /site/wwwroot/ # Adjust if MonsterASP uses a different root directory
+
   notify:
-    needs: [test-and-build, deploy-frontend]
+    needs: [test-and-build, deploy-frontend, deploy-backend]
     runs-on: ubuntu-latest
     if: always()
     
@@ -99,7 +126,7 @@ jobs:
         run: |
           if [ "${{ job.status }}" == "success" ]; then
             echo "✅ Frontend deployed to Netlify!"
-            echo "✅ Backend CI build successful (Deploy manually to runasp.net or configure IIS deploy)"
+            echo "✅ Backend deployed to MonsterASP via FTP!"
           else
             echo "❌ Deployment failed. Check logs above."
             exit 1
