@@ -10,8 +10,9 @@ public static class PipelineConfiguration
         // Configure the HTTP request pipeline.
         app.UseSerilogRequestLogging();
 
-        // Add middleware (order matters - logging first, then validation, then exception handling)
+        // Add middleware (order matters - logging first, then rate limiting, then validation, then exception handling)
         app.UseMiddleware<RequestLoggingMiddleware>();
+        app.UseMiddleware<RateLimitingMiddleware>();
         app.UseMiddleware<FluentValidationMiddleware>();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 

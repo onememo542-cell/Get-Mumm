@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-    Local development environment setup script for Get Mumm (Backend)
+    Local development environment setup script for Get Mumm Backend
     
 .DESCRIPTION
     Sets up the ASP.NET Core backend for local development including:
@@ -17,12 +17,11 @@
     Seed test data into the database after migrations
     
 .EXAMPLE
-    .\scripts\setup-dev.ps1
-    .\scripts\setup-dev.ps1 -SeedTestData
+    .\setup-local-dev.ps1
+    .\setup-local-dev.ps1 -SeedTestData
     
 .NOTES
     Requires: .NET 8 SDK, PostgreSQL connection string in appsettings.Development.json
-    Canonical location: /scripts/setup-dev.ps1 (root level)
 #>
 
 param(
@@ -44,13 +43,6 @@ try {
 } catch {
     Write-Host "❌ .NET SDK not found. Please install .NET 8 SDK." -ForegroundColor Red
     exit 1
-}
-
-# Navigate to backend directory
-$backendPath = Join-Path $PSScriptRoot ".." "backend"
-if (Test-Path $backendPath) {
-    Set-Location $backendPath
-    Write-Host "📍 Working directory: $(Get-Location)"
 }
 
 # Restore NuGet packages
@@ -96,10 +88,10 @@ if ($SkipDatabase) {
 
 # Run tests
 Write-Host "`n🧪 Running tests..." -ForegroundColor Yellow
-dotnet test --configuration Debug --verbosity minimal --logger "console;verbosity=minimal" 2>&1 | Select-Object -Last 10
+dotnet test --configuration Debug --verbosity minimal --logger "console;verbosity=minimal" | Select-Object -Last 5
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "⚠️  Some tests failed (but setup completed)" -ForegroundColor Yellow
-    Write-Host "Note: You can still proceed to development and fix test failures" -ForegroundColor Gray
+    Write-Host "❌ Tests failed" -ForegroundColor Red
+    Write-Host "Note: You can still proceed to development and fix test failures" -ForegroundColor Yellow
 }
 
 Write-Host "`n✅ Local development environment setup complete!" -ForegroundColor Green
