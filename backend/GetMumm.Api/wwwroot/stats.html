@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Stats — Get Mumm API</title>
+  <meta name="description" content="Real-time system statistics for the Get Mumm API — chefs, dishes, posts, and more." />
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <span class="logo-title">Get Mumm</span>
+      <span class="logo-sub">API Portal</span>
+    </a>
+    <nav class="header-nav">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/docs.html" class="nav-link">Docs</a>
+      <a href="/stats.html" class="nav-link">Stats</a>
+      <a href="/swagger" class="nav-link">Swagger</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-theme" aria-label="Toggle theme">
+        <i data-lucide="moon" class="icon icon-sm"></i>
+        <i data-lucide="sun" class="icon icon-sm"></i>
+      </button>
+      <a href="/swagger" class="btn-pill">Try API →</a>
+    </div>
+    <button class="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/docs.html" class="nav-link">Docs</a>
+    <a href="/stats.html" class="nav-link">Stats</a>
+    <a href="/swagger" class="nav-link">Swagger</a>
+  </nav>
+</header>
+
+<!-- ── Page Hero ──────────────────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="status-pill" id="hero-health-pill">
+    <span class="status-dot"></span>
+    <span class="pill-text">Checking status…</span>
+  </div>
+  <h1>Live <em>Stats</em></h1>
+  <p>Real-time data pulled directly from the API — refreshes automatically every 30 seconds.</p>
+</div>
+
+<!-- ── Stats ──────────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-inner">
+
+    <!-- Health bar -->
+    <div class="health-bar" id="health-bar">
+      <div class="health-indicator" id="health-icon">
+        <i data-lucide="loader" class="icon icon-lg state-icon loading-icon"></i>
+        <i data-lucide="check-circle" class="icon icon-lg state-icon healthy-icon"></i>
+        <i data-lucide="x-circle" class="icon icon-lg state-icon unhealthy-icon"></i>
+      </div>
+      <div class="health-text">
+        <h3 id="health-title">Checking health…</h3>
+        <p id="health-msg">Connecting to API…</p>
+      </div>
+      <div class="health-bar-actions">
+        <div class="endpoint-pill">
+          <span class="dot-live"></span>/api/health
+        </div>
+      </div>
+    </div>
+
+    <!-- Refresh bar -->
+    <div class="refresh-bar">
+      <div>
+        <h3>Platform Metrics</h3>
+        <div class="refresh-info" id="refresh-info">Auto-refreshes every 30 s</div>
+      </div>
+      <button class="btn-refresh" id="btn-refresh">
+        <i data-lucide="refresh-cw" class="icon icon-sm refresh-icon"></i> Refresh now
+      </button>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i data-lucide="chef-hat" class="icon"></i></div>
+        <div class="stat-val" id="s-chefs" data-target="0">—</div>
+        <div class="stat-label">Home Chefs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i data-lucide="utensils" class="icon"></i></div>
+        <div class="stat-val" id="s-items" data-target="0">—</div>
+        <div class="stat-label">Menu Items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i data-lucide="file-text" class="icon"></i></div>
+        <div class="stat-val" id="s-posts" data-target="0">—</div>
+        <div class="stat-label">Blog Posts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i data-lucide="star" class="icon"></i></div>
+        <div class="stat-val" id="s-reviews" data-target="0">—</div>
+        <div class="stat-label">Testimonials</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i data-lucide="package" class="icon"></i></div>
+        <div class="stat-val" id="s-plans" data-target="0">—</div>
+        <div class="stat-label">Meal Plans</div>
+      </div>
+    </div>
+
+    <p class="last-updated" id="last-updated"></p>
+
+    <!-- Live API Responses -->
+    <h2 class="section-title live-api-heading">Live API Responses</h2>
+    <p class="section-sub">Actual responses fetched from the running API right now.</p>
+
+    <div class="api-explorer">
+      <div class="api-explorer-header">
+        <h4>GET /api/stats</h4>
+        <div class="endpoint-pill"><span class="dot-live"></span> Live</div>
+      </div>
+      <div class="api-explorer-body">
+        <div class="api-result loading" id="result-stats">Loading…</div>
+      </div>
+    </div>
+
+    <div class="api-explorer">
+      <div class="api-explorer-header">
+        <h4>GET /api/health</h4>
+        <div class="endpoint-pill"><span class="dot-live"></span> Live</div>
+      </div>
+      <div class="api-explorer-body">
+        <div class="api-result loading" id="result-health">Loading…</div>
+      </div>
+    </div>
+
+    <div class="api-explorer">
+      <div class="api-explorer-header">
+        <h4>GET /api/menu/categories</h4>
+        <div class="endpoint-pill"><span class="dot-live"></span> Live</div>
+      </div>
+      <div class="api-explorer-body">
+        <div class="api-result loading" id="result-cats">Loading…</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="logo">
+          <span class="logo-title">Get Mumm</span>
+          <span class="logo-sub">API Portal</span>
+        </a>
+        <p>Homemade meals delivered with love across Cairo &amp; Giza.</p>
+      </div>
+      <div class="footer-col">
+        <h4>API</h4>
+        <a href="/swagger">Swagger UI</a>
+        <a href="/swagger/v1/swagger.json">OpenAPI Spec</a>
+        <a href="/api/health">Health Check</a>
+        <a href="/stats.html">Live Stats</a>
+      </div>
+      <div class="footer-col">
+        <h4>Endpoints</h4>
+        <a href="/api/menu/categories">Menu</a>
+        <a href="/api/chefs">Chefs</a>
+        <a href="/api/blog">Blog</a>
+        <a href="/api/testimonials">Testimonials</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/docs.html">API Reference</a>
+        <a href="/">Home</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© <span id="footer-year"></span> <strong>Get Mumm</strong> — Homemade Meals Delivered With Love</p>
+      <div class="footer-badges">
+        <span class="badge">Live Data</span>
+        <span class="badge">v1.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

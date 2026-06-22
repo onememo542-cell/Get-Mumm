@@ -60,6 +60,16 @@ public class GetMummDbContext : DbContext
     public DbSet<Testimonial> Testimonials { get; set; } = null!;
 
     /// <summary>
+    /// Orders collection
+    /// </summary>
+    public DbSet<Order> Orders { get; set; } = null!;
+
+    /// <summary>
+    /// Order items collection
+    /// </summary>
+    public DbSet<OrderItem> OrderItems { get; set; } = null!;
+
+    /// <summary>
     /// Configures the schema needed for Entity Framework Core with Fluent API.
     /// Sets up entity relationships, cascade delete behavior, query filters for soft deletes,
     /// and database indexes for performance optimization.
@@ -112,6 +122,8 @@ public class GetMummDbContext : DbContext
         ConfigureSoftDeleteFilter<OfficeInquiry>(modelBuilder);
         ConfigureSoftDeleteFilter<Subscription>(modelBuilder);
         ConfigureSoftDeleteFilter<Testimonial>(modelBuilder);
+        ConfigureSoftDeleteFilter<Order>(modelBuilder);
+        ConfigureSoftDeleteFilter<OrderItem>(modelBuilder);
 
         // Configure database indexes for frequently filtered columns
         ConfigureIndexes(modelBuilder);
@@ -161,6 +173,11 @@ public class GetMummDbContext : DbContext
             .HasIndex(c => c.CreatedAt)
             .HasDatabaseName("idx_contacts_created_at");
 
+        // Store BlogPost.PublishStatus as text string to match the DB column type
+        modelBuilder.Entity<BlogPost>()
+            .Property(b => b.PublishStatus)
+            .HasConversion<string>();
+
         // Index on BlogPost.PublishStatus for publish status filtering
         modelBuilder.Entity<BlogPost>()
             .HasIndex(b => b.PublishStatus)
@@ -172,6 +189,15 @@ public class GetMummDbContext : DbContext
             .IsUnique()
             .HasDatabaseName("idx_blog_posts_slug_unique");
 
+        // Store Subscription enums as text strings to match the existing DB schema
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.Type)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.Status)
+            .HasConversion<string>();
+
         // Index on Subscription.UserId for user lookups
         modelBuilder.Entity<Subscription>()
             .HasIndex(s => s.UserId)
@@ -181,5 +207,37 @@ public class GetMummDbContext : DbContext
         modelBuilder.Entity<Subscription>()
             .HasIndex(s => s.Status)
             .HasDatabaseName("idx_subscriptions_status");
+
+        // Order → OrderItem relationship
+        modelBuilder.Entity<Order>()
+            .HasMany(o => o.Items)
+            .WithOne(i => i.Order)
+            .HasForeignKey(i => i.OrderId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .HasConstraintName("fk_order_items_order_id");
+
+        // Store Order enums as text
+        modelBuilder.Entity<Order>()
+            .Property(o => o.Status)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.PaymentMethod)
+            .HasConversion<string>();
+
+        // Index on Order.Phone for customer lookups
+        modelBuilder.Entity<Order>()
+            .HasIndex(o => o.Phone)
+            .HasDatabaseName("idx_orders_phone");
+
+        // Index on Order.Status for status filtering
+        modelBuilder.Entity<Order>()
+            .HasIndex(o => o.Status)
+            .HasDatabaseName("idx_orders_status");
+
+        // Index on OrderItem.OrderId
+        modelBuilder.Entity<OrderItem>()
+            .HasIndex(i => i.OrderId)
+            .HasDatabaseName("idx_order_items_order_id");
     }
 }

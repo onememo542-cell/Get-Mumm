@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Mumm API — Homemade Meals Backend</title>
+  <meta name="description" content="The Get Mumm REST API powers homemade meal delivery across Cairo &amp; Giza. Built on ASP.NET Core 8 with PostgreSQL." />
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <span class="logo-title">Get Mumm</span>
+      <span class="logo-sub">API Portal</span>
+    </a>
+    <nav class="header-nav">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/docs.html" class="nav-link">Docs</a>
+      <a href="/stats.html" class="nav-link">Stats</a>
+      <a href="/swagger" class="nav-link">Swagger</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-theme" aria-label="Toggle theme">
+        <i data-lucide="moon" class="icon icon-sm"></i>
+        <i data-lucide="sun" class="icon icon-sm"></i>
+      </button>
+      <a href="/swagger" class="btn-pill">Try API →</a>
+    </div>
+    <button class="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/docs.html" class="nav-link">Docs</a>
+    <a href="/stats.html" class="nav-link">Stats</a>
+    <a href="/swagger" class="nav-link">Swagger</a>
+  </nav>
+</header>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="status-pill">
+    <span class="status-dot"></span>
+    API Operational
+  </div>
+  <h1>Get Mumm <span>API</span></h1>
+  <p>The backend that connects home chefs in Cairo &amp; Giza with customers craving authentic Egyptian homemade meals.</p>
+  <div class="hero-ctas">
+    <a href="/swagger" class="btn-hero solid">Explore Swagger</a>
+    <a href="/docs.html" class="btn-hero outline">API Reference</a>
+  </div>
+  <div class="hero-stats-row" id="hero-stats">
+    <div class="hero-stat">
+      <span class="hero-stat-val">v1</span>
+      <span class="hero-stat-label">API Version</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-val" id="hs-endpoints">14</span>
+      <span class="hero-stat-label">Endpoints</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-val" id="hs-status">—</span>
+      <span class="hero-stat-label">Health</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Quick Links ──────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-inner">
+    <h2 class="section-title">Quick Access</h2>
+    <p class="section-sub">Jump straight to what you need.</p>
+    <div class="quick-grid">
+      <a href="/swagger" class="quick-item">
+        <i data-lucide="book-open" class="icon icon-md"></i> Swagger UI
+      </a>
+      <a href="/swagger/v1/swagger.json" class="quick-item">
+        <i data-lucide="file-code" class="icon icon-md"></i> OpenAPI JSON
+      </a>
+      <a href="/docs.html" class="quick-item">
+        <i data-lucide="map" class="icon icon-md"></i> API Reference
+      </a>
+      <a href="/stats.html" class="quick-item">
+        <i data-lucide="bar-chart-2" class="icon icon-md"></i> Live Stats
+      </a>
+      <a href="/api/health" class="quick-item">
+        <i data-lucide="activity" class="icon icon-md"></i> Health Check
+      </a>
+      <a href="/api/menu/categories" class="quick-item">
+        <i data-lucide="utensils" class="icon icon-md"></i> Menu Categories
+      </a>
+      <a href="/api/chefs" class="quick-item">
+        <i data-lucide="chef-hat" class="icon icon-md"></i> All Chefs
+      </a>
+      <a href="/api/blog" class="quick-item">
+        <i data-lucide="file-text" class="icon icon-md"></i> Blog Posts
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ── Feature Cards ─────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-inner">
+    <h2 class="section-title">What's Inside</h2>
+    <p class="section-sub">Domains served by this API backend.</p>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-icon"><i data-lucide="utensils" class="icon icon-lg"></i></div>
+        <div class="card-title">Menu &amp; Categories</div>
+        <div class="card-desc">Browse all dish categories, featured items, and full paginated menu with search and filtering by category.</div>
+        <a href="/docs.html#menu" class="card-link">View endpoints →</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon"><i data-lucide="chef-hat" class="icon icon-lg"></i></div>
+        <div class="card-title">Chefs</div>
+        <div class="card-desc">Discover the home chefs behind every dish — list all chefs or retrieve a single chef's full profile by ID.</div>
+        <a href="/docs.html#chefs" class="card-link">View endpoints →</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon"><i data-lucide="file-text" class="icon icon-lg"></i></div>
+        <div class="card-title">Blog</div>
+        <div class="card-desc">Paginated blog posts with slug-based lookup. Covers recipes, chef stories, and food culture from Cairo.</div>
+        <a href="/docs.html#blog" class="card-link">View endpoints →</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon"><i data-lucide="star" class="icon icon-lg"></i></div>
+        <div class="card-title">Testimonials</div>
+        <div class="card-desc">Customer reviews and feedback showcasing real experiences with Get Mumm's homemade meals.</div>
+        <a href="/docs.html#testimonials" class="card-link">View endpoints →</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon"><i data-lucide="shopping-bag" class="icon icon-lg"></i></div>
+        <div class="card-title">Orders</div>
+        <div class="card-desc">Place and track meal orders end-to-end — create an order, poll status, and receive real-time updates.</div>
+        <a href="/docs.html#orders" class="card-link">View endpoints →</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon"><i data-lucide="package" class="icon icon-lg"></i></div>
+        <div class="card-title">Subscriptions</div>
+        <div class="card-desc">Meal plan subscription tiers available for individuals and office catering packages.</div>
+        <a href="/docs.html#subscriptions" class="card-link">View endpoints →</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon"><i data-lucide="mail" class="icon icon-lg"></i></div>
+        <div class="card-title">Contact</div>
+        <div class="card-desc">Submit contact enquiries and office catering requests directly through the API.</div>
+        <a href="/docs.html#contact" class="card-link">View endpoints →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Wave CTA ───────────────────────────────────────────────────────────── -->
+<section class="wave-section">
+  <div class="wave-inner">
+    <h2>Built on Rock-Solid Tech</h2>
+    <p>ASP.NET Core 8 · Clean Architecture · Entity Framework · PostgreSQL · Supabase</p>
+    <div class="tech-list centered">
+      <span class="tech-pill">ASP.NET Core 8</span>
+      <span class="tech-pill">Clean Architecture</span>
+      <span class="tech-pill">EF Core</span>
+      <span class="tech-pill">PostgreSQL</span>
+      <span class="tech-pill">Supabase</span>
+      <span class="tech-pill">Serilog</span>
+      <span class="tech-pill">FluentValidation</span>
+      <span class="tech-pill">AutoMapper</span>
+    </div>
+    <div class="wave-ctas">
+      <a href="/swagger" class="btn-hero solid">Open Swagger →</a>
+      <a href="/stats.html" class="btn-hero outline">Live Stats</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="logo">
+          <span class="logo-title">Get Mumm</span>
+          <span class="logo-sub">API Portal</span>
+        </a>
+        <p>Homemade meals delivered with love across Cairo &amp; Giza. The API powering every order, chef, and story.</p>
+      </div>
+      <div class="footer-col">
+        <h4>API</h4>
+        <a href="/swagger">Swagger UI</a>
+        <a href="/swagger/v1/swagger.json">OpenAPI Spec</a>
+        <a href="/api/health">Health Check</a>
+        <a href="/stats.html">Live Stats</a>
+      </div>
+      <div class="footer-col">
+        <h4>Endpoints</h4>
+        <a href="/api/menu/categories">Menu</a>
+        <a href="/api/chefs">Chefs</a>
+        <a href="/api/blog">Blog</a>
+        <a href="/api/testimonials">Testimonials</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/docs.html">API Reference</a>
+        <a href="/docs.html#auth">Authentication</a>
+        <a href="/docs.html#errors">Error Codes</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© <span id="footer-year"></span> <strong>Get Mumm</strong> — Homemade Meals Delivered With Love</p>
+      <div class="footer-badges">
+        <span class="badge">ASP.NET Core 8</span>
+        <span class="badge">v1.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -249,3 +249,63 @@ export const ListTestimonialsType = {
   chef: 'chef',
 } as const;
 
+export type OrderStatus =
+  | 'Pending'
+  | 'Confirmed'
+  | 'Preparing'
+  | 'OnTheWay'
+  | 'Delivered'
+  | 'Cancelled';
+
+export interface OrderItemResponse {
+  id: string;
+  menuItemId: string;
+  name: string;
+  nameAr: string;
+  imageUrl: string;
+  price: number;
+  qty: number;
+  lineTotal: number;
+}
+
+export interface OrderResponse {
+  id: string;
+  status: OrderStatus;
+  customerName: string;
+  phone: string;
+  area: string;
+  street: string;
+  building: string;
+  notes: string;
+  paymentMethod: 'cod' | 'card';
+  subtotal: number;
+  deliveryFee: number;
+  total: number;
+  placedAt: string;
+  estimatedDeliveryAt: string;
+  stripeClientSecret?: string | null;
+  items: OrderItemResponse[];
+}
+
+export interface OrderStatusResponse {
+  id: string;
+  status: OrderStatus;
+  estimatedDeliveryAt: string;
+}
+
+export interface CreateOrderItemRequest {
+  menuItemId: string;
+  qty: number;
+}
+
+export interface CreateOrderRequest {
+  customerName: string;
+  phone: string;
+  area: string;
+  street: string;
+  building: string;
+  notes: string;
+  paymentMethod: 'cod' | 'card';
+  items: CreateOrderItemRequest[];
+}
+

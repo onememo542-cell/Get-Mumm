@@ -1,0 +1,60 @@
+modules = ["nodejs-20", "dotnet-7.0", "python-3.12", "bash", "dotnet-8.0", "postgresql-16"]
+[agent]
+expertMode = true
+stack = "BEST_EFFORT_FALLBACK"
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend API"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd frontend && PORT=5000 pnpm run dev"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow]]
+name = "Backend API"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && ASPNETCORE_URLS=http://localhost:8080 dotnet run --project GetMumm.Api/GetMumm.Api.csproj"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+exposeLocalhost = true
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["bash", "-c", "cd /tmp/backend-publish && ASPNETCORE_URLS=http://localhost:8080 dotnet GetMumm.Api.dll & cd /home/runner/workspace/frontend && PORT=5000 npx vite preview --host 0.0.0.0"]
+build = ["bash", "-c", "cd backend && dotnet publish GetMumm.Api/GetMumm.Api.csproj -c Release -o /tmp/backend-publish && cd ../frontend && PORT=5000 pnpm run build"]

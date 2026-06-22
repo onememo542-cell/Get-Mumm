@@ -1,0 +1,4 @@
+- [RequestLoggingMiddleware seek fix](request-logging-seek.md) — MemoryStream body swap requires Seek(0,Begin) before CopyToAsync or all API responses return empty bodies.
+- [Subscription enum text columns](subscription-enum-text.md) — SubscriptionType and SubscriptionStatus are stored as text in DB; requires HasConversion<string>() in DbContext or EF Core throws InvalidCastException.
+- [Supabase DB connection](supabase-db.md) — backend connects to Supabase (not local Replit DB); use psql with the appsettings.json connection string for schema changes, not executeSql().
+- [MenuItem IDs are UUIDs](menu-item-id-type.md) — MenuItem.Id is Guid in C# and serializes as UUID string; frontend CartItem.id typed as number but runtime value is UUID string — use String(item.id) when sending to backend.

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Page Not Found · Get Mumm API</title>
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <span class="logo-title">Get Mumm</span>
+      <span class="logo-sub">API Portal</span>
+    </a>
+    <nav class="header-nav">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/docs.html" class="nav-link">Docs</a>
+      <a href="/stats.html" class="nav-link">Stats</a>
+      <a href="/swagger" class="nav-link">Swagger</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-theme" aria-label="Toggle theme">
+        <i data-lucide="moon" class="icon icon-sm"></i>
+        <i data-lucide="sun" class="icon icon-sm"></i>
+      </button>
+      <a href="/swagger" class="btn-pill">Try API →</a>
+    </div>
+    <button class="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/docs.html" class="nav-link">Docs</a>
+    <a href="/stats.html" class="nav-link">Stats</a>
+    <a href="/swagger" class="nav-link">Swagger</a>
+  </nav>
+</header>
+
+<!-- ── 404 Content ───────────────────────────────────────────────────── -->
+<main class="not-found">
+  <div class="not-found-inner">
+    <div class="icon-plate">
+      <i data-lucide="utensils-crossed" class="icon"></i>
+    </div>
+    <div class="not-found-code">404</div>
+    <h1 class="not-found-title">This dish isn't on the menu</h1>
+    <p class="not-found-desc">
+      The page or resource you're looking for doesn't exist, was moved, or the URL is incorrect.
+    </p>
+
+    <div class="not-found-links">
+      <a href="/" class="link-primary">← Back Home</a>
+      <a href="/docs.html" class="link-outline">API Reference</a>
+      <a href="/swagger" class="link-outline">Swagger UI</a>
+    </div>
+
+    <div class="suggestions">
+      <h3>Maybe you meant…</h3>
+      <ul>
+        <li>
+          <a href="/api/health">
+            <i data-lucide="activity" class="icon icon-sm"></i>
+            /api/health — health check
+          </a>
+        </li>
+        <li>
+          <a href="/api/stats">
+            <i data-lucide="bar-chart-2" class="icon icon-sm"></i>
+            /api/stats — system statistics
+          </a>
+        </li>
+        <li>
+          <a href="/api/menu/categories">
+            <i data-lucide="utensils" class="icon icon-sm"></i>
+            /api/menu/categories — menu categories
+          </a>
+        </li>
+        <li>
+          <a href="/api/chefs">
+            <i data-lucide="chef-hat" class="icon icon-sm"></i>
+            /api/chefs — all chefs
+          </a>
+        </li>
+        <li>
+          <a href="/api/blog">
+            <i data-lucide="file-text" class="icon icon-sm"></i>
+            /api/blog — blog posts
+          </a>
+        </li>
+        <li>
+          <a href="/swagger">
+            <i data-lucide="book-open" class="icon icon-sm"></i>
+            /swagger — interactive API explorer
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="logo">
+          <span class="logo-title">Get Mumm</span>
+          <span class="logo-sub">API Portal</span>
+        </a>
+        <p>Homemade meals delivered with love across Cairo &amp; Giza.</p>
+      </div>
+      <div class="footer-col">
+        <h4>API</h4>
+        <a href="/swagger">Swagger UI</a>
+        <a href="/api/health">Health Check</a>
+        <a href="/stats.html">Live Stats</a>
+      </div>
+      <div class="footer-col">
+        <h4>Endpoints</h4>
+        <a href="/api/menu/categories">Menu</a>
+        <a href="/api/chefs">Chefs</a>
+        <a href="/api/blog">Blog</a>
+        <a href="/api/testimonials">Testimonials</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/docs.html">API Reference</a>
+        <a href="/">Home</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© <span id="footer-year"></span> <strong>Get Mumm</strong> — Homemade Meals Delivered With Love</p>
+      <div class="footer-badges">
+        <span class="badge">ASP.NET Core 8</span>
+        <span class="badge">v1.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

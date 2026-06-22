@@ -31,7 +31,17 @@ export default function Home() {
 
   const featuredList = Array.isArray(featuredItems) ? featuredItems : [];
   const categoryList = Array.isArray(categories) ? categories : [];
-  const testimonialList = Array.isArray(testimonials) ? testimonials : [];
+  const testimonialList = Array.isArray(testimonials)
+    ? testimonials.map((t: any) => ({
+        ...t,
+        name:     t.name     ?? t.customerName ?? "",
+        nameAr:   t.nameAr   ?? t.customerName ?? "",
+        quote:    t.quote    ?? t.content      ?? "",
+        quoteAr:  t.quoteAr  ?? t.content      ?? "",
+        role:     t.role     ?? "",
+        roleAr:   t.roleAr   ?? "",
+      }))
+    : [];
 
   useSEO({
     title: tx(home.heroTitle),
@@ -233,7 +243,7 @@ export default function Home() {
                           <div className="flex items-center justify-between text-sm text-muted-foreground border-t border-border pt-4">
                             <span className="flex items-center gap-2">
                               <span className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] text-white font-bold">
-                                {(isRtl ? item.chefNameAr : item.chefName).charAt(0)}
+                                {(isRtl ? item.chefNameAr : item.chefName)?.charAt(0) ?? "?"}
                               </span>
                               {isRtl ? item.chefNameAr : item.chefName}
                             </span>
@@ -413,7 +423,7 @@ export default function Home() {
                             </div>
                             <div className="flex items-center gap-2.5 mt-auto border-t border-border pt-3">
                               <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0">
-                                {(isRtl ? testimonial.nameAr : testimonial.name).charAt(0)}
+                                {(isRtl ? testimonial.nameAr : testimonial.name)?.charAt(0) ?? "?"}
                               </div>
                               <div className="min-w-0">
                                 <p className="text-xs font-semibold leading-tight truncate">
@@ -452,7 +462,7 @@ export default function Home() {
                     </div>
                     <div className="flex items-center gap-2.5 border-t border-border pt-3">
                       <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0">
-                        {(isRtl ? testimonial.nameAr : testimonial.name).charAt(0)}
+                        {(isRtl ? testimonial.nameAr : testimonial.name)?.charAt(0) ?? "?"}
                       </div>
                       <div className="min-w-0">
                         <p className="text-xs font-semibold leading-tight truncate">

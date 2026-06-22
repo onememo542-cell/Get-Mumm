@@ -77,7 +77,10 @@ public class RequestLoggingMiddleware
                     statusCode,
                     elapsedMilliseconds);
 
-                // Copy the response body to the original stream
+                // Seek to the beginning before copying — the stream position is at
+                // the end after the response body was written into it, so without
+                // this seek CopyToAsync copies 0 bytes and the client gets an empty body.
+                responseBodyStream.Seek(0, SeekOrigin.Begin);
                 await responseBodyStream.CopyToAsync(originalBodyStream);
             }
             catch (Exception exception)

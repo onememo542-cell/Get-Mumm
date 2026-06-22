@@ -5,28 +5,16 @@ namespace GetMumm.Application.DTOs;
 /// </summary>
 public class TestimonialDto
 {
-    /// <summary>
-    /// Unique testimonial identifier
-    /// </summary>
     public Guid Id { get; set; }
-
-    /// <summary>
-    /// Customer name
-    /// </summary>
-    public string CustomerName { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Rating given (0-5 scale)
-    /// </summary>
+    public string Name { get; set; } = string.Empty;
+    public string NameAr { get; set; } = string.Empty;
+    public string Quote { get; set; } = string.Empty;
+    public string QuoteAr { get; set; } = string.Empty;
+    public string Type { get; set; } = "customer";
     public decimal Rating { get; set; }
-
-    /// <summary>
-    /// Testimonial content/review text
-    /// </summary>
-    public string Content { get; set; } = string.Empty;
-
-    /// <summary>
-    /// When the testimonial was created
-    /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public string AvatarUrl { get; set; } = string.Empty;
+    public string? Company { get; set; }
+    public string? CompanyAr { get; set; }
+    public string? Role { get; set; }
+    public string? RoleAr { get; set; }
 }

@@ -5,12 +5,15 @@ import type {
   Chef,
   ContactInput,
   ContactResponse,
+  CreateOrderRequest,
   HealthStatus,
   ListBlogPostsParams,
   ListMenuItemsParams,
   ListTestimonialsParams,
   MenuItem,
   OfficeInquiryInput,
+  OrderResponse,
+  OrderStatusResponse,
   SiteSummary,
   SubscriptionPlan,
   Testimonial,
@@ -18,7 +21,7 @@ import type {
 
 export const endpoints = {
   // Health
-  healthCheck: () => customFetch<HealthStatus>("/api/healthz", { method: "GET" }),
+  healthCheck: () => customFetch<HealthStatus>("/api/health", { method: "GET" }),
 
   // Site Stats
   getSiteSummary: () => customFetch<SiteSummary>("/api/stats", { method: "GET" }),
@@ -82,6 +85,19 @@ export const endpoints = {
     return customFetch<Testimonial[]>(`/api/testimonials${query}`, { method: "GET" });
   },
 
+  // Orders
+  createOrder: (data: CreateOrderRequest) =>
+    customFetch<OrderResponse>("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  getOrder: (id: string) =>
+    customFetch<OrderResponse>(`/api/orders/${id}`, { method: "GET" }),
+
+  getOrderStatus: (id: string) =>
+    customFetch<OrderStatusResponse>(`/api/orders/${id}/status`, { method: "GET" }),
+
   // Forms
   submitContact: (data: ContactInput) =>
     customFetch<ContactResponse>("/api/contact", {
@@ -90,7 +106,7 @@ export const endpoints = {
     }),
 
   submitOfficeInquiry: (data: OfficeInquiryInput) =>
-    customFetch<ContactResponse>("/api/office-inquiry", {
+    customFetch<ContactResponse>("/api/contact/office-inquiry", {
       method: "POST",
       body: JSON.stringify(data),
     }),
