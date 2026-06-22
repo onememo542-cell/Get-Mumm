@@ -1,5 +1,7 @@
 namespace GetMumm.Domain.Entities;
 
+using GetMumm.Domain.Enums;
+
 /// <summary>
 /// Represents a blog post with bilingual support and publishing workflow.
 /// </summary>
@@ -43,7 +45,7 @@ public class BlogPost : BaseEntity
     /// <summary>
     /// Publishing status (Draft, Published, Archived)
     /// </summary>
-    public string PublishStatus { get; set; } = "Draft";
+    public PublishStatus PublishStatus { get; set; } = PublishStatus.Draft;
 
     /// <summary>
     /// Publication timestamp (when post was published)

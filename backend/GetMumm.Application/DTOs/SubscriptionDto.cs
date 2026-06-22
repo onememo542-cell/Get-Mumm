@@ -1,5 +1,7 @@
 namespace GetMumm.Application.DTOs;
 
+using GetMumm.Domain.Enums;
+
 /// <summary>
 /// Data transfer object for subscription
 /// </summary>
@@ -18,7 +20,7 @@ public class SubscriptionDto
     /// <summary>
     /// Subscription type
     /// </summary>
-    public string Type { get; set; } = string.Empty;
+    public SubscriptionType Type { get; set; }
 
     /// <summary>
     /// Subscription start date
@@ -33,7 +35,7 @@ public class SubscriptionDto
     /// <summary>
     /// Subscription status
     /// </summary>
-    public string Status { get; set; } = string.Empty;
+    public SubscriptionStatus Status { get; set; }
 }
 
 /// <summary>
@@ -49,7 +51,7 @@ public class CreateSubscriptionRequest
     /// <summary>
     /// Subscription type
     /// </summary>
-    public string Type { get; set; } = string.Empty;
+    public SubscriptionType Type { get; set; }
 }
 
 /// <summary>
@@ -60,10 +62,10 @@ public class UpdateSubscriptionRequest
     /// <summary>
     /// Subscription type
     /// </summary>
-    public string Type { get; set; } = string.Empty;
+    public SubscriptionType Type { get; set; }
 
     /// <summary>
     /// Subscription status
     /// </summary>
-    public string Status { get; set; } = string.Empty;
+    public SubscriptionStatus Status { get; set; }
 }

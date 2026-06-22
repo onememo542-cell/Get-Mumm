@@ -27,11 +27,17 @@ public class MappingProfile : Profile
         // BlogPost mappings
         ConfigureBlogPostMappings();
 
+        // Testimonial mappings
+        ConfigureTestimonialMappings();
+
         // Contact mappings
         ConfigureContactMappings();
 
         // OfficeInquiry mappings
         ConfigureOfficeInquiryMappings();
+
+        // Subscription mappings
+        ConfigureSubscriptionMappings();
     }
 
     /// <summary>
@@ -124,6 +130,20 @@ public class MappingProfile : Profile
     }
 
     /// <summary>
+    /// Configures Testimonial to TestimonialDto mapping
+    /// </summary>
+    private void ConfigureTestimonialMappings()
+    {
+        // Testimonial -> TestimonialDto
+        CreateMap<Testimonial, TestimonialDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerName))
+            .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
+            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+            .ReverseMap();
+    }
+
+    /// <summary>
     /// Configures SubmitContactRequest to Contact entity mapping
     /// </summary>
     private void ConfigureContactMappings()
@@ -155,6 +175,22 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Frequency, opt => opt.MapFrom(src => src.Frequency))
             .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message))
             .ForMember(dest => dest.Id, opt => opt.Ignore()) // Let database assign ID
+            .ReverseMap();
+    }
+
+    /// <summary>
+    /// Configures Subscription entity to SubscriptionDto mapping
+    /// </summary>
+    private void ConfigureSubscriptionMappings()
+    {
+        // Subscription -> SubscriptionDto
+        CreateMap<Subscription, SubscriptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
             .ReverseMap();
     }
 }

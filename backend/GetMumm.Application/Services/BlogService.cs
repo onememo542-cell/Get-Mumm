@@ -2,6 +2,7 @@ using AutoMapper;
 using GetMumm.Application.DTOs;
 using GetMumm.Application.Interfaces;
 using GetMumm.Domain.Entities;
+using GetMumm.Domain.Enums;
 using GetMumm.Domain.Interfaces;
 
 namespace GetMumm.Application.Services;
@@ -42,7 +43,7 @@ public class BlogService : IBlogService
     {
         // Get only published blog posts
         var allPosts = await _blogPostRepository.FindAsync(
-            x => x.PublishStatus == "Published",
+            x => x.PublishStatus == PublishStatus.Published,
             cancellationToken);
         var postsList = allPosts.OrderByDescending(x => x.PublishedAt).ToList();
 

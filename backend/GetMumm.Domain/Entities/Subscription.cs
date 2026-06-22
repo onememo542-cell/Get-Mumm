@@ -1,5 +1,7 @@
 namespace GetMumm.Domain.Entities;
 
+using GetMumm.Domain.Enums;
+
 /// <summary>
 /// Represents a user subscription.
 /// </summary>
@@ -13,7 +15,7 @@ public class Subscription : BaseEntity
     /// <summary>
     /// Subscription type (Monthly, Quarterly, Annual, etc.)
     /// </summary>
-    public string Type { get; set; } = string.Empty;
+    public SubscriptionType Type { get; set; } = SubscriptionType.Monthly;
 
     /// <summary>
     /// Subscription start date
@@ -28,5 +30,5 @@ public class Subscription : BaseEntity
     /// <summary>
     /// Current subscription status (Active, Paused, Canceled)
     /// </summary>
-    public string Status { get; set; } = "Active";
+    public SubscriptionStatus Status { get; set; } = SubscriptionStatus.Active;
 }

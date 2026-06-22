@@ -1,5 +1,7 @@
 namespace GetMumm.Domain.Entities;
 
+using GetMumm.Domain.Enums;
+
 /// <summary>
 /// Represents a contact form submission.
 /// </summary>
@@ -29,4 +31,9 @@ public class Contact : BaseEntity
     /// Contact subject/topic
     /// </summary>
     public string Subject { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Current status of the contact submission
+    /// </summary>
+    public ContactStatus Status { get; set; } = ContactStatus.New;
 }

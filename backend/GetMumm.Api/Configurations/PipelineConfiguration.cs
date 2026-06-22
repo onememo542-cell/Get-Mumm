@@ -10,7 +10,9 @@ public static class PipelineConfiguration
         // Configure the HTTP request pipeline.
         app.UseSerilogRequestLogging();
 
-        // Add middleware
+        // Add middleware (order matters - logging first, then validation, then exception handling)
+        app.UseMiddleware<RequestLoggingMiddleware>();
+        app.UseMiddleware<FluentValidationMiddleware>();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         // Enable Swagger in all environments for deployment testing

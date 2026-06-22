@@ -2,6 +2,7 @@ using AutoMapper;
 using GetMumm.Application.DTOs;
 using GetMumm.Application.Interfaces;
 using GetMumm.Domain.Entities;
+using GetMumm.Domain.Enums;
 using GetMumm.Domain.Interfaces;
 
 namespace GetMumm.Application.Services;
@@ -67,7 +68,7 @@ public class SubscriptionService : ISubscriptionService
             UserId = request.UserId,
             Type = request.Type,
             StartDate = DateTime.UtcNow,
-            Status = "Active"
+            Status = SubscriptionStatus.Active
         };
 
         var created = await _subscriptionRepository.CreateAsync(subscription, cancellationToken);

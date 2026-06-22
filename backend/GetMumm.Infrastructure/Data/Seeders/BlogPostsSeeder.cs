@@ -1,6 +1,7 @@
 namespace GetMumm.Infrastructure.Data.Seeders;
 
 using GetMumm.Domain.Entities;
+using GetMumm.Domain.Enums;
 using GetMumm.Infrastructure.Data.Contexts;
 using Microsoft.Extensions.Logging;
 
@@ -43,7 +44,7 @@ public class BlogPostsSeeder
                     AuthorName = "Chef Mohammed",
                     AuthorNameAr = "الشيف محمد",
                     Slug = "art-of-traditional-arabic-cuisine",
-                    PublishStatus = "Published",
+                    PublishStatus = PublishStatus.Published,
                     PublishedAt = DateTime.UtcNow.AddDays(-5),
                     CreatedAt = DateTime.UtcNow.AddDays(-5)
                 },
@@ -57,7 +58,7 @@ public class BlogPostsSeeder
                     AuthorName = "Chef Fatima",
                     AuthorNameAr = "الشيفة فاطمة",
                     Slug = "fusion-cuisine-blending-east-and-west",
-                    PublishStatus = "Published",
+                    PublishStatus = PublishStatus.Published,
                     PublishedAt = DateTime.UtcNow.AddDays(-2),
                     CreatedAt = DateTime.UtcNow.AddDays(-2)
                 },
@@ -71,7 +72,7 @@ public class BlogPostsSeeder
                     AuthorName = "Chef Fatima",
                     AuthorNameAr = "الشيفة فاطمة",
                     Slug = "seafood-selection-perfect-catch",
-                    PublishStatus = "Published",
+                    PublishStatus = PublishStatus.Published,
                     PublishedAt = DateTime.UtcNow.AddDays(-7),
                     CreatedAt = DateTime.UtcNow.AddDays(-7)
                 }
