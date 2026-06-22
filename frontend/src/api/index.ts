@@ -1,4 +1,4 @@
-export * from "./generated/api";
-export * from "./generated/api.schemas";
-export { setBaseUrl, setAuthTokenGetter } from "./custom-fetch";
-export type { AuthTokenGetter } from "./custom-fetch";
+export * from "./client";
+export * from "./types";
+export * from "./endpoints";
+// React Query hooks are located in the `queries/` directory

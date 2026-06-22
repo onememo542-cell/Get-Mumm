@@ -1,6 +1,7 @@
 using GetMumm.Infrastructure.Data.Contexts;
 using GetMumm.Infrastructure.Data.Seeders;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace GetMumm.Api.Configurations;
 
@@ -35,7 +36,10 @@ public static class DatabaseInitialization
                 }
                 catch (Exception ex) when (attempt < maxRetries && (
                     ex is System.Net.Sockets.SocketException ||
-                    ex.InnerException is System.Net.Sockets.SocketException))
+                    ex.InnerException is System.Net.Sockets.SocketException ||
+                    ex is Npgsql.NpgsqlException ||
+                    ex.InnerException is Npgsql.NpgsqlException ||
+                    ex.InnerException is TimeoutException))
                 {
                     var delay = TimeSpan.FromSeconds(Math.Pow(2, attempt));
                     logger.LogWarning(ex, 

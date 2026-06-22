@@ -33,7 +33,15 @@ public static class ServiceCollectionExtensions
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<GetMummDbContext>(options =>
             options.UseNpgsql(connectionString,
-                b => b.MigrationsAssembly("GetMumm.Infrastructure")));
+                b =>
+                {
+                    b.MigrationsAssembly("GetMumm.Infrastructure");
+                    // Retry on transient failures (network hiccups, pooler resets)
+                    b.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorCodesToAdd: null);
+                }));
         
         // Register generic repository
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
