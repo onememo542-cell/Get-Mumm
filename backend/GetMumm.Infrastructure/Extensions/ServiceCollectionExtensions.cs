@@ -1,6 +1,7 @@
 namespace GetMumm.Infrastructure.Extensions;
 
 using GetMumm.Application.Interfaces;
+using GetMumm.Application.Services;
 using GetMumm.Domain.Interfaces;
 using GetMumm.Infrastructure.Configuration;
 using GetMumm.Infrastructure.Data.Repositories;
@@ -45,6 +46,12 @@ public static class ServiceCollectionExtensions
         
         // Register generic repository
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+        // Register order repository (specialised, with Include support)
+        services.AddScoped<IOrderRepository, OrderRepository>();
+
+        // Register application services
+        services.AddScoped<IOrderService, OrderService>();
         
         // Register external services
         services.AddScoped<ISupabaseService, SupabaseService>();

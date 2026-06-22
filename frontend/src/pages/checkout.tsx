@@ -10,13 +10,10 @@ import { ShoppingBag, MapPin, Phone, User, FileText, CreditCard, Banknote, Chevr
 import { sectionReveal, ease } from "@/lib/motion";
 import { Link } from "wouter";
 import { checkout, common, cart, home, nav } from "@/locales";
+import { endpoints } from "@/api/endpoints";
 
 const AREAS_EN = ["Maadi", "New Cairo", "Heliopolis", "Zamalek", "Downtown Cairo", "Dokki", "Mohandessin", "Nasr City", "Shubra", "6th of October", "Sheikh Zayed"];
 const AREAS_AR = ["المعادي", "القاهرة الجديدة", "مصر الجديدة (هليوبوليس)", "الزمالك", "وسط القاهرة", "الدقي", "المهندسين", "مدينة نصر", "شبرا", "السادس من أكتوبر", "الشيخ زايد"];
-
-function generateOrderId() {
-  return "MM" + Math.floor(100000 + Math.random() * 900000).toString();
-}
 
 export default function CheckoutPage() {
   const { t, tx, isRtl } = useLanguage();
@@ -29,10 +26,12 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "card">("cod");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const set = (field: string, val: string) => {
     setForm((prev) => ({ ...prev, [field]: val }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
+    setApiError(null);
   };
 
   const validate = () => {
@@ -45,31 +44,54 @@ export default function CheckoutPage() {
     return e;
   };
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     const e = validate();
     if (Object.keys(e).length > 0) { setErrors(e); return; }
     if (items.length === 0) return;
 
     setLoading(true);
-    setTimeout(() => {
-      const order: PlacedOrder = {
-        id: generateOrderId(),
-        items: [...items],
-        subtotal,
-        deliveryFee,
-        total,
+    setApiError(null);
+
+    try {
+      const response = await endpoints.createOrder({
         customerName: form.name,
-        phone: form.phone,
-        area: form.area,
-        street: form.street,
-        building: form.building,
-        notes: form.notes,
-        placedAt: new Date().toISOString(),
+        phone:        form.phone,
+        area:         form.area,
+        street:       form.street,
+        building:     form.building,
+        notes:        form.notes,
+        paymentMethod,
+        items: items.map((item) => ({
+          menuItemId: String(item.id),
+          qty:        item.qty,
+        })),
+      });
+
+      const order: PlacedOrder = {
+        id:           response.id,
+        items:        items.map((i) => ({ ...i })),
+        subtotal:     response.subtotal,
+        deliveryFee:  response.deliveryFee,
+        total:        response.total,
+        customerName: response.customerName,
+        phone:        response.phone,
+        area:         response.area,
+        street:       response.street,
+        building:     response.building,
+        notes:        response.notes,
+        placedAt:     response.placedAt,
+        estimatedDeliveryAt: response.estimatedDeliveryAt,
       };
+
       setLastOrder(order);
       clearCart();
       navigate("/order-confirmation");
-    }, 1200);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to place order. Please try again.";
+      setApiError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (items.length === 0 && !loading) {
@@ -259,6 +281,17 @@ export default function CheckoutPage() {
                   </div>
                 </div>
               </motion.section>
+
+              {/* API error */}
+              {apiError && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-destructive/10 border border-destructive/30 text-destructive rounded-xl px-4 py-3 text-sm font-medium"
+                >
+                  {apiError}
+                </motion.div>
+              )}
             </div>
 
             {/* ── Right: Order Summary ────────────────────────────────────── */}
@@ -278,7 +311,7 @@ export default function CheckoutPage() {
                 {/* Item list */}
                 <div className="space-y-3 mb-4 max-h-56 overflow-y-auto">
                   {items.map((item) => (
-                    <div key={item.id} className="flex items-center gap-3">
+                    <div key={String(item.id)} className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
                         <img src={item.imageUrl} alt={isRtl ? item.nameAr : item.name} className="w-full h-full object-cover" />
                       </div>

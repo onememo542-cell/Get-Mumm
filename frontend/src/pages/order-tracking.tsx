@@ -1,16 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "wouter";
 import { motion } from "framer-motion";
-import { CheckCircle2, Circle, Clock, MapPin, Phone, ChefHat, MessageCircle, Home } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Phone, ChefHat, MessageCircle, Home } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCart } from "@/contexts/CartContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/button";
 import { ease } from "@/lib/motion";
+import { endpoints } from "@/api/endpoints";
+import type { OrderStatus } from "@/api/types";
 
 type StageKey = "received" | "preparing" | "on_the_way" | "delivered";
 
-const STAGES: { key: StageKey; labelEn: string; labelAr: string; icon: React.ReactNode; descEn: string; descAr: string }[] = [
+const STATUS_TO_STAGE: Record<string, StageKey> = {
+  Pending:   "received",
+  Confirmed: "received",
+  Preparing: "preparing",
+  OnTheWay:  "on_the_way",
+  Delivered: "delivered",
+  Cancelled: "received",
+};
+
+const STAGES: {
+  key: StageKey;
+  labelEn: string;
+  labelAr: string;
+  icon: React.ReactNode;
+  descEn: string;
+  descAr: string;
+}[] = [
   {
     key: "received",
     labelEn: "Order Received",
@@ -45,35 +63,53 @@ const STAGES: { key: StageKey; labelEn: string; labelAr: string; icon: React.Rea
   },
 ];
 
-// Mock: simulate advancing stages over time
-function useSimulatedStage(): StageKey {
-  const [stage, setStage] = useState<StageKey>("preparing");
-  useEffect(() => {
-    const t1 = setTimeout(() => setStage("on_the_way"), 15000);
-    const t2 = setTimeout(() => setStage("delivered"),  30000);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
-  return stage;
-}
-
 function stageIndex(key: StageKey) {
   return STAGES.findIndex((s) => s.key === key);
 }
+
+function statusToStage(status: OrderStatus | undefined): StageKey {
+  if (!status) return "received";
+  return STATUS_TO_STAGE[status] ?? "received";
+}
+
+const POLL_INTERVAL_MS = 30_000;
 
 export default function OrderTrackingPage() {
   const { t, isRtl } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const { lastOrder } = useCart();
-  const currentStage = useSimulatedStage();
-  const currentIdx = stageIndex(currentStage);
 
+  const [currentStage, setCurrentStage] = useState<StageKey>("received");
+  const [eta, setEta] = useState<string>("--:--");
+
+  const fetchStatus = useCallback(async () => {
+    if (!id) return;
+    try {
+      const status = await endpoints.getOrderStatus(id);
+      setCurrentStage(statusToStage(status.status));
+      const etaDate = new Date(status.estimatedDeliveryAt);
+      setEta(etaDate.toLocaleTimeString(isRtl ? "ar-EG" : "en-EG", { hour: "2-digit", minute: "2-digit" }));
+    } catch {
+      // If the order isn't found in the backend (e.g. legacy local order),
+      // fall back to the local order's ETA if available.
+      if (lastOrder?.estimatedDeliveryAt) {
+        const etaDate = new Date(lastOrder.estimatedDeliveryAt);
+        setEta(etaDate.toLocaleTimeString(isRtl ? "ar-EG" : "en-EG", { hour: "2-digit", minute: "2-digit" }));
+      } else if (lastOrder?.placedAt) {
+        const etaDate = new Date(new Date(lastOrder.placedAt).getTime() + 55 * 60 * 1000);
+        setEta(etaDate.toLocaleTimeString(isRtl ? "ar-EG" : "en-EG", { hour: "2-digit", minute: "2-digit" }));
+      }
+    }
+  }, [id, isRtl, lastOrder]);
+
+  useEffect(() => {
+    fetchStatus();
+    const interval = setInterval(fetchStatus, POLL_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [fetchStatus]);
+
+  const currentIdx = stageIndex(currentStage);
   const order = lastOrder?.id === id ? lastOrder : null;
-  const eta = order
-    ? new Date(new Date(order.placedAt).getTime() + 55 * 60 * 1000).toLocaleTimeString(
-        isRtl ? "ar-EG" : "en-EG",
-        { hour: "2-digit", minute: "2-digit" }
-      )
-    : "--:--";
 
   return (
     <PageWrapper>
@@ -88,7 +124,7 @@ export default function OrderTrackingPage() {
             className="text-center mb-8"
           >
             <p className="text-muted-foreground text-sm mb-1">{t("Tracking order", "تتبع الطلب")}</p>
-            <h1 className="text-3xl font-serif font-bold">#{id}</h1>
+            <h1 className="text-3xl font-serif font-bold">#{id?.slice(0, 8).toUpperCase()}</h1>
             {order && (
               <p className="text-muted-foreground text-sm mt-2">
                 {t(`Delivering to ${order.area}`, `التوصيل إلى ${order.area}`)}
@@ -142,14 +178,11 @@ export default function OrderTrackingPage() {
 
                 return (
                   <div key={stage.key} className="flex items-start gap-4 relative">
-                    {/* Vertical connector line */}
                     {idx < STAGES.length - 1 && (
                       <div className={`absolute ${isRtl ? "right-5" : "left-5"} top-10 w-0.5 h-12 rounded-full ${
                         done ? "bg-primary" : "bg-border"
                       }`} />
                     )}
-
-                    {/* Icon circle */}
                     <motion.div
                       initial={active ? { scale: 0.7, opacity: 0 } : false}
                       animate={active ? { scale: 1, opacity: 1 } : {}}
@@ -162,8 +195,6 @@ export default function OrderTrackingPage() {
                     >
                       {done ? <CheckCircle2 className="w-5 h-5" /> : stage.icon}
                     </motion.div>
-
-                    {/* Text */}
                     <div className={`flex-1 pb-10 ${pending ? "opacity-40" : ""}`}>
                       <div className="flex items-center gap-2">
                         <p className={`font-semibold text-sm ${active ? "text-primary" : ""}`}>
@@ -219,7 +250,6 @@ export default function OrderTrackingPage() {
             </a>
           </motion.div>
 
-          {/* Navigation — separated from contact group */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}

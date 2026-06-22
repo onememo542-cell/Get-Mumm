@@ -27,6 +27,7 @@ export interface PlacedOrder {
   building: string;
   notes: string;
   placedAt: string;
+  estimatedDeliveryAt?: string;
 }
 
 interface CartContextValue {

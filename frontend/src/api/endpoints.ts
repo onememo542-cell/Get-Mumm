@@ -5,12 +5,15 @@ import type {
   Chef,
   ContactInput,
   ContactResponse,
+  CreateOrderRequest,
   HealthStatus,
   ListBlogPostsParams,
   ListMenuItemsParams,
   ListTestimonialsParams,
   MenuItem,
   OfficeInquiryInput,
+  OrderResponse,
+  OrderStatusResponse,
   SiteSummary,
   SubscriptionPlan,
   Testimonial,
@@ -81,6 +84,19 @@ export const endpoints = {
     const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
     return customFetch<Testimonial[]>(`/api/testimonials${query}`, { method: "GET" });
   },
+
+  // Orders
+  createOrder: (data: CreateOrderRequest) =>
+    customFetch<OrderResponse>("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  getOrder: (id: string) =>
+    customFetch<OrderResponse>(`/api/orders/${id}`, { method: "GET" }),
+
+  getOrderStatus: (id: string) =>
+    customFetch<OrderStatusResponse>(`/api/orders/${id}/status`, { method: "GET" }),
 
   // Forms
   submitContact: (data: ContactInput) =>
