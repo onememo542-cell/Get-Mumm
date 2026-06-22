@@ -1,13 +1,15 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgIconComponent } from '@ng-icons/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, FormsModule, NgIconComponent],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-mumm-orange to-amber-700 flex items-center justify-center p-4">
       <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-8">
@@ -35,8 +37,9 @@ import { AuthService } from '../../core/services/auth.service';
             </div>
           }
 
-          <button type="submit" class="btn-primary w-full justify-center py-3 text-base" [disabled]="loading()">
-            @if (loading()) { <span class="animate-spin">⟳</span> } Sign In
+          <button type="submit" class="btn-primary w-full justify-center py-3 text-base gap-2" [disabled]="loading()">
+            @if (loading()) { <ng-icon name="lucideLoader" size="16" class="animate-spin" /> }
+            Sign In
           </button>
         </form>
 

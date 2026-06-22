@@ -1,5 +1,6 @@
 import { Component, inject, signal, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgIconComponent } from '@ng-icons/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../core/services/api.service';
 import { OrderDto } from '../../models';
@@ -8,83 +9,139 @@ import { OrderDto } from '../../models';
   selector: 'app-orders',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, NgIconComponent],
   template: `
     <div class="space-y-6">
       <div>
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Orders</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">View and manage customer orders</p>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Orders</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Look up any customer order by its UUID</p>
       </div>
 
+      <!-- Lookup -->
       <div class="card p-6">
-        <div class="flex items-center gap-3 mb-4">
-          <span class="text-2xl">📋</span>
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-900/20 flex items-center justify-center">
+            <ng-icon name="lucideClipboardList" size="18" class="text-primary-600 dark:text-primary-400" />
+          </div>
           <div>
-            <h3 class="font-semibold text-gray-800 dark:text-white">Order Lookup</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Orders are created via the customer app. Look up any order by its UUID.</p>
+            <h3 class="font-semibold text-gray-800 dark:text-white text-sm">Order Lookup</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Enter a full order UUID to retrieve its details</p>
           </div>
         </div>
 
         <div class="flex gap-3 flex-col sm:flex-row">
-          <input type="text" class="input flex-1" placeholder="Enter Order ID (UUID)..."
-                 [value]="orderId()"
-                 (input)="orderId.set($any($event.target).value)" />
-          <button class="btn-primary whitespace-nowrap" (click)="lookup()" [disabled]="!orderId() || loadingOrder()">
-            @if (loadingOrder()) { <span>⟳</span> } Look Up
+          <div class="relative flex-1">
+            <ng-icon name="lucideSearch" size="15" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <input type="text" class="input pl-9 font-mono" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                   [value]="orderId()" (input)="orderId.set($any($event.target).value)"
+                   aria-label="Order UUID" autocomplete="off" />
+          </div>
+          <button class="btn-primary whitespace-nowrap gap-2" (click)="lookup()" [disabled]="!orderId().trim() || loadingOrder()">
+            @if (loadingOrder()) {
+              <ng-icon name="lucideLoader" size="14" class="animate-spin" />
+            } @else {
+              <ng-icon name="lucideEye" size="14" />
+            }
+            Look Up
           </button>
         </div>
 
         @if (orderError()) {
-          <div class="mt-3 px-4 py-3 bg-red-50 text-red-700 rounded-lg text-sm border border-red-100">{{ orderError() }}</div>
+          <div class="mt-4 flex items-start gap-2.5 px-4 py-3 bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 rounded-xl text-sm border border-red-100 dark:border-red-800" role="alert">
+            <ng-icon name="lucideAlertTriangle" size="15" class="flex-shrink-0 mt-0.5" />
+            {{ orderError() }}
+          </div>
         }
 
         @if (order()) {
-          <div class="mt-6 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden">
-            <div class="bg-gray-50 dark:bg-gray-800 px-4 py-3 flex items-center justify-between">
-              <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Order #{{ order()!.id.slice(0,8) }}…</span>
-              <span class="badge" [class]="statusClass(order()!.status)">{{ order()!.status }}</span>
+          <div class="mt-6 border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden">
+            <!-- Order header -->
+            <div class="bg-gray-50 dark:bg-gray-800 px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <ng-icon name="lucideClipboardList" size="14" class="text-gray-500" />
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 font-mono">
+                  #{{ order()!.id.slice(0,8) }}…
+                </span>
+              </div>
+              <span class="badge font-medium" [class]="statusClass(order()!.status)">{{ order()!.status }}</span>
             </div>
-            <div class="p-4 grid grid-cols-2 gap-4 text-sm">
-              <div><span class="text-gray-400">Customer</span><p class="font-medium dark:text-white">{{ order()!.customerName }}</p></div>
-              <div><span class="text-gray-400">Phone</span><p class="font-medium dark:text-white">{{ order()!.phone }}</p></div>
-              <div><span class="text-gray-400">Area</span><p class="font-medium dark:text-white">{{ order()!.area }}</p></div>
-              <div><span class="text-gray-400">Payment</span><p class="font-medium dark:text-white">{{ order()!.paymentMethod }}</p></div>
-              <div><span class="text-gray-400">Subtotal</span><p class="font-bold text-primary-600">EGP {{ order()!.subtotal | number:'1.0-2' }}</p></div>
-              <div><span class="text-gray-400">Total</span><p class="font-bold text-primary-600">EGP {{ order()!.total | number:'1.0-2' }}</p></div>
+
+            <!-- Details grid -->
+            <div class="p-5 grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">
+              <div>
+                <p class="text-xs text-gray-400 mb-0.5 flex items-center gap-1"><ng-icon name="lucideUser" size="11" /> Customer</p>
+                <p class="font-semibold text-gray-800 dark:text-white">{{ order()!.customerName }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-0.5">Phone</p>
+                <p class="font-medium text-gray-700 dark:text-gray-300">{{ order()!.phone }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-0.5">Area</p>
+                <p class="font-medium text-gray-700 dark:text-gray-300">{{ order()!.area }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-0.5">Payment</p>
+                <p class="font-medium text-gray-700 dark:text-gray-300">{{ order()!.paymentMethod }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-0.5">Subtotal</p>
+                <p class="font-bold text-primary-600 dark:text-primary-400">EGP {{ order()!.subtotal | number:'1.0-2' }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-0.5">Total</p>
+                <p class="font-bold text-primary-600 dark:text-primary-400 text-base">EGP {{ order()!.total | number:'1.0-2' }}</p>
+              </div>
             </div>
+
+            <!-- Order Items Table -->
             @if (order()!.items?.length) {
               <div class="border-t border-gray-100 dark:border-gray-800">
-                <table class="w-full text-sm">
+                <!-- Desktop -->
+                <table class="w-full text-sm hidden sm:table" role="table">
                   <thead class="bg-gray-50 dark:bg-gray-800">
                     <tr>
-                      <th class="table-header text-left">Item</th>
-                      <th class="table-header text-right">Qty</th>
-                      <th class="table-header text-right">Unit Price</th>
-                      <th class="table-header text-right">Subtotal</th>
+                      <th class="table-header text-left" scope="col">Item</th>
+                      <th class="table-header text-right" scope="col">Qty</th>
+                      <th class="table-header text-right" scope="col">Unit Price</th>
+                      <th class="table-header text-right" scope="col">Subtotal</th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (item of order()!.items; track item.menuItemId) {
-                      <tr class="border-t border-gray-50 dark:border-gray-800">
-                        <td class="table-cell">{{ item.menuItemName }}</td>
-                        <td class="table-cell text-right">{{ item.quantity }}</td>
-                        <td class="table-cell text-right">EGP {{ item.unitPrice | number:'1.0-2' }}</td>
-                        <td class="table-cell text-right font-medium">EGP {{ item.subtotal | number:'1.0-2' }}</td>
+                      <tr class="border-t border-gray-50 dark:border-gray-800 hover:bg-gray-50/60 dark:hover:bg-gray-800/30 transition-colors">
+                        <td class="table-cell font-medium">{{ item.menuItemName }}</td>
+                        <td class="table-cell text-right text-gray-500">{{ item.quantity }}</td>
+                        <td class="table-cell text-right text-gray-500">EGP {{ item.unitPrice | number:'1.0-2' }}</td>
+                        <td class="table-cell text-right font-semibold text-gray-800 dark:text-white">EGP {{ item.subtotal | number:'1.0-2' }}</td>
                       </tr>
                     }
                   </tbody>
                 </table>
+                <!-- Mobile -->
+                <div class="sm:hidden divide-y divide-gray-50 dark:divide-gray-800">
+                  @for (item of order()!.items; track item.menuItemId) {
+                    <div class="px-5 py-3 flex items-center justify-between gap-3">
+                      <div>
+                        <p class="text-sm font-medium text-gray-800 dark:text-white">{{ item.menuItemName }}</p>
+                        <p class="text-xs text-gray-400">× {{ item.quantity }} · EGP {{ item.unitPrice | number:'1.0-2' }} each</p>
+                      </div>
+                      <p class="text-sm font-bold text-primary-600 dark:text-primary-400 flex-shrink-0">EGP {{ item.subtotal | number:'1.0-2' }}</p>
+                    </div>
+                  }
+                </div>
               </div>
             }
           </div>
         }
       </div>
 
-      <div class="card p-4 flex items-start gap-3 bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-800">
-        <span class="text-blue-500 text-xl">ℹ️</span>
+      <!-- Info banner -->
+      <div class="card p-4 flex items-start gap-3 bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-800" role="note">
+        <ng-icon name="lucideInfo" size="16" class="text-blue-500 flex-shrink-0 mt-0.5" />
         <div>
           <p class="text-sm font-medium text-blue-700 dark:text-blue-400">Orders are customer-initiated</p>
-          <p class="text-xs text-blue-600 dark:text-blue-500 mt-0.5">Use the lookup above to retrieve full order details by UUID. Orders are placed through the customer-facing Get Mumm app.</p>
+          <p class="text-xs text-blue-600 dark:text-blue-500 mt-0.5">Orders are placed through the Get Mumm customer app. Use the lookup above to retrieve full order details by UUID.</p>
         </div>
       </div>
     </div>
@@ -116,11 +173,11 @@ export class OrdersComponent {
 
   statusClass(status: string): string {
     return ({
-      Pending:   'bg-yellow-100 text-yellow-700',
-      Confirmed: 'bg-blue-100 text-blue-700',
-      Preparing: 'bg-orange-100 text-orange-700',
-      Delivered: 'bg-green-100 text-green-700',
-      Cancelled: 'bg-red-100 text-red-700',
+      Pending:   'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400',
+      Confirmed: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',
+      Preparing: 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400',
+      Delivered: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+      Cancelled: 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400',
     } as Record<string, string>)[status] ?? 'bg-gray-100 text-gray-600';
   }
 }

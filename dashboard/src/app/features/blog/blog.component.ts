@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgIconComponent } from '@ng-icons/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -13,27 +14,26 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
   selector: 'app-blog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, SkeletonComponent, EmptyStateComponent, ErrorStateComponent],
+  imports: [CommonModule, NgIconComponent, SkeletonComponent, EmptyStateComponent, ErrorStateComponent],
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Blog Posts</h2>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Blog Posts</h2>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             @if (!loading()) { {{ filtered().length }} published articles }
           </p>
         </div>
-        <button class="btn-secondary" (click)="load()" aria-label="Refresh blog posts">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        <button class="btn-secondary gap-2" (click)="load()" aria-label="Refresh">
+          <ng-icon name="lucideRefreshCw" size="14" />
         </button>
       </div>
 
-      <div class="card p-3 md:p-4">
+      <div class="card p-4">
         <div class="relative w-full sm:w-80">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/></svg>
-          <input type="search" class="input pl-9" placeholder="Search posts..."
-                 [value]="search()"
-                 (input)="search$.next($any($event.target).value)"
+          <ng-icon name="lucideSearch" size="15" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <input type="search" class="input pl-9" placeholder="Search posts or authors..."
+                 [value]="search()" (input)="search$.next($any($event.target).value)"
                  aria-label="Search blog posts" />
         </div>
       </div>
@@ -43,7 +43,7 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
       } @else if (error()) {
         <app-error-state (retry)="load()" />
       } @else if (filtered().length === 0) {
-        <app-empty-state icon="📝" title="No blog posts" message="No posts match your search." />
+        <app-empty-state iconName="lucideNewspaper" title="No blog posts" message="No posts match your search." />
       } @else {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" role="list">
           @for (post of filtered(); track post.id) {
@@ -52,16 +52,24 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
                 @if (post.imageUrl) {
                   <img [src]="post.imageUrl" [alt]="post.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" decoding="async" />
                 } @else {
-                  <div class="w-full h-full flex items-center justify-center text-5xl opacity-30">📝</div>
+                  <div class="w-full h-full flex items-center justify-center">
+                    <ng-icon name="lucideNewspaper" size="40" class="text-gray-300 dark:text-gray-600" />
+                  </div>
                 }
               </div>
               <div class="p-4 flex flex-col flex-1">
-                <h3 class="font-semibold text-gray-900 dark:text-white text-sm line-clamp-2 mb-1" [title]="post.title">{{ post.title }}</h3>
-                <p class="text-xs text-gray-400 mb-2">{{ post.publishedAt | date:'dd MMM yyyy' }} · {{ post.author }}</p>
+                <h3 class="font-semibold text-gray-900 dark:text-white text-sm line-clamp-2 mb-1.5" [title]="post.title">{{ post.title }}</h3>
+                <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
+                  <ng-icon name="lucideCalendar" size="11" />
+                  {{ post.publishedAt | date:'dd MMM yyyy' }}
+                  <span class="text-gray-300 dark:text-gray-600">·</span>
+                  <ng-icon name="lucideUser" size="11" />
+                  {{ post.author }}
+                </p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-3 flex-1">{{ post.excerpt }}</p>
-                <div class="mt-3 flex items-center justify-between">
+                <div class="mt-3 flex items-center justify-between gap-2">
                   @if (post.tags?.length) {
-                    <div class="flex flex-wrap gap-1">
+                    <div class="flex flex-wrap gap-1 min-w-0">
                       @for (tag of post.tags.slice(0, 2); track tag) {
                         <span class="badge bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-xs">#{{ tag }}</span>
                       }
@@ -70,7 +78,7 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
                       }
                     </div>
                   }
-                  <span class="text-xs text-gray-300 dark:text-gray-600 font-mono ml-auto">{{ post.slug }}</span>
+                  <code class="text-xs text-gray-300 dark:text-gray-600 font-mono truncate ml-auto">{{ post.slug }}</code>
                 </div>
               </div>
             </article>
@@ -89,7 +97,6 @@ export class BlogComponent implements OnInit {
   posts    = signal<BlogPostDto[]>([]);
   filtered = signal<BlogPostDto[]>([]);
   search   = signal('');
-
   readonly search$ = new Subject<string>();
 
   ngOnInit(): void {
@@ -99,10 +106,9 @@ export class BlogComponent implements OnInit {
   }
 
   load(): void {
-    this.loading.set(true);
-    this.error.set(false);
+    this.loading.set(true); this.error.set(false);
     this.api.getBlogPosts().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: r => { this.posts.set(r); this.filtered.set(r); this.loading.set(false); },
+      next: r  => { this.posts.set(r); this.filtered.set(r); this.loading.set(false); },
       error: () => { this.error.set(true); this.loading.set(false); },
     });
   }

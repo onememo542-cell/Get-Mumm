@@ -20,6 +20,8 @@
     "@angular/pwa": "^21.2.16",
     "@angular/router": "^18.2.0",
     "@angular/service-worker": "^21.2.17",
+    "@ng-icons/core": "^33.3.0",
+    "@ng-icons/lucide": "^33.3.0",
     "chart.js": "^4.5.1",
     "ng2-charts": "^10.0.0",
     "rxjs": "~7.8.0",
