@@ -1,0 +1,79 @@
+Angular Admin Dashboard Implementation for Get-Mumm Project
+
+## Project Context
+- Repository: https://github.com/Mostafa-SAID7/Get-Mumm
+- Backend: ASP.NET Core 8 + Clean Architecture (already mature with EF Core, many endpoints)
+- Current Frontend: React 19 + Vite + Tailwind
+- Goal: **Replace or add a professional Angular dashboard** (Admin Panel) that gives full system visibility and management from the frontend side.
+
+## Objective
+Create a **modern, production-ready Angular Admin Dashboard** that connects to the existing .NET backend and provides complete system oversight (Menu, Orders, Chefs, Users, Analytics, etc.).
+
+## Requirements
+
+### 1. Project Structure (Angular Best Practices)
+- Use latest **Angular 18+** (Standalone components, Signals, new control flow).
+- Folder structure following **Nx or Angular recommended style**:
+frontend-admin/
+├── src/
+│   ├── app/
+│   │   ├── core/                  # Guards, interceptors, services
+│   │   ├── features/              # Lazy-loaded modules (dashboard, menu, orders...)
+│   │   ├── shared/                # UI components, pipes, directives
+│   │   ├── layout/                # Sidebar, Navbar, Footer
+│   │   └── models/                # DTO interfaces matching backend
+│   ├── assets/
+│   └── environments/
+text### 2. Key Features to Implement
+- **Authentication** (Login + JWT handling + Refresh token)
+- **Responsive Sidebar Navigation**
+- **Dashboard Home**:
+- Key metrics cards (Total Orders, Revenue, Active Chefs, Today’s Deliveries)
+- Recent orders table
+- Chart (Revenue / Orders over time) — use Chart.js or ng2-charts
+- **Menu Management** (CRUD)
+- Categories, Menu Items, Featured items
+- **Orders Management**
+- List, Filter (status, date), View details, Update status
+- **Chefs / Cooks Management**
+- **Users / Customers** (if API available)
+- **Analytics / Reports**
+- **Settings** (Profile, System config)
+- **Role-based access** (Admin only for now)
+
+### 3. UI/UX Requirements
+- Use **Tailwind CSS** + **Angular Material** or **PrimeNG** (choose one and be consistent).
+- Dark/Light mode support.
+- Beautiful, modern, professional design matching the main customer app’s Egyptian warm/food theme.
+- Fully responsive (mobile + desktop).
+- Loading states, error handling, toast notifications.
+
+### 4. Integration with Backend
+- Use **HttpClient** + interceptors for JWT.
+- Match all existing backend endpoints (Menu, Chefs, Contact, Stats, etc.).
+- Use **Typed interfaces** exactly matching backend DTOs.
+- Implement proper error handling and loading indicators.
+
+### 5. Technical Standards
+- Strict TypeScript (no `any`).
+- Signals + new `@angular/core` features.
+- Lazy loading for all feature modules.
+- Proper state management (NgRx or Signals + Services).
+- Responsive forms with validation.
+- Unit tests + basic E2E (Playwright if possible).
+- Clean, well-documented code.
+
+## Steps for the Agent
+1. Create new Angular app inside `/frontend/admin` or replace current React frontend.
+2. Set up routing, layout, and core services.
+3. Implement Auth module first.
+4. Build Dashboard + Sidebar.
+5. Implement all CRUD features one by one.
+6. Update `README.md`, Docker, and deployment config.
+7. Ensure it works perfectly with the existing ASP.NET Core backend.
+
+**Important**: Keep the same Tailwind design language as the current customer-facing app for consistency.
+
+Start by analyzing the current backend API endpoints first, then proceed.
+
+Let me know when you finish each major feature.
