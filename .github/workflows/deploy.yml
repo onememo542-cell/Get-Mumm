@@ -9,6 +9,7 @@ on:
 
 env:
   NODE_VERSION: "24"
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
   test-and-build:
@@ -107,6 +108,14 @@ jobs:
           name: backend-publish
           path: ./backend/publish
 
+      - name: Check FTP secrets configured
+        run: |
+          if [ -z "${{ secrets.FTP_SERVER }}" ] || [ -z "${{ secrets.FTP_USERNAME }}" ] || [ -z "${{ secrets.FTP_PASSWORD }}" ]; then
+            echo "❌ FTP secrets not configured. Please set FTP_SERVER, FTP_USERNAME, and FTP_PASSWORD in GitHub repository secrets."
+            exit 1
+          fi
+          echo "✅ FTP secrets found"
+
       - name: FTP Deploy to MonsterASP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -114,7 +123,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./backend/publish/
-          server-dir: /site/wwwroot/ # Adjust if MonsterASP uses a different root directory
+          server-dir: /site/wwwroot/
 
   notify:
     needs: [test-and-build, deploy-frontend, deploy-backend]
