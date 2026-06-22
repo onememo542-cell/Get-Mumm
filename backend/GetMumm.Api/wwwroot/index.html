@@ -4,84 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Get Mumm API — Homemade Meals Backend</title>
-  <meta name="description" content="The Get Mumm REST API powers homemade meal delivery across Cairo & Giza. Built on ASP.NET Core 8 with PostgreSQL." />
+  <meta name="description" content="The Get Mumm REST API powers homemade meal delivery across Cairo &amp; Giza. Built on ASP.NET Core 8 with PostgreSQL." />
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
   <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="/js/app.js" defer></script>
-  <style>
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-    .quick-item {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 1.1rem 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      text-decoration: none;
-      color: var(--fg);
-      font-weight: 600;
-      font-size: .875rem;
-      transition: border-color .2s, transform .15s, box-shadow .2s;
-    }
-    .quick-item:hover {
-      border-color: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
-    }
-    .quick-item span:first-child { font-size: 1.3rem; }
-    .tech-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem;
-      margin-top: 1rem;
-    }
-    .tech-pill {
-      padding: .3rem .8rem;
-      border-radius: 999px;
-      background: var(--muted);
-      color: var(--fg);
-      font-size: .78rem;
-      font-weight: 600;
-      border: 1px solid var(--border);
-    }
-    .hero-stat {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      gap: .15rem;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.22);
-      border-radius: var(--radius-lg);
-      padding: .7rem 1.2rem;
-      backdrop-filter: blur(8px);
-    }
-    .hero-stat-val {
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: var(--primary);
-      line-height: 1;
-    }
-    .hero-stat-label {
-      font-size: .7rem;
-      font-weight: 600;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      opacity: .78;
-    }
-    .hero-stats-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .75rem;
-      justify-content: center;
-      margin-top: 2rem;
-    }
-    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
-  </style>
 </head>
 <body>
 
@@ -99,7 +26,10 @@
       <a href="/swagger" class="nav-link">Swagger</a>
     </nav>
     <div class="header-actions">
-      <button class="btn-theme" aria-label="Toggle theme">🌙</button>
+      <button class="btn-theme" aria-label="Toggle theme">
+        <i data-lucide="moon" class="icon icon-sm"></i>
+        <i data-lucide="sun" class="icon icon-sm"></i>
+      </button>
       <a href="/swagger" class="btn-pill">Try API →</a>
     </div>
     <button class="hamburger" aria-label="Menu">
@@ -121,7 +51,7 @@
     API Operational
   </div>
   <h1>Get Mumm <span>API</span></h1>
-  <p>The backend that connects home chefs in Cairo & Giza with customers craving authentic Egyptian homemade meals.</p>
+  <p>The backend that connects home chefs in Cairo &amp; Giza with customers craving authentic Egyptian homemade meals.</p>
   <div class="hero-ctas">
     <a href="/swagger" class="btn-hero solid">Explore Swagger</a>
     <a href="/docs.html" class="btn-hero outline">API Reference</a>
@@ -132,7 +62,7 @@
       <span class="hero-stat-label">API Version</span>
     </div>
     <div class="hero-stat">
-      <span class="hero-stat-val" id="hs-endpoints">12</span>
+      <span class="hero-stat-val" id="hs-endpoints">14</span>
       <span class="hero-stat-label">Endpoints</span>
     </div>
     <div class="hero-stat">
@@ -148,14 +78,30 @@
     <h2 class="section-title">Quick Access</h2>
     <p class="section-sub">Jump straight to what you need.</p>
     <div class="quick-grid">
-      <a href="/swagger" class="quick-item"><span>📖</span> Swagger UI</a>
-      <a href="/swagger/v1/swagger.json" class="quick-item"><span>📄</span> OpenAPI JSON</a>
-      <a href="/docs.html" class="quick-item"><span>🗺️</span> API Reference</a>
-      <a href="/stats.html" class="quick-item"><span>📊</span> Live Stats</a>
-      <a href="/api/health" class="quick-item"><span>💚</span> Health Check</a>
-      <a href="/api/menu/categories" class="quick-item"><span>🍽️</span> Menu Categories</a>
-      <a href="/api/chefs" class="quick-item"><span>👩‍🍳</span> All Chefs</a>
-      <a href="/api/blog" class="quick-item"><span>📝</span> Blog Posts</a>
+      <a href="/swagger" class="quick-item">
+        <i data-lucide="book-open" class="icon icon-md"></i> Swagger UI
+      </a>
+      <a href="/swagger/v1/swagger.json" class="quick-item">
+        <i data-lucide="file-code" class="icon icon-md"></i> OpenAPI JSON
+      </a>
+      <a href="/docs.html" class="quick-item">
+        <i data-lucide="map" class="icon icon-md"></i> API Reference
+      </a>
+      <a href="/stats.html" class="quick-item">
+        <i data-lucide="bar-chart-2" class="icon icon-md"></i> Live Stats
+      </a>
+      <a href="/api/health" class="quick-item">
+        <i data-lucide="activity" class="icon icon-md"></i> Health Check
+      </a>
+      <a href="/api/menu/categories" class="quick-item">
+        <i data-lucide="utensils" class="icon icon-md"></i> Menu Categories
+      </a>
+      <a href="/api/chefs" class="quick-item">
+        <i data-lucide="chef-hat" class="icon icon-md"></i> All Chefs
+      </a>
+      <a href="/api/blog" class="quick-item">
+        <i data-lucide="file-text" class="icon icon-md"></i> Blog Posts
+      </a>
     </div>
   </div>
 </section>
@@ -170,42 +116,49 @@
     <div class="cards-grid">
 
       <div class="card">
-        <div class="card-icon">🍽️</div>
+        <div class="card-icon"><i data-lucide="utensils" class="icon icon-lg"></i></div>
         <div class="card-title">Menu &amp; Categories</div>
         <div class="card-desc">Browse all dish categories, featured items, and full paginated menu with search and filtering by category.</div>
         <a href="/docs.html#menu" class="card-link">View endpoints →</a>
       </div>
 
       <div class="card">
-        <div class="card-icon">👩‍🍳</div>
+        <div class="card-icon"><i data-lucide="chef-hat" class="icon icon-lg"></i></div>
         <div class="card-title">Chefs</div>
         <div class="card-desc">Discover the home chefs behind every dish — list all chefs or retrieve a single chef's full profile by ID.</div>
         <a href="/docs.html#chefs" class="card-link">View endpoints →</a>
       </div>
 
       <div class="card">
-        <div class="card-icon">📝</div>
+        <div class="card-icon"><i data-lucide="file-text" class="icon icon-lg"></i></div>
         <div class="card-title">Blog</div>
         <div class="card-desc">Paginated blog posts with slug-based lookup. Covers recipes, chef stories, and food culture from Cairo.</div>
         <a href="/docs.html#blog" class="card-link">View endpoints →</a>
       </div>
 
       <div class="card">
-        <div class="card-icon">⭐</div>
+        <div class="card-icon"><i data-lucide="star" class="icon icon-lg"></i></div>
         <div class="card-title">Testimonials</div>
         <div class="card-desc">Customer reviews and feedback showcasing real experiences with Get Mumm's homemade meals.</div>
         <a href="/docs.html#testimonials" class="card-link">View endpoints →</a>
       </div>
 
       <div class="card">
-        <div class="card-icon">📦</div>
+        <div class="card-icon"><i data-lucide="shopping-bag" class="icon icon-lg"></i></div>
+        <div class="card-title">Orders</div>
+        <div class="card-desc">Place and track meal orders end-to-end — create an order, poll status, and receive real-time updates.</div>
+        <a href="/docs.html#orders" class="card-link">View endpoints →</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon"><i data-lucide="package" class="icon icon-lg"></i></div>
         <div class="card-title">Subscriptions</div>
         <div class="card-desc">Meal plan subscription tiers available for individuals and office catering packages.</div>
         <a href="/docs.html#subscriptions" class="card-link">View endpoints →</a>
       </div>
 
       <div class="card">
-        <div class="card-icon">📬</div>
+        <div class="card-icon"><i data-lucide="mail" class="icon icon-lg"></i></div>
         <div class="card-title">Contact</div>
         <div class="card-desc">Submit contact enquiries and office catering requests directly through the API.</div>
         <a href="/docs.html#contact" class="card-link">View endpoints →</a>
@@ -220,18 +173,18 @@
   <div class="wave-inner">
     <h2>Built on Rock-Solid Tech</h2>
     <p>ASP.NET Core 8 · Clean Architecture · Entity Framework · PostgreSQL · Supabase</p>
-    <div class="tech-list" style="justify-content:center">
-      <span class="tech-pill" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff">ASP.NET Core 8</span>
-      <span class="tech-pill" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff">Clean Architecture</span>
-      <span class="tech-pill" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff">EF Core</span>
-      <span class="tech-pill" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff">PostgreSQL</span>
-      <span class="tech-pill" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff">Supabase</span>
-      <span class="tech-pill" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff">Serilog</span>
-      <span class="tech-pill" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff">FluentValidation</span>
-      <span class="tech-pill" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff">AutoMapper</span>
+    <div class="tech-list centered">
+      <span class="tech-pill">ASP.NET Core 8</span>
+      <span class="tech-pill">Clean Architecture</span>
+      <span class="tech-pill">EF Core</span>
+      <span class="tech-pill">PostgreSQL</span>
+      <span class="tech-pill">Supabase</span>
+      <span class="tech-pill">Serilog</span>
+      <span class="tech-pill">FluentValidation</span>
+      <span class="tech-pill">AutoMapper</span>
     </div>
-    <div style="margin-top:2rem">
-      <a href="/swagger" class="btn-hero solid" style="margin-right:.75rem">Open Swagger →</a>
+    <div class="wave-ctas">
+      <a href="/swagger" class="btn-hero solid">Open Swagger →</a>
       <a href="/stats.html" class="btn-hero outline">Live Stats</a>
     </div>
   </div>
@@ -270,7 +223,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p class="footer-copy">© <span id="footer-year"></span> <strong>Get Mumm</strong> — Homemade Meals Delivered With Love 🧡</p>
+      <p class="footer-copy">© <span id="footer-year"></span> <strong>Get Mumm</strong> — Homemade Meals Delivered With Love</p>
       <div class="footer-badges">
         <span class="badge">ASP.NET Core 8</span>
         <span class="badge">v1.0</span>
@@ -279,17 +232,5 @@
   </div>
 </footer>
 
-<script>
-// Live health check for hero
-fetch('/api/health')
-  .then(r => {
-    const el = document.getElementById('hs-status');
-    if (el) el.textContent = r.ok ? '✅' : '⚠️';
-  })
-  .catch(() => {
-    const el = document.getElementById('hs-status');
-    if (el) el.textContent = '⚠️';
-  });
-</script>
 </body>
 </html>

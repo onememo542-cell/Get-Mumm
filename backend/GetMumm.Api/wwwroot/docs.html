@@ -5,105 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>API Reference — Get Mumm</title>
   <meta name="description" content="Complete REST API reference for the Get Mumm backend — all endpoints, parameters, and response schemas." />
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
   <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="/js/app.js" defer></script>
-  <style>
-    .page-hero {
-      background: linear-gradient(135deg, #1a1207 0%, #2d1f08 100%);
-      color: #fff;
-      padding: 3.5rem 1.5rem 2.5rem;
-      text-align: center;
-    }
-    .dark .page-hero { background: linear-gradient(135deg, #0d0a05 0%, #1a1207 100%); }
-    .page-hero h1 { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 900; margin-bottom: .5rem; }
-    .page-hero h1 em { color: var(--primary); font-style: normal; }
-    .page-hero p { color: rgba(255,255,255,.72); max-width: 500px; margin: 0 auto; font-size: .95rem; }
-
-    .toc {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .toc h3 { font-size: .85rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--muted-fg); margin-bottom: .75rem; }
-    .toc ul { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; }
-    .toc li a {
-      padding: .3rem .8rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: .8rem;
-      font-weight: 600;
-      text-decoration: none;
-      color: var(--fg);
-      transition: background .2s, border-color .2s;
-    }
-    .toc li a:hover { background: var(--primary); color: var(--primary-fg); border-color: var(--primary); }
-
-    .info-box {
-      background: var(--accent);
-      border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
-      border-radius: var(--radius);
-      padding: 1rem 1.25rem;
-      font-size: .875rem;
-      color: var(--accent-fg);
-      margin-bottom: 1.5rem;
-      display: flex;
-      gap: .75rem;
-    }
-    .info-box span:first-child { font-size: 1.1rem; flex-shrink: 0; }
-
-    .param-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .83rem;
-      margin: .75rem 0 1.25rem;
-    }
-    .param-table th {
-      text-align: left;
-      padding: .5rem .75rem;
-      background: var(--muted);
-      color: var(--muted-fg);
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--border);
-    }
-    .param-table td {
-      padding: .6rem .75rem;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-    .param-table tr:last-child td { border-bottom: none; }
-    .param-table code {
-      font-family: 'Courier New', monospace;
-      font-size: .82rem;
-      background: var(--muted);
-      padding: .15rem .4rem;
-      border-radius: .25rem;
-    }
-    .optional { color: var(--muted-fg); font-size: .75rem; }
-    .required { color: #e53e3e; font-size: .75rem; font-weight: 700; }
-
-    .response-example {
-      background: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem 1.25rem;
-      font-family: 'Courier New', monospace;
-      font-size: .78rem;
-      color: var(--fg);
-      overflow-x: auto;
-      white-space: pre;
-      margin-top: .75rem;
-      line-height: 1.6;
-    }
-    .dark .response-example { background: hsl(22,12%,11%); }
-
-    .section + .section { padding-top: 0; }
-    .anchor { scroll-margin-top: 80px; }
-  </style>
 </head>
 <body>
 
@@ -121,7 +26,10 @@
       <a href="/swagger" class="nav-link">Swagger</a>
     </nav>
     <div class="header-actions">
-      <button class="btn-theme" aria-label="Toggle theme">🌙</button>
+      <button class="btn-theme" aria-label="Toggle theme">
+        <i data-lucide="moon" class="icon icon-sm"></i>
+        <i data-lucide="sun" class="icon icon-sm"></i>
+      </button>
       <a href="/swagger" class="btn-pill">Try API →</a>
     </div>
     <button class="hamburger" aria-label="Menu">
@@ -157,6 +65,7 @@
         <li><a href="#chefs">Chefs</a></li>
         <li><a href="#blog">Blog</a></li>
         <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#orders">Orders</a></li>
         <li><a href="#subscriptions">Subscriptions</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a href="#errors">Errors</a></li>
@@ -168,22 +77,22 @@
       <h2 class="section-title">Overview</h2>
       <p class="section-sub">Base URL and general conventions.</p>
       <div class="info-box">
-        <span>ℹ️</span>
+        <i data-lucide="info" class="icon icon-md"></i>
         <div>All endpoints are prefixed with <code>/api</code>. All responses are JSON. Pagination uses <code>page</code> and <code>pageSize</code> query parameters. The API requires no authentication for read operations.</div>
       </div>
       <div class="endpoint-group">
-        <div style="font-size:.875rem;margin-bottom:.75rem">
+        <p class="base-info">
           <strong>Base URL:</strong>
-          <code style="font-family:monospace;margin-left:.5rem;padding:.2rem .6rem;background:var(--muted);border-radius:.3rem">/api</code>
-        </div>
-        <div style="font-size:.875rem">
+          <code>/api</code>
+        </p>
+        <p class="format-line">
           <strong>Format:</strong> JSON &nbsp;|&nbsp; <strong>Rate limit:</strong> 5 req/hour per IP &nbsp;|&nbsp; <strong>SSL:</strong> Required in production
-        </div>
+        </p>
       </div>
     </div>
 
     <!-- Health -->
-    <div id="health" class="anchor" style="margin-top:2.5rem">
+    <div id="health" class="anchor mt-section">
       <h2 class="section-title">Health</h2>
       <p class="section-sub">Service and database connectivity status.</p>
       <div class="endpoint-group">
@@ -193,7 +102,7 @@
             <div class="endpoint-path">/api/health</div>
             <div class="endpoint-desc">Returns service health including database connectivity. Responds 200 (Healthy) or 503 (Unhealthy).</div>
           </div>
-          <a href="/api/health" target="_blank" class="card-link" style="white-space:nowrap">Try →</a>
+          <a href="/api/health" target="_blank" class="card-link nowrap">Try →</a>
         </div>
       </div>
       <div class="response-example">{
@@ -205,7 +114,7 @@
     </div>
 
     <!-- Stats -->
-    <div id="stats" class="anchor" style="margin-top:2.5rem">
+    <div id="stats" class="anchor mt-section">
       <h2 class="section-title">Stats</h2>
       <p class="section-sub">Aggregated system-wide counts.</p>
       <div class="endpoint-group">
@@ -215,7 +124,7 @@
             <div class="endpoint-path">/api/stats</div>
             <div class="endpoint-desc">Returns aggregated counts: total chefs, menu items, blog posts, testimonials, and subscriptions.</div>
           </div>
-          <a href="/api/stats" target="_blank" class="card-link" style="white-space:nowrap">Try →</a>
+          <a href="/api/stats" target="_blank" class="card-link nowrap">Try →</a>
         </div>
       </div>
       <div class="response-example">{
@@ -228,7 +137,7 @@
     </div>
 
     <!-- Menu -->
-    <div id="menu" class="anchor" style="margin-top:2.5rem">
+    <div id="menu" class="anchor mt-section">
       <h2 class="section-title">Menu</h2>
       <p class="section-sub">Categories, featured dishes, and full paginated menu.</p>
       <div class="endpoint-group">
@@ -239,7 +148,7 @@
             <div class="endpoint-path">/api/menu/categories</div>
             <div class="endpoint-desc">List all menu categories.</div>
           </div>
-          <a href="/api/menu/categories" target="_blank" class="card-link" style="white-space:nowrap">Try →</a>
+          <a href="/api/menu/categories" target="_blank" class="card-link nowrap">Try →</a>
         </div>
 
         <div class="endpoint">
@@ -248,7 +157,7 @@
             <div class="endpoint-path">/api/menu/items/featured</div>
             <div class="endpoint-desc">List featured, currently-available menu items.</div>
           </div>
-          <a href="/api/menu/items/featured" target="_blank" class="card-link" style="white-space:nowrap">Try →</a>
+          <a href="/api/menu/items/featured" target="_blank" class="card-link nowrap">Try →</a>
         </div>
 
         <div class="endpoint">
@@ -257,7 +166,7 @@
             <div class="endpoint-path">/api/menu/items</div>
             <div class="endpoint-desc">Paginated list of all menu items with optional filtering.</div>
           </div>
-          <a href="/api/menu/items" target="_blank" class="card-link" style="white-space:nowrap">Try →</a>
+          <a href="/api/menu/items" target="_blank" class="card-link nowrap">Try →</a>
         </div>
 
         <div class="endpoint">
@@ -267,9 +176,10 @@
             <div class="endpoint-desc">Get a single menu item by GUID with full details and chef info.</div>
           </div>
         </div>
+
       </div>
 
-      <h4 style="font-size:.85rem;font-weight:700;margin:.75rem 0 .5rem">Query Parameters — <code>/api/menu/items</code></h4>
+      <p class="param-heading">Query Parameters — <code>/api/menu/items</code></p>
       <table class="param-table">
         <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
         <tbody>
@@ -282,7 +192,7 @@
     </div>
 
     <!-- Chefs -->
-    <div id="chefs" class="anchor" style="margin-top:2.5rem">
+    <div id="chefs" class="anchor mt-section">
       <h2 class="section-title">Chefs</h2>
       <p class="section-sub">Home chef profiles and details.</p>
       <div class="endpoint-group">
@@ -292,7 +202,7 @@
             <div class="endpoint-path">/api/chefs</div>
             <div class="endpoint-desc">List all home chefs.</div>
           </div>
-          <a href="/api/chefs" target="_blank" class="card-link" style="white-space:nowrap">Try →</a>
+          <a href="/api/chefs" target="_blank" class="card-link nowrap">Try →</a>
         </div>
         <div class="endpoint">
           <span class="method-badge method-get">GET</span>
@@ -305,7 +215,7 @@
     </div>
 
     <!-- Blog -->
-    <div id="blog" class="anchor" style="margin-top:2.5rem">
+    <div id="blog" class="anchor mt-section">
       <h2 class="section-title">Blog</h2>
       <p class="section-sub">Published articles, recipes, and chef stories.</p>
       <div class="endpoint-group">
@@ -315,7 +225,7 @@
             <div class="endpoint-path">/api/blog</div>
             <div class="endpoint-desc">Paginated list of published blog posts.</div>
           </div>
-          <a href="/api/blog" target="_blank" class="card-link" style="white-space:nowrap">Try →</a>
+          <a href="/api/blog" target="_blank" class="card-link nowrap">Try →</a>
         </div>
         <div class="endpoint">
           <span class="method-badge method-get">GET</span>
@@ -332,7 +242,7 @@
           </div>
         </div>
       </div>
-      <h4 style="font-size:.85rem;font-weight:700;margin:.75rem 0 .5rem">Query Parameters — <code>/api/blog</code></h4>
+      <p class="param-heading">Query Parameters — <code>/api/blog</code></p>
       <table class="param-table">
         <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
         <tbody>
@@ -343,7 +253,7 @@
     </div>
 
     <!-- Testimonials -->
-    <div id="testimonials" class="anchor" style="margin-top:2.5rem">
+    <div id="testimonials" class="anchor mt-section">
       <h2 class="section-title">Testimonials</h2>
       <p class="section-sub">Real customer reviews.</p>
       <div class="endpoint-group">
@@ -353,13 +263,71 @@
             <div class="endpoint-path">/api/testimonials</div>
             <div class="endpoint-desc">List all published customer testimonials.</div>
           </div>
-          <a href="/api/testimonials" target="_blank" class="card-link" style="white-space:nowrap">Try →</a>
+          <a href="/api/testimonials" target="_blank" class="card-link nowrap">Try →</a>
         </div>
       </div>
     </div>
 
+    <!-- Orders -->
+    <div id="orders" class="anchor mt-section">
+      <h2 class="section-title">Orders</h2>
+      <p class="section-sub">Place and track meal orders end-to-end.</p>
+      <div class="endpoint-group">
+
+        <div class="endpoint">
+          <span class="method-badge method-post">POST</span>
+          <div class="endpoint-info">
+            <div class="endpoint-path">/api/orders</div>
+            <div class="endpoint-desc">Create a new order — provide customer info, delivery area, payment method, and a list of menu items with quantities.</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-info">
+            <div class="endpoint-path">/api/orders/{id}</div>
+            <div class="endpoint-desc">Retrieve a full order by GUID — includes all items, totals, and current status.</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-info">
+            <div class="endpoint-path">/api/orders/{id}/status</div>
+            <div class="endpoint-desc">Poll the current fulfillment status of an order: Pending → Confirmed → Preparing → OutForDelivery → Delivered.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="param-heading">POST /api/orders — Request Body</p>
+      <table class="param-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>customerName</code></td><td>string</td><td><span class="required">required</span></td><td>Full name of the customer</td></tr>
+          <tr><td><code>customerPhone</code></td><td>string</td><td><span class="required">required</span></td><td>Contact phone number</td></tr>
+          <tr><td><code>deliveryArea</code></td><td>string</td><td><span class="required">required</span></td><td>District / area in Cairo or Giza</td></tr>
+          <tr><td><code>paymentMethod</code></td><td>string</td><td><span class="required">required</span></td><td><code>Cash</code> or <code>Card</code></td></tr>
+          <tr><td><code>items</code></td><td>array</td><td><span class="required">required</span></td><td>Array of <code>{ menuItemId, quantity }</code> objects</td></tr>
+          <tr><td><code>notes</code></td><td>string</td><td><span class="optional">optional</span></td><td>Special delivery instructions</td></tr>
+        </tbody>
+      </table>
+
+      <div class="response-example">{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "customerName": "Ahmed Hassan",
+  "deliveryArea": "Maadi",
+  "status": "Pending",
+  "totalAmount": 145.00,
+  "items": [
+    { "menuItemId": "...", "name": "Koshary", "quantity": 2, "unitPrice": 45.00 }
+  ],
+  "createdAt": "2025-06-22T10:00:00Z"
+}</div>
+    </div>
+
     <!-- Subscriptions -->
-    <div id="subscriptions" class="anchor" style="margin-top:2.5rem">
+    <div id="subscriptions" class="anchor mt-section">
       <h2 class="section-title">Subscriptions</h2>
       <p class="section-sub">Meal plan tiers for individuals and offices.</p>
       <div class="endpoint-group">
@@ -369,13 +337,13 @@
             <div class="endpoint-path">/api/subscriptions</div>
             <div class="endpoint-desc">List all available subscription / meal plan tiers.</div>
           </div>
-          <a href="/api/subscriptions" target="_blank" class="card-link" style="white-space:nowrap">Try →</a>
+          <a href="/api/subscriptions" target="_blank" class="card-link nowrap">Try →</a>
         </div>
       </div>
     </div>
 
     <!-- Contact -->
-    <div id="contact" class="anchor" style="margin-top:2.5rem">
+    <div id="contact" class="anchor mt-section">
       <h2 class="section-title">Contact</h2>
       <p class="section-sub">General enquiries and office catering requests.</p>
       <div class="endpoint-group">
@@ -397,7 +365,7 @@
     </div>
 
     <!-- Errors -->
-    <div id="errors" class="anchor" style="margin-top:2.5rem">
+    <div id="errors" class="anchor mt-section">
       <h2 class="section-title">Error Codes</h2>
       <p class="section-sub">Standard HTTP status codes returned by the API.</p>
       <table class="param-table">
@@ -412,9 +380,9 @@
         </tbody>
       </table>
 
-      <div class="info-box" style="margin-top:1rem">
-        <span>📖</span>
-        <div>For interactive testing with request/response examples, open the <a href="/swagger" style="color:var(--secondary);font-weight:700">Swagger UI</a>. The full OpenAPI spec is at <a href="/swagger/v1/swagger.json" style="color:var(--secondary);font-weight:700">/swagger/v1/swagger.json</a>.</div>
+      <div class="info-box mt">
+        <i data-lucide="book-open" class="icon icon-md"></i>
+        <div>For interactive testing with request/response examples, open the <a href="/swagger">Swagger UI</a>. The full OpenAPI spec is at <a href="/swagger/v1/swagger.json">/swagger/v1/swagger.json</a>.</div>
       </div>
     </div>
 
@@ -444,18 +412,19 @@
         <a href="/api/menu/categories">Menu</a>
         <a href="/api/chefs">Chefs</a>
         <a href="/api/blog">Blog</a>
-        <a href="/api/testimonials">Testimonials</a>
+        <a href="/api/orders">Orders</a>
       </div>
       <div class="footer-col">
         <h4>Docs</h4>
         <a href="#overview">Overview</a>
         <a href="#health">Health</a>
         <a href="#menu">Menu</a>
+        <a href="#orders">Orders</a>
         <a href="#errors">Errors</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p class="footer-copy">© <span id="footer-year"></span> <strong>Get Mumm</strong> — Homemade Meals Delivered With Love 🧡</p>
+      <p class="footer-copy">© <span id="footer-year"></span> <strong>Get Mumm</strong> — Homemade Meals Delivered With Love</p>
       <div class="footer-badges">
         <span class="badge">REST API</span>
         <span class="badge">v1.0</span>
@@ -463,5 +432,6 @@
     </div>
   </div>
 </footer>
+
 </body>
 </html>
