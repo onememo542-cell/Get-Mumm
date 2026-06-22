@@ -1,9 +1,13 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ApiService } from '../../core/services/api.service';
+import { OrderDto } from '../../models';
 
 @Component({
   selector: 'app-orders',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
     <div class="space-y-6">
@@ -87,32 +91,36 @@ import { CommonModule } from '@angular/common';
   `
 })
 export class OrdersComponent {
+  private api        = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
+
   orderId      = signal('');
-  order        = signal<any>(null);
+  order        = signal<OrderDto | null>(null);
   orderError   = signal('');
   loadingOrder = signal(false);
 
   lookup(): void {
-    const id = this.orderId();
+    const id = this.orderId().trim();
     if (!id) return;
     this.orderError.set('');
     this.order.set(null);
     this.loadingOrder.set(true);
-
-    fetch(`/api/orders/${id}`)
-      .then(r => { if (!r.ok) throw new Error(`Order not found (${r.status})`); return r.json(); })
-      .then(data => { this.order.set(data); this.loadingOrder.set(false); })
-      .catch((e: Error) => { this.orderError.set(e.message); this.loadingOrder.set(false); });
+    this.api.getOrder(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => { this.order.set(data); this.loadingOrder.set(false); },
+      error: (e: { status?: number }) => {
+        this.orderError.set(e.status === 404 ? `Order not found: ${id.slice(0, 8)}…` : 'Failed to fetch order. Check the UUID and try again.');
+        this.loadingOrder.set(false);
+      },
+    });
   }
 
   statusClass(status: string): string {
-    const map: Record<string, string> = {
+    return ({
       Pending:   'bg-yellow-100 text-yellow-700',
       Confirmed: 'bg-blue-100 text-blue-700',
       Preparing: 'bg-orange-100 text-orange-700',
       Delivered: 'bg-green-100 text-green-700',
       Cancelled: 'bg-red-100 text-red-700',
-    };
-    return map[status] ?? 'bg-gray-100 text-gray-600';
+    } as Record<string, string>)[status] ?? 'bg-gray-100 text-gray-600';
   }
 }

@@ -1,14 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../core/services/theme.service';
 import { AuthService } from '../../core/services/auth.service';
-import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule],
   template: `
     <div class="space-y-6 max-w-2xl">
       <div>
@@ -86,5 +85,18 @@ import { ToastService } from '../../core/services/toast.service';
 export class SettingsComponent {
   theme = inject(ThemeService);
   auth  = inject(AuthService);
-  toast = inject(ToastService);
+
+  readonly backendInfo = [
+    { label: 'API Base URL',  value: '/api (proxied)' },
+    { label: 'Backend Port',  value: '8080' },
+    { label: 'Framework',     value: 'ASP.NET Core 8' },
+    { label: 'Database',      value: 'PostgreSQL (Supabase)' },
+  ];
+
+  readonly pwaInfo = [
+    { label: 'App Name',       value: 'Get Mumm Admin' },
+    { label: 'Display Mode',   value: 'Standalone' },
+    { label: 'Service Worker', value: 'Enabled (production)' },
+    { label: 'Cache Strategy', value: 'Performance + Freshness' },
+  ];
 }

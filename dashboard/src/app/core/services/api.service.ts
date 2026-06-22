@@ -1,56 +1,65 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { CacheService } from './cache.service';
 import {
   ListCategoriesResponse, ListMenuItemsResponse, GetMenuItemResponse,
   GetFeaturedItemsResponse, ListChefsResponse, GetChefResponse,
-  MenuItemDto, OrderDto, OrderStatusDto,
+  OrderDto, OrderStatusDto,
   SubscriptionDto, CreateSubscriptionRequest, UpdateSubscriptionRequest,
   BlogPostDto, TestimonialDto, StatsDto, HealthCheckResponse
 } from '../../models';
+
+const TTL = {
+  STABLE:    10 * 60 * 1000,  // 10 min — categories, chefs, blog, testimonials
+  MEDIUM:     5 * 60 * 1000,  // 5 min  — menu items
+  REALTIME:      30 * 1000,   // 30 sec — stats, subscriptions
+  HEALTH:        15 * 1000,   // 15 sec — health check
+};
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private base = '/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cache: CacheService) {}
 
   /* ── Stats ── */
   getStats(): Observable<StatsDto> {
-    return this.http.get<StatsDto>(`${this.base}/Stats`);
+    return this.cache.wrap('stats', this.http.get<StatsDto>(`${this.base}/Stats`), TTL.REALTIME);
   }
 
   getHealth(): Observable<HealthCheckResponse> {
-    return this.http.get<HealthCheckResponse>(`${this.base}/Health`);
+    return this.cache.wrap('health', this.http.get<HealthCheckResponse>(`${this.base}/Health`), TTL.HEALTH);
   }
 
   /* ── Menu ── */
   getCategories(): Observable<ListCategoriesResponse> {
-    return this.http.get<ListCategoriesResponse>(`${this.base}/Menu/categories`);
+    return this.cache.wrap('categories', this.http.get<ListCategoriesResponse>(`${this.base}/Menu/categories`), TTL.STABLE);
   }
 
-  getMenuItems(page = 1, pageSize = 20, categoryId?: string, search?: string): Observable<ListMenuItemsResponse> {
+  getMenuItems(page = 1, pageSize = 100, categoryId?: string, search?: string): Observable<ListMenuItemsResponse> {
+    const key = `menu-items:${page}:${pageSize}:${categoryId ?? ''}:${search ?? ''}`;
     let params = new HttpParams().set('Page', page).set('PageSize', pageSize);
     if (categoryId) params = params.set('CategoryId', categoryId);
     if (search) params = params.set('Search', search);
-    return this.http.get<ListMenuItemsResponse>(`${this.base}/Menu/items`, { params });
+    return this.cache.wrap(key, this.http.get<ListMenuItemsResponse>(`${this.base}/Menu/items`, { params }), TTL.MEDIUM);
   }
 
   getMenuItem(id: string): Observable<GetMenuItemResponse> {
-    return this.http.get<GetMenuItemResponse>(`${this.base}/Menu/items/${id}`);
+    return this.cache.wrap(`menu-item:${id}`, this.http.get<GetMenuItemResponse>(`${this.base}/Menu/items/${id}`), TTL.MEDIUM);
   }
 
   getFeaturedItems(): Observable<GetFeaturedItemsResponse> {
-    return this.http.get<GetFeaturedItemsResponse>(`${this.base}/Menu/items/featured`);
+    return this.cache.wrap('featured-items', this.http.get<GetFeaturedItemsResponse>(`${this.base}/Menu/items/featured`), TTL.MEDIUM);
   }
 
   /* ── Chefs ── */
   getChefs(): Observable<ListChefsResponse> {
-    return this.http.get<ListChefsResponse>(`${this.base}/Chefs`);
+    return this.cache.wrap('chefs', this.http.get<ListChefsResponse>(`${this.base}/Chefs`), TTL.STABLE);
   }
 
   getChef(id: string): Observable<GetChefResponse> {
-    return this.http.get<GetChefResponse>(`${this.base}/Chefs/${id}`);
+    return this.cache.wrap(`chef:${id}`, this.http.get<GetChefResponse>(`${this.base}/Chefs/${id}`), TTL.STABLE);
   }
 
   /* ── Orders ── */
@@ -62,7 +71,7 @@ export class ApiService {
     return this.http.get<OrderStatusDto>(`${this.base}/orders/${id}/status`);
   }
 
-  /* ── Subscriptions ── */
+  /* ── Subscriptions (no caching — CRUD) ── */
   getSubscriptions(): Observable<SubscriptionDto[]> {
     return this.http.get<SubscriptionDto[]>(`${this.base}/Subscriptions`);
   }
@@ -72,6 +81,7 @@ export class ApiService {
   }
 
   createSubscription(req: CreateSubscriptionRequest): Observable<SubscriptionDto> {
+    this.cache.invalidate('stats');
     return this.http.post<SubscriptionDto>(`${this.base}/Subscriptions`, req);
   }
 
@@ -80,20 +90,21 @@ export class ApiService {
   }
 
   deleteSubscription(id: string): Observable<void> {
+    this.cache.invalidate('stats');
     return this.http.delete<void>(`${this.base}/Subscriptions/${id}`);
   }
 
   /* ── Blog ── */
   getBlogPosts(): Observable<BlogPostDto[]> {
-    return this.http.get<BlogPostDto[]>(`${this.base}/Blog/posts`);
+    return this.cache.wrap('blog-posts', this.http.get<BlogPostDto[]>(`${this.base}/Blog/posts`), TTL.STABLE);
   }
 
   getBlogPost(slug: string): Observable<BlogPostDto> {
-    return this.http.get<BlogPostDto>(`${this.base}/Blog/posts/${slug}`);
+    return this.cache.wrap(`blog-post:${slug}`, this.http.get<BlogPostDto>(`${this.base}/Blog/posts/${slug}`), TTL.STABLE);
   }
 
   /* ── Testimonials ── */
   getTestimonials(): Observable<TestimonialDto[]> {
-    return this.http.get<TestimonialDto[]>(`${this.base}/Testimonials`);
+    return this.cache.wrap('testimonials', this.http.get<TestimonialDto[]>(`${this.base}/Testimonials`), TTL.STABLE);
   }
 }
