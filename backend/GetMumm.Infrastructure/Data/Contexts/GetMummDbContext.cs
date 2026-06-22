@@ -173,6 +173,11 @@ public class GetMummDbContext : DbContext
             .HasIndex(c => c.CreatedAt)
             .HasDatabaseName("idx_contacts_created_at");
 
+        // Store BlogPost.PublishStatus as text string to match the DB column type
+        modelBuilder.Entity<BlogPost>()
+            .Property(b => b.PublishStatus)
+            .HasConversion<string>();
+
         // Index on BlogPost.PublishStatus for publish status filtering
         modelBuilder.Entity<BlogPost>()
             .HasIndex(b => b.PublishStatus)

@@ -21,7 +21,7 @@ import type {
 
 export const endpoints = {
   // Health
-  healthCheck: () => customFetch<HealthStatus>("/api/healthz", { method: "GET" }),
+  healthCheck: () => customFetch<HealthStatus>("/api/health", { method: "GET" }),
 
   // Site Stats
   getSiteSummary: () => customFetch<SiteSummary>("/api/stats", { method: "GET" }),
@@ -106,7 +106,7 @@ export const endpoints = {
     }),
 
   submitOfficeInquiry: (data: OfficeInquiryInput) =>
-    customFetch<ContactResponse>("/api/office-inquiry", {
+    customFetch<ContactResponse>("/api/contact/office-inquiry", {
       method: "POST",
       body: JSON.stringify(data),
     }),

@@ -5,53 +5,19 @@ namespace GetMumm.Application.DTOs;
 /// </summary>
 public class BlogPostDto
 {
-    /// <summary>
-    /// Unique blog post identifier
-    /// </summary>
-    public int Id { get; set; }
-
-    /// <summary>
-    /// Blog post title in English
-    /// </summary>
+    public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Blog post title in Arabic
-    /// </summary>
     public string TitleAr { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Blog post content in English
-    /// </summary>
-    public string Content { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Blog post content in Arabic
-    /// </summary>
-    public string ContentAr { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Author name in English
-    /// </summary>
-    public string AuthorName { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Author name in Arabic
-    /// </summary>
-    public string AuthorNameAr { get; set; } = string.Empty;
-
-    /// <summary>
-    /// URL-friendly slug for the blog post
-    /// </summary>
     public string Slug { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Publishing status (Draft, Published, Archived)
-    /// </summary>
-    public string PublishStatus { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Publication timestamp
-    /// </summary>
+    public string Excerpt { get; set; } = string.Empty;
+    public string ExcerptAr { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public string ContentAr { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public string Type { get; set; } = "blog";
     public DateTime? PublishedAt { get; set; }
+    public string Author { get; set; } = string.Empty;
+    public string AuthorAr { get; set; } = string.Empty;
+    public int ReadTimeMinutes { get; set; } = 3;
+    public List<string> Tags { get; set; } = new();
 }

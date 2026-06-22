@@ -4,193 +4,146 @@ using AutoMapper;
 using GetMumm.Application.DTOs;
 using GetMumm.Domain.Entities;
 
-/// <summary>
-/// AutoMapper profile for configuring entity-to-DTO mappings
-/// Centralizes all mapping configurations in one place to maintain consistency
-/// </summary>
 public class MappingProfile : Profile
 {
-    /// <summary>
-    /// Initializes the mapping profile with entity-to-DTO configurations
-    /// </summary>
     public MappingProfile()
     {
-        // MenuItem mappings
         ConfigureMenuItemMappings();
-
-        // Category mappings
         ConfigureCategoryMappings();
-
-        // Chef mappings
         ConfigureChefMappings();
-
-        // BlogPost mappings
         ConfigureBlogPostMappings();
-
-        // Testimonial mappings
         ConfigureTestimonialMappings();
-
-        // Contact mappings
         ConfigureContactMappings();
-
-        // OfficeInquiry mappings
         ConfigureOfficeInquiryMappings();
-
-        // Subscription mappings
         ConfigureSubscriptionMappings();
     }
 
-    /// <summary>
-    /// Configures MenuItem to MenuItemDto and MenuItemDetailDto mappings
-    /// </summary>
     private void ConfigureMenuItemMappings()
     {
-        // MenuItem -> MenuItemDto (list view)
         CreateMap<MenuItem, MenuItemDto>()
-            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName))
+            .ForMember(dest => dest.CategoryName,   opt => opt.MapFrom(src => src.CategoryName))
             .ForMember(dest => dest.CategoryNameAr, opt => opt.MapFrom(src => src.CategoryNameAr))
-            .ForMember(dest => dest.ChefName, opt => opt.MapFrom(src => src.ChefName))
-            .ForMember(dest => dest.ChefNameAr, opt => opt.MapFrom(src => src.ChefNameAr))
+            .ForMember(dest => dest.ChefName,       opt => opt.MapFrom(src => src.ChefName))
+            .ForMember(dest => dest.ChefNameAr,     opt => opt.MapFrom(src => src.ChefNameAr))
             .ReverseMap();
 
-        // MenuItem -> MenuItemDetailDto (detail view)
         CreateMap<MenuItem, MenuItemDetailDto>()
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
-            .ForMember(dest => dest.Chef, opt => opt.MapFrom(src => src.Chef))
+            .ForMember(dest => dest.Chef,       opt => opt.MapFrom(src => src.Chef))
             .IncludeBase<MenuItem, MenuItemDto>()
             .ReverseMap();
     }
 
-    /// <summary>
-    /// Configures Category to CategoryDto mappings
-    /// </summary>
     private void ConfigureCategoryMappings()
     {
-        // Category -> CategoryDto
-        CreateMap<Category, CategoryDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.NameAr, opt => opt.MapFrom(src => src.NameAr))
-            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-            .ForMember(dest => dest.DescriptionAr, opt => opt.MapFrom(src => src.DescriptionAr))
-            .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
-            .ForMember(dest => dest.ItemCount, opt => opt.MapFrom(src => src.ItemCount))
-            .ReverseMap();
+        CreateMap<Category, CategoryDto>().ReverseMap();
     }
 
-    /// <summary>
-    /// Configures Chef to ChefDto and ChefDetailDto mappings
-    /// </summary>
     private void ConfigureChefMappings()
     {
-        // Chef -> ChefDto (list view)
-        CreateMap<Chef, ChefDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.NameAr, opt => opt.MapFrom(src => src.NameAr))
-            .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.Bio))
-            .ForMember(dest => dest.BioAr, opt => opt.MapFrom(src => src.BioAr))
-            .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
-            .ForMember(dest => dest.Specialties, opt => opt.MapFrom(src => src.Specialties))
-            .ForMember(dest => dest.SpecialtiesAr, opt => opt.MapFrom(src => src.SpecialtiesAr))
-            .ForMember(dest => dest.ItemCount, opt => opt.MapFrom(src => src.ItemCount))
-            .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
-            .ReverseMap();
+        CreateMap<Chef, ChefDto>().ReverseMap();
 
-        // Chef -> ChefDetailDto (detail view)
         CreateMap<Chef, ChefDetailDto>()
             .ForMember(dest => dest.JoinedYear, opt => opt.MapFrom(src => src.JoinedYear))
             .IncludeBase<Chef, ChefDto>()
             .ReverseMap();
     }
 
-    /// <summary>
-    /// Configures BlogPost to BlogPostDto and BlogPostDetailDto mappings
-    /// </summary>
+    private static string MakeExcerpt(string text)
+    {
+        const int maxLen = 220;
+        if (string.IsNullOrEmpty(text)) return string.Empty;
+        text = text.Trim();
+        return text.Length <= maxLen ? text : text.Substring(0, maxLen).TrimEnd() + "…";
+    }
+
+    private static string MakeExcerptAr(string text) => MakeExcerpt(text);
+
+    private static int CalcReadTime(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return 1;
+        var words = text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        return Math.Max(1, (int)Math.Ceiling(words / 200.0));
+    }
+
+    private static readonly string[] DefaultBlogImages =
+    {
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800",
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800",
+        "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800",
+        "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800",
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+    };
+
+    private static string DefaultBlogImage(Guid id) =>
+        DefaultBlogImages[Math.Abs(id.GetHashCode()) % DefaultBlogImages.Length];
+
     private void ConfigureBlogPostMappings()
     {
-        // BlogPost -> BlogPostDto
         CreateMap<BlogPost, BlogPostDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
-            .ForMember(dest => dest.TitleAr, opt => opt.MapFrom(src => src.TitleAr))
-            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
-            .ForMember(dest => dest.ContentAr, opt => opt.MapFrom(src => src.ContentAr))
-            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.AuthorName))
-            .ForMember(dest => dest.AuthorNameAr, opt => opt.MapFrom(src => src.AuthorNameAr))
-            .ForMember(dest => dest.Slug, opt => opt.MapFrom(src => src.Slug))
-            .ForMember(dest => dest.PublishStatus, opt => opt.MapFrom(src => src.PublishStatus))
-            .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.PublishedAt))
-            .ReverseMap();
+            .ForMember(dest => dest.Excerpt,         opt => opt.MapFrom(src => MakeExcerpt(src.Content)))
+            .ForMember(dest => dest.ExcerptAr,       opt => opt.MapFrom(src => MakeExcerpt(src.ContentAr)))
+            .ForMember(dest => dest.ImageUrl,        opt => opt.MapFrom(src => DefaultBlogImage(src.Id)))
+            .ForMember(dest => dest.Type,            opt => opt.MapFrom(src => "blog"))
+            .ForMember(dest => dest.Author,          opt => opt.MapFrom(src => src.AuthorName))
+            .ForMember(dest => dest.AuthorAr,        opt => opt.MapFrom(src => src.AuthorNameAr))
+            .ForMember(dest => dest.ReadTimeMinutes, opt => opt.MapFrom(src => CalcReadTime(src.Content)))
+            .ForMember(dest => dest.Tags,            opt => opt.MapFrom(src => new List<string>()))
+            .ReverseMap()
+            .ForMember(dest => dest.AuthorName,   opt => opt.MapFrom(src => src.Author))
+            .ForMember(dest => dest.AuthorNameAr, opt => opt.MapFrom(src => src.AuthorAr));
 
-        // BlogPost -> BlogPostDetailDto (inherits from BlogPostDto)
         CreateMap<BlogPost, BlogPostDetailDto>()
             .IncludeBase<BlogPost, BlogPostDto>()
             .ReverseMap();
     }
 
-    /// <summary>
-    /// Configures Testimonial to TestimonialDto mapping
-    /// </summary>
+    private static readonly string[] DefaultAvatars =
+    {
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100",
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100",
+        "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=100",
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100",
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
+    };
+
+    private static string DefaultAvatar(Guid id) =>
+        DefaultAvatars[Math.Abs(id.GetHashCode()) % DefaultAvatars.Length];
+
     private void ConfigureTestimonialMappings()
     {
-        // Testimonial -> TestimonialDto
         CreateMap<Testimonial, TestimonialDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerName))
-            .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
-            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
-            .ReverseMap();
+            .ForMember(dest => dest.Name,      opt => opt.MapFrom(src => src.CustomerName))
+            .ForMember(dest => dest.NameAr,    opt => opt.MapFrom(src => src.CustomerName))
+            .ForMember(dest => dest.Quote,     opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.QuoteAr,   opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.Type,      opt => opt.MapFrom(src => "customer"))
+            .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => DefaultAvatar(src.Id)))
+            .ForMember(dest => dest.Company,   opt => opt.Ignore())
+            .ForMember(dest => dest.CompanyAr, opt => opt.Ignore())
+            .ForMember(dest => dest.Role,      opt => opt.Ignore())
+            .ForMember(dest => dest.RoleAr,    opt => opt.Ignore())
+            .ReverseMap()
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Content,      opt => opt.MapFrom(src => src.Quote));
     }
 
-    /// <summary>
-    /// Configures SubmitContactRequest to Contact entity mapping
-    /// </summary>
     private void ConfigureContactMappings()
     {
-        // SubmitContactRequest -> Contact
         CreateMap<SubmitContactRequest, Contact>()
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-            .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
-            .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message))
-            .ForMember(dest => dest.Subject, opt => opt.MapFrom(src => src.Subject))
-            .ForMember(dest => dest.Id, opt => opt.Ignore()) // Let database assign ID
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ReverseMap();
     }
 
-    /// <summary>
-    /// Configures SubmitOfficeInquiryRequest to OfficeInquiry entity mapping
-    /// </summary>
     private void ConfigureOfficeInquiryMappings()
     {
-        // SubmitOfficeInquiryRequest -> OfficeInquiry
         CreateMap<SubmitOfficeInquiryRequest, OfficeInquiry>()
-            .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.CompanyName))
-            .ForMember(dest => dest.ContactName, opt => opt.MapFrom(src => src.ContactName))
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-            .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
-            .ForMember(dest => dest.HeadCount, opt => opt.MapFrom(src => src.HeadCount))
-            .ForMember(dest => dest.DeliveryArea, opt => opt.MapFrom(src => src.DeliveryArea))
-            .ForMember(dest => dest.Frequency, opt => opt.MapFrom(src => src.Frequency))
-            .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message))
-            .ForMember(dest => dest.Id, opt => opt.Ignore()) // Let database assign ID
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ReverseMap();
     }
 
-    /// <summary>
-    /// Configures Subscription entity to SubscriptionDto mapping
-    /// </summary>
     private void ConfigureSubscriptionMappings()
     {
-        // Subscription -> SubscriptionDto
-        CreateMap<Subscription, SubscriptionDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
-            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
-            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-            .ReverseMap();
+        CreateMap<Subscription, SubscriptionDto>().ReverseMap();
     }
 }
