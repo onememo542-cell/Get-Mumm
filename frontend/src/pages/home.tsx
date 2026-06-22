@@ -31,7 +31,17 @@ export default function Home() {
 
   const featuredList = Array.isArray(featuredItems) ? featuredItems : [];
   const categoryList = Array.isArray(categories) ? categories : [];
-  const testimonialList = Array.isArray(testimonials) ? testimonials : [];
+  const testimonialList = Array.isArray(testimonials)
+    ? testimonials.map((t: any) => ({
+        ...t,
+        name:     t.name     ?? t.customerName ?? "",
+        nameAr:   t.nameAr   ?? t.customerName ?? "",
+        quote:    t.quote    ?? t.content      ?? "",
+        quoteAr:  t.quoteAr  ?? t.content      ?? "",
+        role:     t.role     ?? "",
+        roleAr:   t.roleAr   ?? "",
+      }))
+    : [];
 
   useSEO({
     title: tx(home.heroTitle),
