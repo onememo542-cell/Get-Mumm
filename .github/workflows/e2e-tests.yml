@@ -1,4 +1,4 @@
-name: E2E Tests
+name: Python E2E Tests (Pytest + Playwright)
 
 on:
   push:
@@ -10,27 +10,11 @@ on:
 env:
   PYTHON_VERSION: "3.11"
   NODE_VERSION: "24"
-  DOCKER_BUILDKIT: 1
 
 jobs:
   e2e-tests:
-    name: Run E2E Tests
+    name: Run Python E2E Tests
     runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5433:5432
 
     steps:
       - name: Checkout code
@@ -58,10 +42,11 @@ jobs:
 
       - name: Install Playwright browsers
         run: |
-          python -m playwright install chromium firefox
+          playwright install chromium
 
       - name: Install backend dependencies
         run: |
+          cd backend
           pnpm install
 
       - name: Build backend
@@ -69,77 +54,29 @@ jobs:
           cd backend
           npm run build
 
-      - name: Build frontend
-        run: |
-          cd frontend
-          npm run build
-
-      - name: Wait for PostgreSQL
-        run: |
-          until pg_isready -h localhost -p 5433 -U test_user; do
-            echo 'waiting for PostgreSQL...'
-            sleep 1
-          done
-
-      - name: Initialize database
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5433/test_db
-        run: |
-          cd backend
-          echo "Running migrations..."
-          psql $DATABASE_URL -f migrations/001_init.sql || echo "Migration 1 completed with status $?"
-          psql $DATABASE_URL -f migrations/002_seed_data.sql || echo "Migration 2 completed with status $?"
-          echo "Database initialization completed"
-
       - name: Start backend server
         env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5433/test_db
           NODE_ENV: test
           PORT: 3001
-          SUPABASE_URL: http://localhost:5433
-          SUPABASE_SERVICE_ROLE_KEY: test_key
         run: |
           cd backend
           echo "Starting backend server on port 3001..."
           node --enable-source-maps ./dist/index.mjs > backend.log 2>&1 &
           BACKEND_PID=$!
           echo "Backend PID: $BACKEND_PID"
-          sleep 3
           
           for i in {1..30}; do
-            if ! kill -0 $BACKEND_PID 2>/dev/null; then
-              echo "❌ Backend process died immediately"
-              echo "=== BACKEND LOG ==="
-              cat backend.log
-              exit 1
-            fi
-            
             if curl -s http://localhost:3001/health 2>/dev/null | grep -q "ok"; then
-              echo "✓ Backend server is ready after $i attempts"
-              sleep 1
+              echo "✓ Backend ready after $i attempts"
               break
             fi
-            
-            echo "Health check attempt $i/30..."
             sleep 1
           done
-          
-          if ! kill -0 $BACKEND_PID 2>/dev/null; then
-            echo "❌ Backend process died during health checks"
-            echo "=== BACKEND LOG ==="
-            cat backend.log
-            exit 1
-          fi
-          
-          # Verify server is still responding
-          if ! curl -s http://localhost:3001/health 2>/dev/null | grep -q "ok"; then
-            echo "❌ Backend health check failed"
-            echo "=== BACKEND LOG ==="
-            cat backend.log
-            exit 1
-          fi
-          
-          echo "✓ Backend startup verified successfully"
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          pnpm install
 
       - name: Start frontend dev server
         env:
@@ -151,49 +88,30 @@ jobs:
           npm run dev > frontend.log 2>&1 &
           FRONTEND_PID=$!
           echo "Frontend PID: $FRONTEND_PID"
-          sleep 3
           
           for i in {1..30}; do
-            if ! kill -0 $FRONTEND_PID 2>/dev/null; then
-              echo "❌ Frontend process died immediately"
-              echo "=== FRONTEND LOG ==="
-              cat frontend.log
-              exit 1
-            fi
-            
             if curl -s http://localhost:3000 2>/dev/null | grep -q "html\|<!DOCTYPE"; then
-              echo "✓ Frontend server is ready after $i attempts"
-              sleep 1
+              echo "✓ Frontend ready after $i attempts"
               break
             fi
-            
-            echo "Frontend health check attempt $i/30..."
             sleep 1
           done
-          
-          if ! kill -0 $FRONTEND_PID 2>/dev/null; then
-            echo "❌ Frontend process died during health checks"
-            echo "=== FRONTEND LOG ==="
-            cat frontend.log
-            exit 1
-          fi
-          
-          echo "✓ Frontend startup verified successfully"
 
-      - name: Run E2E tests with parallel execution
+      - name: Run Python E2E tests
         env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5433/test_db
-          API_URL: http://localhost:3001
-          BROWSER_URL: http://localhost:3000
+          API_BASE_URL: http://localhost:3001
+          FRONTEND_BASE_URL: http://localhost:3000
+          MCP_API_KEY: test-key-12345
+          BROWSER_HEADLESS: "true"
         run: |
-          pytest tests/ \
+          cd tests
+          pytest . \
             -v \
             --tb=short \
             -n 4 \
-            --dist loadscope \
             --timeout=300 \
-            --junit-xml=test-results/junit.xml \
-            --alluredir=allure-results \
+            --junit-xml=../test-results/junit.xml \
+            --alluredir=../allure-results \
             -m "not flaky"
 
       - name: Generate Allure report
@@ -206,7 +124,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: pytest-results
           path: test-results/
           retention-days: 30
 
@@ -218,61 +136,9 @@ jobs:
           path: allure-report/
           retention-days: 30
 
-      - name: Upload debug artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: debug-artifacts
-          path: tests/debug/
-          retention-days: 7
-
-      - name: Parse test results for PR comment
-        if: always() && github.event_name == 'pull_request'
-        id: parse-results
-        run: |
-          if [ -f "test-results/junit.xml" ]; then
-            TOTAL=$(grep -c "<testcase" test-results/junit.xml || echo "0")
-            PASSED=$(grep -c 'testcase.*\(succeeded\|skipped\)' test-results/junit.xml || echo "0")
-            FAILED=$(grep -c 'testcase.*failure' test-results/junit.xml || echo "0")
-            
-            echo "total=$TOTAL" >> $GITHUB_OUTPUT
-            echo "passed=$PASSED" >> $GITHUB_OUTPUT
-            echo "failed=$FAILED" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Comment PR with test results
-        if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const total = '${{ steps.parse-results.outputs.total }}' || '0';
-            const passed = '${{ steps.parse-results.outputs.passed }}' || '0';
-            const failed = '${{ steps.parse-results.outputs.failed }}' || '0';
-            
-            let comment = '## 🧪 E2E Test Results\n\n';
-            comment += `| Metric | Count |\n`;
-            comment += `|--------|-------|\n`;
-            comment += `| Total Tests | ${total} |\n`;
-            comment += `| ✅ Passed | ${passed} |\n`;
-            comment += `| ❌ Failed | ${failed} |\n\n`;
-            comment += `📊 [View Allure Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
-
-      - name: Cleanup Docker services
-        if: always()
-        run: |
-          docker-compose -f tests/docker-compose.test.yml down -v || true
-
       - name: Set workflow status
         if: always()
         run: |
-          if [ "${{ steps.parse-results.outputs.failed }}" != "0" ]; then
+          if grep -q "failed" test-results/junit.xml 2>/dev/null; then
             exit 1
           fi

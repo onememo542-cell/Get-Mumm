@@ -12,6 +12,9 @@ import { WaveDivider } from "@/components/ui/WaveDivider";
 export default function ChefsPage() {
   const { t, isRtl } = useLanguage();
   const { data: chefs, isLoading } = useListChefs();
+  
+  // Ensure chefs is always an array
+  const chefsArray = Array.isArray(chefs) ? chefs : [];
 
   useSEO({
     title: t("Meet Our Chefs", "تعرف على طهاتنا"),
@@ -35,17 +38,17 @@ export default function ChefsPage() {
   useEffect(() => { setActiveSpecialty(null); }, [isRtl]);
 
   const allSpecialties = useMemo(() => {
-    if (!chefs) return [];
+    if (!chefsArray || chefsArray.length === 0) return [];
     const set = new Set<string>();
-    chefs.forEach((chef) =>
+    chefsArray.forEach((chef) =>
       (isRtl ? chef.specialtiesAr : chef.specialties).forEach((s) => set.add(s))
     );
     return Array.from(set).sort();
-  }, [chefs, isRtl]);
+  }, [chefsArray, isRtl]);
 
   const filteredChefs = useMemo(() => {
-    if (!chefs) return [];
-    let result = chefs;
+    if (!chefsArray || chefsArray.length === 0) return [];
+    let result = chefsArray;
     if (debouncedSearch) {
       const q = debouncedSearch.toLowerCase();
       result = result.filter(

@@ -11,6 +11,9 @@ import { WaveDivider } from "@/components/ui/WaveDivider";
 export default function SubscriptionsPage() {
   const { t, isRtl } = useLanguage();
   const { data: plans, isLoading } = useListSubscriptionPlans();
+  
+  // Ensure plans is always an array
+  const plansArray = Array.isArray(plans) ? plans : [];
 
   return (
     <PageWrapper>
@@ -36,7 +39,7 @@ export default function SubscriptionsPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {plans?.map((plan) => (
+            {plansArray?.map((plan) => (
               <div 
                 key={plan.id} 
                 className={`relative flex flex-col bg-card border rounded-[2rem] p-8 transition-transform hover:-translate-y-2 ${

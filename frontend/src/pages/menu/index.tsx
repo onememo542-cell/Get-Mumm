@@ -93,19 +93,25 @@ export default function MenuPage() {
     maxPrice: PRICE_RANGES[priceRangeIdx].max ?? undefined,
   });
 
+  // Ensure categories is always an array
+  const categoriesArray = Array.isArray(categories) ? categories : [];
+  
+  // Ensure rawItems is always an array
+  const rawItemsArray = Array.isArray(rawItems) ? rawItems : [];
+
   const categoryCounts = useMemo<Record<number, number>>(() => {
-    if (!rawItems) return {};
-    return rawItems.reduce<Record<number, number>>((acc, item) => {
+    if (!rawItemsArray || rawItemsArray.length === 0) return {};
+    return rawItemsArray.reduce<Record<number, number>>((acc, item) => {
       if (item.categoryId != null) {
         acc[item.categoryId] = (acc[item.categoryId] ?? 0) + 1;
       }
       return acc;
     }, {});
-  }, [rawItems]);
+  }, [rawItemsArray]);
 
   const filteredItems = useMemo(() => {
-    if (!rawItems) return [];
-    let out = rawItems;
+    if (!rawItemsArray || rawItemsArray.length === 0) return [];
+    let out = rawItemsArray;
 
     if (activeCategory !== null) {
       out = out.filter((item) => item.categoryId === activeCategory);
@@ -128,7 +134,7 @@ export default function MenuPage() {
     });
 
     return out;
-  }, [rawItems, activeCategory, activeDietary, sortKey]);
+  }, [rawItemsArray, activeCategory, activeDietary, sortKey]);
 
   const totalPages     = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
   const paginatedItems = useMemo(
@@ -239,14 +245,14 @@ export default function MenuPage() {
                   ? "bg-primary-foreground/20 text-primary-foreground"
                   : "bg-muted text-muted-foreground"
               }`}>
-                {rawItems?.length ?? 0}
+                {rawItemsArray?.length ?? 0}
               </span>
             </span>
           </button>
 
           {isCatsLoading
             ? Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-9 w-28 rounded-full shrink-0" />)
-            : categories?.map((cat) => {
+            : categoriesArray?.map((cat) => {
                 const count = categoryCounts[cat.id] ?? 0;
                 const isActive = activeCategory === cat.id;
                 return (

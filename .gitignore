@@ -48,3 +48,23 @@ Thumbs.db
 .cache/
 .local/
 .vercel
+
+# Python testing (pytest + Playwright)
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.pytest/
+test_execution.log
+test-results/
+allure-results/
+allure-report/
+*.log
+.env.local
+
+# Python environment
+venv/
+env/
+ENV/
+.venv
+

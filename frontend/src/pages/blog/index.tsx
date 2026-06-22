@@ -40,11 +40,14 @@ export default function BlogPage() {
     filter === "all" ? undefined : { type: filter }
   );
 
+  // Ensure posts is always an array
+  const postsArray = Array.isArray(posts) ? posts : [];
+
   const filteredPosts = useMemo(() => {
-    if (!posts) return [];
-    if (!debouncedSearch) return posts;
+    if (!postsArray || postsArray.length === 0) return [];
+    if (!debouncedSearch) return postsArray;
     const q = debouncedSearch.toLowerCase();
-    return posts.filter(
+    return postsArray.filter(
       (p) =>
         p.title.toLowerCase().includes(q) ||
         p.titleAr.toLowerCase().includes(q) ||
@@ -52,7 +55,7 @@ export default function BlogPage() {
         p.author.toLowerCase().includes(q) ||
         (p.tags ?? []).some((tag) => tag.toLowerCase().includes(q))
     );
-  }, [posts, debouncedSearch]);
+  }, [postsArray, debouncedSearch]);
 
   const totalPages = Math.ceil(filteredPosts.length / ITEMS_PER_PAGE);
   const paginatedPosts = useMemo(

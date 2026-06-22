@@ -210,10 +210,10 @@ export default function AboutPage() {
                 className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
               >
                 {[
-                  { value: `${summary.mealsDelivered.toLocaleString()}+`, label: t("Meals Delivered", "وجبة تم توصيلها") },
-                  { value: `${summary.chefsEmpowered}+`, label: t("Active Kitchens", "مطبخ نشط") },
+                  { value: `${(summary?.mealsDelivered ?? 0).toLocaleString()}+`, label: t("Meals Delivered", "وجبة تم توصيلها") },
+                  { value: `${summary?.chefsEmpowered ?? 0}+`, label: t("Active Kitchens", "مطبخ نشط") },
                   { value: "80%", label: t("Repeat Customers", "عملاء متكررون") },
-                  { value: summary.avgRating, label: t("Average Rating", "متوسط التقييم") },
+                  { value: summary?.avgRating ?? "4.8", label: t("Average Rating", "متوسط التقييم") },
                 ].map((stat, i) => (
                   <motion.div key={i} variants={sectionItem} className="flex flex-col">
                     <span className="text-4xl md:text-5xl font-bold mb-2">{stat.value}</span>

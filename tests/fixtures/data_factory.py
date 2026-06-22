@@ -321,6 +321,19 @@ class TestDataFactory:
         logger.info("Generated edge case test data")
         return edge_cases
     
+    # Aliases for conftest compatibility
+    def create_menu_items(self, count: int = 5) -> List[MenuItem]:
+        """Alias for generate_menu_items (used by conftest)."""
+        return self.generate_menu_items(count)
+    
+    def create_chefs(self, count: int = 3) -> List[Chef]:
+        """Alias for generate_chefs (used by conftest)."""
+        return self.generate_chefs(count)
+    
+    def create_blog_posts(self, count: int = 5) -> List[BlogPost]:
+        """Alias for generate_blog_posts (used by conftest)."""
+        return self.generate_blog_posts(count)
+    
     def generate_invalid_emails(self) -> List[str]:
         """
         Generate invalid email addresses for validation testing.
