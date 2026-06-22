@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconComponent } from '@ng-icons/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -14,27 +15,28 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
   selector: 'app-blog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, NgIconComponent, SkeletonComponent, EmptyStateComponent, ErrorStateComponent],
+  imports: [CommonModule, NgIconComponent, TranslatePipe, SkeletonComponent, EmptyStateComponent, ErrorStateComponent],
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Blog Posts</h2>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">{{ 'BLOG.TITLE' | translate }}</h2>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            @if (!loading()) { {{ filtered().length }} published articles }
+            @if (!loading()) { {{ filtered().length }} {{ 'BLOG.SUBTITLE_COUNT' | translate }} }
           </p>
         </div>
-        <button class="btn-secondary gap-2" (click)="load()" aria-label="Refresh">
+        <button class="btn-secondary gap-2" (click)="load()" [attr.aria-label]="'COMMON.REFRESH' | translate">
           <ng-icon name="lucideRefreshCw" size="14" />
         </button>
       </div>
 
       <div class="card p-4">
         <div class="relative w-full sm:w-80">
-          <ng-icon name="lucideSearch" size="15" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-          <input type="search" class="input pl-9" placeholder="Search posts or authors..."
+          <ng-icon name="lucideSearch" size="15" class="absolute start-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <input type="search" class="input ps-9"
+                 [placeholder]="'BLOG.SEARCH_PLACEHOLDER' | translate"
                  [value]="search()" (input)="search$.next($any($event.target).value)"
-                 aria-label="Search blog posts" />
+                 [attr.aria-label]="'COMMON.SEARCH' | translate" />
         </div>
       </div>
 
@@ -43,14 +45,18 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
       } @else if (error()) {
         <app-error-state (retry)="load()" />
       } @else if (filtered().length === 0) {
-        <app-empty-state iconName="lucideNewspaper" title="No blog posts" message="No posts match your search." />
+        <app-empty-state iconName="lucideNewspaper"
+                         [title]="'BLOG.EMPTY_TITLE' | translate"
+                         [message]="'BLOG.EMPTY_MSG' | translate" />
       } @else {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" role="list">
           @for (post of filtered(); track post.id) {
             <article class="card overflow-hidden hover:shadow-md transition-shadow group flex flex-col" role="listitem">
               <div class="h-44 bg-gray-100 dark:bg-gray-800 overflow-hidden flex-shrink-0">
                 @if (post.imageUrl) {
-                  <img [src]="post.imageUrl" [alt]="post.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" decoding="async" />
+                  <img [src]="post.imageUrl" [alt]="post.title"
+                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                       loading="lazy" decoding="async" />
                 } @else {
                   <div class="w-full h-full flex items-center justify-center">
                     <ng-icon name="lucideNewspaper" size="40" class="text-gray-300 dark:text-gray-600" />
@@ -62,7 +68,7 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
                 <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
                   <ng-icon name="lucideCalendar" size="11" />
                   {{ post.publishedAt | date:'dd MMM yyyy' }}
-                  <span class="text-gray-300 dark:text-gray-600">·</span>
+                  <span class="opacity-40">·</span>
                   <ng-icon name="lucideUser" size="11" />
                   {{ post.author }}
                 </p>
@@ -78,7 +84,7 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
                       }
                     </div>
                   }
-                  <code class="text-xs text-gray-300 dark:text-gray-600 font-mono truncate ml-auto">{{ post.slug }}</code>
+                  <code class="text-xs text-gray-300 dark:text-gray-600 font-mono truncate ms-auto">{{ post.slug }}</code>
                 </div>
               </div>
             </article>
@@ -91,7 +97,6 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
 export class BlogComponent implements OnInit {
   private api        = inject(ApiService);
   private destroyRef = inject(DestroyRef);
-
   loading  = signal(true);
   error    = signal(false);
   posts    = signal<BlogPostDto[]>([]);

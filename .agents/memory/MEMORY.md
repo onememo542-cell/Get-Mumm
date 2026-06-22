@@ -2,3 +2,4 @@
 - [Subscription enum text columns](subscription-enum-text.md) — SubscriptionType and SubscriptionStatus are stored as text in DB; requires HasConversion<string>() in DbContext or EF Core throws InvalidCastException.
 - [Supabase DB connection](supabase-db.md) — backend connects to Supabase (not local Replit DB); use psql with the appsettings.json connection string for schema changes, not executeSql().
 - [MenuItem IDs are UUIDs](menu-item-id-type.md) — MenuItem.Id is Guid in C# and serializes as UUID string; frontend CartItem.id typed as number but runtime value is UUID string — use String(item.id) when sending to backend.
+- [Angular 18 i18n inline loader](angular-i18n-inline.md) — Angular 18 app builder serves assets from `public/` not `src/assets/`; ngx-translate HTTP loader 404s in dev. Use an inline object loader (Observable.of()) instead — synchronous, no HTTP needed.

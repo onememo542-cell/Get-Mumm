@@ -1,8 +1,9 @@
-import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './sidebar.component';
 import { NavbarComponent } from './navbar.component';
 import { ToastComponent } from '../shared/components/toast.component';
+import { LanguageService } from '../core/services/language.service';
 
 @Component({
   selector: 'app-shell',
@@ -15,7 +16,7 @@ import { ToastComponent } from '../shared/components/toast.component';
       <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <app-navbar (menuOpen)="sidebarOpen.set(true)" />
         <main class="flex-1 overflow-y-auto">
-          <div class="max-w-screen-2xl mx-auto px-4 py-5 md:px-8 md:py-7">
+          <div class="max-w-screen-2xl mx-auto px-4 py-5 sm:px-6 md:px-8 md:py-7">
             <router-outlet />
           </div>
         </main>
@@ -24,6 +25,12 @@ import { ToastComponent } from '../shared/components/toast.component';
     <app-toast />
   `
 })
-export class ShellComponent {
+export class ShellComponent implements OnInit {
   sidebarOpen = signal(false);
+
+  private langService = inject(LanguageService);
+
+  ngOnInit(): void {
+    this.langService.lang();
+  }
 }
