@@ -27,8 +27,9 @@ Security patches will be released as soon as possible after verification and tes
 ## Dependencies
 
 We use:
-- **Frontend:** React 19, Vite, Tailwind CSS
-- **Backend:** Node.js, Express, PostgreSQL, Drizzle ORM
-- **Testing:** Pytest, Playwright
+- **Frontend:** React 19, Vite, Tailwind CSS (deployed to Netlify)
+- **Backend:** C# ASP.NET Core 8.0, PostgreSQL (deployed to MonsterASP)
+- **Testing:** Pytest, Playwright, xUnit/NUnit
+- **Database:** PostgreSQL with Entity Framework Core
 
 Dependencies are regularly updated via automated scanning and manual reviews.

@@ -94,12 +94,6 @@ echo ""
 
 # 5. Check deployment configs
 echo "5️⃣  Checking deployment configurations..."
-if [ -f "vercel.json" ]; then
-    check_pass "vercel.json found"
-else
-    check_fail "vercel.json not found. Run: cp vercel.json.example vercel.json"
-fi
-
 if [ -f "netlify.toml" ]; then
     check_pass "netlify.toml found"
 else
@@ -244,9 +238,9 @@ if [ $FAILED -eq 0 ]; then
     echo ""
     echo "📝 Next steps:"
     echo "1. Review QUICK_DEPLOY_GUIDE.md for deployment steps"
-    echo "2. Set environment variables in Vercel and Netlify"
+    echo "2. Set environment variables in Azure and Netlify"
     echo "3. Push to main branch: git push origin main"
-    echo "4. Monitor deployments on Vercel and Netlify dashboards"
+    echo "4. Monitor deployments on Azure and Netlify dashboards"
     exit 0
 else
     echo "❌ Fix the above errors before deploying."

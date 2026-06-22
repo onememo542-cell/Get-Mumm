@@ -3,7 +3,7 @@
 ## Overview
 
 - **Frontend:** Deployed to Netlify
-- **Backend:** Deployed to Vercel
+- **Backend:** Deployed to Azure App Service (ASP.NET Core)
 - **Database:** PostgreSQL (managed service)
 - **CI/CD:** GitHub Actions
 
@@ -41,24 +41,26 @@ npm run build
 
 See `netlify.toml` for build settings.
 
-## Backend Deployment (Vercel)
+## Backend Deployment (Azure App Service)
 
 ### Setup
 
-1. Connect GitHub repository to Vercel
-2. Configure project settings:
-   - Framework: Node.js
-   - Build command: `npm run build`
-   - Output directory: `backend/dist`
-   - Root directory: `backend`
+1. Create Azure App Service with ASP.NET Core runtime
+2. Configure deployment source:
+   - Connect GitHub repository
+   - Select branch (e.g., `main`)
+   - Enable continuous deployment
 
 ### Environment Variables
 
-Set in Vercel dashboard → Settings → Environment Variables:
+Set in Azure App Service → Configuration → Application settings:
 ```
-DATABASE_URL=postgresql://user:pass@host/db
-NODE_ENV=production
-PORT=3001
+ASPNETCORE_ENVIRONMENT=Production
+DB_CONNECTION_STRING=postgresql://user:pass@host/db
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your-anon-key
+CORS_ORIGINS=https://your-frontend-domain.com
+LOG_LEVEL=Information
 ```
 
 ### Deploy
@@ -70,17 +72,15 @@ PORT=3001
 **Manual:**
 ```bash
 cd backend
-npm run build
-vercel deploy
+dotnet build --configuration Release
+dotnet publish --configuration Release --output ./publish
+# Use Azure CLI or portal to deploy publish folder
+az webapp deployment source config-zip --resource-group get-mumm-rg --name get-mumm-api --src-path ./publish.zip
 ```
 
 ### Configuration
 
-See `backend/vercel.json` for settings.
-
-### Serverless Functions
-
-Backend runs as serverless functions via `api/index.mjs`.
+See `appsettings.{Environment}.json` files for environment-specific settings.
 
 ## Database Setup (Production)
 
@@ -145,8 +145,8 @@ Workflow: `.github/workflows/e2e-tests.yml`
 - Error tracking
 - Performance monitoring
 
-### Backend (Vercel)
-- Vercel Analytics
+### Backend (Azure)
+- Application Insights
 - Function logs
 - Error monitoring
 
@@ -162,9 +162,10 @@ Workflow: `.github/workflows/e2e-tests.yml`
 - Automatic scaling built-in
 
 ### Backend
-- Serverless auto-scales with demand
-- Increase function timeout if needed
-- Monitor concurrent executions
+- Azure App Service auto-scales based on App Service Plan tier
+- Upgrade App Service Plan tier for higher concurrency
+- Monitor performance via Application Insights metrics
+- Configure auto-scale rules if using App Service Plan Premium or higher
 
 ### Database
 - Upgrade instance size if needed
@@ -177,7 +178,7 @@ Workflow: `.github/workflows/e2e-tests.yml`
 
 **Check logs:**
 - Netlify: Deploy tab → View logs
-- Vercel: Deployments → View logs
+- Azure: Application Insights → Logs
 
 **Common issues:**
 - Build command failed
@@ -188,7 +189,7 @@ Workflow: `.github/workflows/e2e-tests.yml`
 
 **Check status:**
 - Frontend: Netlify status page
-- Backend: Vercel status page
+- Backend: Azure status page
 - Database: Service provider status
 
 **Debug:**
@@ -213,10 +214,11 @@ SELECT * FROM information_schema.tables;
 2. Find previous deployment
 3. Click "Publish deploy"
 
-### Backend (Vercel)
-1. Go to Vercel dashboard
-2. Find previous deployment
-3. Click "Promote to Production"
+### Backend (Azure)
+1. Go to Azure portal
+2. Navigate to App Service deployment history
+3. Select previous deployment
+4. Click "Redeploy"
 
 ## Security
 
@@ -250,7 +252,7 @@ See [Security Policy](../.github/SECURITY.md) for details.
 ### Monitor Performance
 
 - Frontend: Netlify Analytics
-- Backend: Vercel Analytics
+- Backend: Azure Application Insights
 - Database: Provider metrics
 
 See [Architecture](./ARCHITECTURE.md) for performance considerations.

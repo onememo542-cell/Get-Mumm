@@ -81,14 +81,6 @@ echo.
 
 REM 5. Check deployment configs
 echo 5. Checking deployment configurations...
-if exist "vercel.json" (
-    echo   [OK] vercel.json found
-    set /a PASSED+=1
-) else (
-    echo   [ERROR] vercel.json not found
-    set /a FAILED+=1
-)
-
 if exist "netlify.toml" (
     echo   [OK] netlify.toml found
     set /a PASSED+=1
@@ -184,9 +176,9 @@ if !FAILED! EQU 0 (
     echo.
     echo Next steps:
     echo 1. Review QUICK_DEPLOY_GUIDE.md
-    echo 2. Set environment variables in Vercel and Netlify
+    echo 2. Set environment variables in Azure and Netlify
     echo 3. Push to main: git push origin main
-    echo 4. Monitor deployments on Vercel and Netlify dashboards
+    echo 4. Monitor deployments on Azure and Netlify dashboards
     exit /b 0
 ) else (
     echo Fix the above errors before deploying.

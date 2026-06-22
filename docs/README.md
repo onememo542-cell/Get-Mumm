@@ -32,7 +32,7 @@ Welcome to Get-Mumm documentation. Choose what you need:
 
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deploying to production
   - Frontend to Netlify
-  - Backend to Vercel
+  - Backend to Azure App Service
   - Database setup
   - CI/CD pipeline
 

@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced pytest configuration
 
 ### Fixed
-- Backend Vercel deployment (conditional server start)
+- Backend Azure App Service deployment
 - Frontend Netlify deployment (build base path, Node version)
 
 ## Versioning

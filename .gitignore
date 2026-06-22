@@ -47,7 +47,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
-.vercel
 
 # Python testing (pytest + Playwright)
 __pycache__/

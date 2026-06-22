@@ -187,22 +187,22 @@ npm run build
 npm run build 2>&1
 ```
 
-### Vercel Deployment Fails
+### Azure Deployment Fails
 
 **Check:**
-1. Build logs: Vercel → Deployments → View logs
-2. Root directory set to `backend`
-3. Build command: `npm run build`
-4. Environment variables set?
+1. Build logs: Azure Portal → App Service → Deployment → View logs
+2. Environment variables set correctly
+3. Database connection string valid
+4. ASP.NET Core runtime version compatible
 
 **Solution:**
 ```bash
 # Test build locally
 cd backend
-npm run build
+dotnet build --configuration Release
 
-# Check dist/ generated
-ls -la dist/
+# Test locally first
+dotnet run --configuration Release
 ```
 
 ### Database Migration Failed
@@ -226,10 +226,10 @@ SELECT * FROM drizzle_schema_migration;
 **Problem:** Backend not responding
 
 **Solutions:**
-1. Check function is deployed
+1. Check application is deployed and running
 2. Check environment variables
 3. Check database connection
-4. View function logs in Vercel
+4. View application logs in Azure Application Insights
 
 ## Performance
 
@@ -281,8 +281,8 @@ tail -f tests/test_execution.log
 **Deployment (Netlify):**
 - Netlify → Deploys → Latest → View logs
 
-**Deployment (Vercel):**
-- Vercel → Deployments → Latest → View logs
+**Deployment (Azure):**
+- Azure Portal → App Service → Monitoring → Logs
 
 ### Check Status
 
@@ -291,9 +291,7 @@ tail -f tests/test_execution.log
 docker ps
 
 # Ports listening
-lsof -i :3001
-
-# Database
+lsof -i :3001# Database
 psql -c "SELECT 1"
 ```
 

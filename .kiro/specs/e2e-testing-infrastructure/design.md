@@ -285,18 +285,18 @@ services:
       dockerfile: Dockerfile
     container_name: get-mumm-app-server
     environment:
-      DATABASE_URL: postgres://test_user:test_password@postgres-test:5432/test_db
-      NODE_ENV: test
-      PORT: 3001
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__DefaultConnection: Host=postgres-test;Database=test_db;Username=test_user;Password=test_password
     ports:
-      - "3001:3001"
+      - "5000:5000"
     depends_on:
       postgres-test:
         condition: service_healthy
     networks:
       - test-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 2s
       timeout: 5s
       retries: 10
@@ -998,8 +998,13 @@ jobs:
           pip install -r requirements-test.txt
           playwright install chromium firefox
       
-      - name: Install Node dependencies
-        run: cd backend && npm install
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore backend dependencies
+        run: cd backend && dotnet restore
       
       - name: Start Docker Compose services
         run: docker-compose -f docker-compose.test.yml up -d

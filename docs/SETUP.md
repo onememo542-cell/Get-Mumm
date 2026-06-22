@@ -2,6 +2,7 @@
 
 ## Prerequisites
 
+- .NET SDK 8.0+
 - Node.js >= 20
 - Python 3.11+
 - PostgreSQL 15+
@@ -21,18 +22,18 @@ cd Get-Mumm
 **Backend:**
 ```bash
 cd backend
-npm install
+dotnet restore
 ```
 
 **Frontend:**
 ```bash
 cd frontend
-npm install
+pnpm install
 ```
 
 **Tests:**
 ```bash
-pip install -r tests/requirements-test.txt
+pip install -r frontend/tests/e2e/requirements-test.txt
 playwright install chromium
 ```
 
@@ -40,16 +41,23 @@ playwright install chromium
 
 **Backend:**
 ```bash
-cd backend
-cp .env.example .env
-# Edit .env with your settings
+cd backend/GetMumm.Api
+cp appsettings.Development.json.example appsettings.Development.json
+# Edit appsettings.Development.json with your settings
 ```
 
-**Example .env:**
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/get_mumm
-NODE_ENV=development
-PORT=3001
+**Example appsettings.Development.json:**
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=get_mumm;Username=postgres;Password=password"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    }
+  }
+}
 ```
 
 ### 4. Database Setup
@@ -58,8 +66,8 @@ PORT=3001
 ```bash
 createdb get_mumm
 cd backend
-npm run migrate  # Run migrations
-npm run seed     # Seed initial data
+dotnet ef database update --project GetMumm.Api
+# Seed initial data (if seeding project exists)
 ```
 
 **Option B: Docker PostgreSQL**
@@ -78,15 +86,15 @@ docker run -d \
 
 **Terminal 1 - Backend:**
 ```bash
-cd backend
-npm run dev
-# Server runs on http://localhost:3001
+cd backend/GetMumm.Api
+dotnet run
+# Server runs on http://localhost:5000 (or port specified in launchSettings.json)
 ```
 
 **Terminal 2 - Frontend:**
 ```bash
 cd frontend
-npm run dev
+pnpm dev
 # App runs on http://localhost:5173
 ```
 
@@ -95,14 +103,14 @@ npm run dev
 **Backend:**
 ```bash
 cd backend
-npm run build
-npm run start
+dotnet build --configuration Release
+dotnet publish --configuration Release --output ./publish
 ```
 
 **Frontend:**
 ```bash
 cd frontend
-npm run build
+pnpm build
 # Output in dist/
 ```
 
@@ -114,8 +122,8 @@ See [Testing Guide](./TESTING.md) for running tests.
 
 **Port already in use:**
 ```bash
-# Find process on port 3001
-lsof -i :3001
+# Find process on port 5000 (default ASP.NET Core)
+lsof -i :5000
 # Kill it
 kill -9 <PID>
 ```
@@ -126,10 +134,11 @@ kill -9 <PID>
 psql -U postgres -d get_mumm -c "SELECT 1"
 ```
 
-**Node modules issues:**
+**.NET dependencies issues:**
 ```bash
-rm -rf node_modules package-lock.json
-npm install
+rm -rf backend/bin backend/obj
+cd backend
+dotnet restore
 ```
 
 See [Troubleshooting](./TROUBLESHOOTING.md) for more help.

@@ -427,17 +427,17 @@ This document specifies the functional and non-functional requirements for migra
 4. WHEN accessing `/swagger/ui`, THE browser SHALL display interactive API documentation
 5. EACH endpoint SHALL document request parameters, request body schema, response schema, and possible status codes
 
-### Requirement 33: Deployment to Serverless Environment
+### Requirement 33: Deployment to App Service (MonsterASP)
 
-**User Story:** As an operator, I want to deploy to serverless platform (Azure Functions or AWS Lambda), so that I can reduce infrastructure overhead.
+**User Story:** As an operator, I want to deploy to MonsterASP (or Azure App Service), so that I can host the backend with reliable infrastructure and scalability.
 
 #### Acceptance Criteria
 
-1. THE Presentation_Layer SHALL be deployable to Azure Functions or AWS Lambda
-2. WHEN deployed to serverless, THE application SHALL start and respond to HTTP requests within configured timeout
-3. THE serverless configuration SHALL read connection strings from environment variables (not appsettings.json)
-4. WHEN cold start occurs, THE application SHALL initialize DbContext and services on first request
-5. THE migrations SHALL be applied before serverless deployment (during deployment pipeline)
+1. THE Presentation_Layer SHALL be deployable to MonsterASP via FTP or Git
+2. WHEN deployed to MonsterASP, THE application SHALL start and respond to HTTP requests
+3. THE application configuration SHALL read connection strings and settings from environment variables or web.config
+4. WHEN application starts, THE Entity Framework Core DbContext SHALL initialize and migrations SHALL apply
+5. THE health check endpoint SHALL be available at /api/health for monitoring
 
 ### Requirement 34: Health Check Endpoint
 
