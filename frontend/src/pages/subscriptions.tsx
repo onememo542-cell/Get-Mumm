@@ -68,7 +68,7 @@ export default function SubscriptionsPage() {
                 </div>
 
                 <div className="flex-1 space-y-4 mb-8">
-                  {(isRtl ? plan.featuresAr : plan.features).map((feature, idx) => (
+                  {(isRtl ? plan.featuresAr : plan.features).map((feature: string, idx: number) => (
                     <div key={idx} className="flex items-start gap-3">
                       <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                       <span className="text-sm font-medium">{feature}</span>

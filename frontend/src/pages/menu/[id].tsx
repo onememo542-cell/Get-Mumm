@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCart } from "@/contexts/CartContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useGetMenuItem, useListMenuItems, getGetMenuItemQueryKey } from "@/api";
+import { useGetMenuItem, useListMenuItems } from "@/api";
 import { useParams, Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -45,9 +45,7 @@ export default function MenuItemPage() {
   const { addItem, openCart } = useCart();
   const [quantity, setQuantity] = useState(1);
 
-  const { data: item, isLoading } = useGetMenuItem(Number(id), {
-    query: { enabled: !!id, queryKey: getGetMenuItemQueryKey(Number(id)) }
-  });
+  const { data: item, isLoading } = useGetMenuItem(Number(id));
 
   const { data: allItems } = useListMenuItems();
   const relatedItems = useMemo(() => {

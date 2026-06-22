@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { endpoints } from "../endpoints";
-import type { ContactInput, OfficeInquiryInput, ErrorType } from "../types";
+import type { ContactInput, OfficeInquiryInput } from "../types";
 
 export const useSubmitContact = () => {
   return useMutation({

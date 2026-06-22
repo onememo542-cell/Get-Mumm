@@ -32,10 +32,10 @@
 - Wouter (Routing)
 
 **Backend**
-- Node.js + Express
-- Drizzle ORM
+- ASP.NET Core 8
+- Entity Framework Core
 - PostgreSQL
-- Zod (Schema Validation)
+- FluentValidation & AutoMapper
 
 ## 🚀 Quick Start
 
@@ -54,11 +54,10 @@
 
 2. **Setup the Backend**
    ```bash
-   cd backend
-   pnpm install
-   # Configure your .env file
-   cp .env.example .env 
-   pnpm dev
+   cd backend/GetMumm.Api
+   # Configure your appsettings.Development.json with DB credentials
+   dotnet restore
+   dotnet run
    ```
 
 3. **Setup the Frontend**
@@ -68,14 +67,14 @@
    pnpm dev
    ```
 
-The frontend will be available at `http://localhost:5173` and the API at `http://localhost:8080`.
+The frontend will be available at `http://localhost:5173` and the API at `https://localhost:5001`.
 
 ## 📂 Project Structure
 
 This repository is split into two independent applications:
 
 - `/frontend`: The React application and UI.
-- `/backend`: The Express API and database schemas.
+- `/backend`: The ASP.NET Core API and Clean Architecture layers.
 
 ## 🧪 Testing
 
@@ -108,7 +107,7 @@ Tests run automatically on GitHub Actions for all PRs and pushes to `main`/`deve
 
 ```
 get-mumm/
-├── backend/                     # Express.js API
+├── backend/                     # ASP.NET Core API
 ├── frontend/                    # React 19 UI
 ├── tests/                       # E2E tests (Pytest + Playwright)
 ├── scripts/                     # Utility scripts

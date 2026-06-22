@@ -47,9 +47,7 @@ export default function ForOfficesPage() {
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    submitInquiry.mutate(
-      { data },
-      {
+    submitInquiry.mutate(data, {
         onSuccess: () => {
           toast({
             title: tx(offices.inquirySent),

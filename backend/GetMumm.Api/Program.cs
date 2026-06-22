@@ -8,17 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // 1. Configure Serilog
 builder.Host.ConfigureSerilog();
 
-// 2. Add services to the container
-builder.Services.AddControllers(options =>
-{
-    options.ReturnHttpNotAcceptable = true;
-});
-
-// Configure JSON options
-builder.Services.Configure<JsonOptions>(options =>
-{
-    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-});
+// 2. Add controllers and JSON options configuration
+builder.Services.AddControllersConfiguration();
 
 // Add CORS, Swagger, and other configurations
 builder.Services.AddCorsConfiguration(builder.Configuration);

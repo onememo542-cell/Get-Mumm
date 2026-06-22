@@ -5,10 +5,10 @@
 ```
 ┌─────────────┐         ┌──────────────┐         ┌──────────────┐
 │   Frontend  │         │    Backend   │         │  PostgreSQL  │
-│  React 19   │◄────────│  Express.js  │◄────────│   Database   │
+│  React 19   │◄────────│ASP.NET Core 8│◄────────│   Database   │
 │   + Vite    │  HTTP   │              │  SQL    │              │
 └─────────────┘         └──────────────┘         └──────────────┘
-  Port 5173              Port 3001                 Port 5432
+  Port 5173              Port 5001                 Port 5432
 
        ▼
    Tests (Pytest)
@@ -48,23 +48,20 @@ frontend/src/
 ## Backend Architecture
 
 **Tech Stack:**
-- Node.js + Express (REST API)
-- Drizzle ORM (type-safe database)
+- ASP.NET Core 8 (REST API)
+- Entity Framework Core (type-safe database access)
 - PostgreSQL (data storage)
-- Zod (schema validation)
-- TypeScript (type safety)
+- FluentValidation (schema validation)
+- C# (type safety)
 
-**Structure:**
+**Structure (Clean Architecture):**
 ```
-backend/src/
-├── routes/         # API endpoints
-├── services/       # Business logic
-├── repositories/   # Data access layer
-├── db/             # Database config & migrations
-├── middlewares/    # Express middlewares
-├── lib/            # Utilities
-├── types/          # TypeScript types
-└── index.ts        # Server entry point
+backend/
+├── GetMumm.Api/            # Presentation Layer (Controllers)
+├── GetMumm.Application/    # Application Layer (Services & DTOs)
+├── GetMumm.Domain/         # Domain Layer (Entities & Interfaces)
+├── GetMumm.Infrastructure/ # Infrastructure Layer (EF Core & Data)
+└── GetMumm.Tests/          # Test Projects
 ```
 
 **API Endpoints:**
@@ -76,12 +73,12 @@ backend/src/
 - `GET /health` - Health check
 
 **Database Schema:**
-- `menu_items` - Menu items with prices & dietary info
-- `chefs` - Chef profiles
-- `blog_posts` - Blog content
-- `contact_submissions` - Contact form submissions
-- `subscriptions` - Subscription plans
-- See `backend/migrations/` for full schema
+- `MenuItems` - Menu items with prices & dietary info
+- `Chefs` - Chef profiles
+- `BlogPosts` - Blog content
+- `ContactSubmissions` - Contact form submissions
+- `Subscriptions` - Subscription plans
+- See `backend/GetMumm.Infrastructure/Migrations/` for full schema
 
 ## Testing Architecture
 
@@ -119,10 +116,10 @@ backend/src/
 - Output: `dist/`
 - Environment: `.env.local`
 
-### Backend (Vercel)
-- Build: `npm run build`
-- Output: `dist/`
-- Serverless functions: `api/index.mjs`
+### Backend (RunAsp.net / IIS)
+- Build: `dotnet build`
+- Output: `bin/Release/net8.0/`
+- Server: ASP.NET Core Kestrel / IIS
 
 ### Database (Production PostgreSQL)
 - Managed PostgreSQL instance
@@ -137,8 +134,8 @@ See [Deployment Guide](./DEPLOYMENT.md) for details.
 ```
 1. Frontend requests: GET /api/menu
 2. Backend queries database
-3. Drizzle ORM transforms data
-4. Express returns JSON
+3. Entity Framework Core transforms data
+4. ASP.NET Core API returns JSON
 5. React Query caches response
 6. UI renders with Tailwind CSS
 ```
@@ -146,8 +143,8 @@ See [Deployment Guide](./DEPLOYMENT.md) for details.
 ### User Submits Contact Form
 ```
 1. Frontend sends: POST /api/contact (form data)
-2. Express validates with Zod
-3. Backend inserts into database
+2. API validates with FluentValidation
+3. Backend inserts into database via EF Core
 4. Transaction commits
 5. Success response sent
 6. Frontend shows confirmation
@@ -161,9 +158,9 @@ See [Deployment Guide](./DEPLOYMENT.md) for details.
 - Fallback UI
 
 **Backend:**
-- Express error middleware
-- Zod validation errors
-- Database error logging
+- ExceptionHandlingMiddleware
+- FluentValidation errors
+- Database error logging via Serilog
 - HTTP status codes
 
 **Tests:**
@@ -200,8 +197,8 @@ See [Deployment Guide](./DEPLOYMENT.md) for details.
 - HTTPS only
 
 **Backend:**
-- Input validation with Zod
-- SQL injection prevention (ORM)
+- Input validation with FluentValidation
+- SQL injection prevention (EF Core)
 - CORS configuration
 - Rate limiting ready
 

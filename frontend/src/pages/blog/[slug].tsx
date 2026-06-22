@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useGetBlogPost, getGetBlogPostQueryKey } from "@/api";
+import { useGetBlogPost } from "@/api";
 import { useParams, Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Clock, ArrowLeft, ArrowRight } from "lucide-react";
@@ -19,9 +19,7 @@ export default function BlogPostPage() {
     ),
   });
 
-  const { data: post, isLoading } = useGetBlogPost(slug || "", {
-    query: { enabled: !!slug, queryKey: getGetBlogPostQueryKey(slug || "") }
-  });
+  const { data: post, isLoading } = useGetBlogPost(slug as string);
 
   if (isLoading) {
     return (

@@ -11,12 +11,20 @@ import type {
   ListTestimonialsParams,
   MenuItem,
   OfficeInquiryInput,
+  SiteSummary,
+  SubscriptionPlan,
   Testimonial,
 } from "./types";
 
 export const endpoints = {
   // Health
   healthCheck: () => customFetch<HealthStatus>("/api/healthz", { method: "GET" }),
+
+  // Site Stats
+  getSiteSummary: () => customFetch<SiteSummary>("/api/stats", { method: "GET" }),
+
+  // Subscriptions
+  listSubscriptionPlans: () => customFetch<SubscriptionPlan[]>("/api/subscriptions", { method: "GET" }),
 
   // Menu Categories
   listCategories: () => customFetch<Category[]>("/api/menu/categories", { method: "GET" }),

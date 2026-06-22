@@ -41,21 +41,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       
-      - name: Install all dependencies
-        run: pnpm install --recursive
+      - name: Install frontend dependencies
+        run: cd frontend && pnpm install
       
-      - name: Lint backend
-        run: pnpm --filter backend lint:check
-        continue-on-error: true
-      
-      - name: Type check backend
-        run: cd backend && npm run typecheck
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          
+      - name: Build backend
+        run: dotnet build backend/GetMumm.Api/GetMumm.Api.csproj -c Release
       
       - name: Type check frontend
         run: cd frontend && npm run typecheck
-      
-      - name: Build backend
-        run: cd backend && npm run build
       
       - name: Build frontend
         run: cd frontend && npm run build
@@ -67,14 +65,6 @@ jobs:
             exit 1
           fi
           echo "Frontend built successfully to: frontend/dist"
-      
-      - name: Check backend build output
-        run: |
-          if [ ! -f "backend/dist/index.mjs" ]; then
-            echo "Error: Backend dist file not found"
-            exit 1
-          fi
-          echo "Backend built successfully to: backend/dist/index.mjs"
   
   deploy-frontend:
     needs: test-and-build
@@ -109,7 +99,7 @@ jobs:
         run: |
           if [ "${{ job.status }}" == "success" ]; then
             echo "✅ Frontend deployed to Netlify!"
-            echo "✅ Backend will auto-deploy via Vercel GitHub integration"
+            echo "✅ Backend CI build successful (Deploy manually to runasp.net or configure IIS deploy)"
           else
             echo "❌ Deployment failed. Check logs above."
             exit 1

@@ -44,29 +44,24 @@ jobs:
         run: |
           playwright install chromium
 
-      - name: Install backend dependencies
-        run: |
-          cd backend
-          pnpm install
-
-      - name: Build backend
-        run: |
-          cd backend
-          npm run build
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
 
       - name: Start backend server
         env:
-          NODE_ENV: test
-          PORT: 3001
+          ASPNETCORE_ENVIRONMENT: Development
+          ASPNETCORE_URLS: http://localhost:3001
         run: |
-          cd backend
+          cd backend/GetMumm.Api
           echo "Starting backend server on port 3001..."
-          node --enable-source-maps ./dist/index.mjs > backend.log 2>&1 &
+          dotnet run > ../backend.log 2>&1 &
           BACKEND_PID=$!
           echo "Backend PID: $BACKEND_PID"
           
-          for i in {1..30}; do
-            if curl -s http://localhost:3001/health 2>/dev/null | grep -q "ok"; then
+          for i in {1..60}; do
+            if curl -s http://localhost:3001/api/health 2>/dev/null | grep -q "Healthy\|Service is operational"; then
               echo "✓ Backend ready after $i attempts"
               break
             fi

@@ -69,9 +69,7 @@ export default function ContactPage() {
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    submitContact.mutate(
-      { data },
-      {
+    submitContact.mutate(data, {
         onSuccess: () => {
           toast({
             title: t("Message sent!", "تم إرسال رسالتك!"),
