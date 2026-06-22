@@ -12,10 +12,13 @@ import {
   lucideX, lucidePlus, lucideTrash2, lucideLogOut, lucideSun, lucideMoon,
   lucideMenu, lucideAlertTriangle, lucideInfo, lucideCheckCircle2,
   lucideXCircle, lucideDatabase, lucideActivity, lucideLoader, lucideEye,
-  lucideChevronRight, lucideArrowRight, lucideShield, lucidePackage,
+  lucideChevronRight, lucideChevronDown, lucideChevronUp,
+  lucideArrowRight, lucideShield, lucidePackage,
   lucideUsers, lucideTrendingUp, lucideHeart, lucideNewspaper,
   lucideCalendar, lucideUser, lucideLock, lucideWifi, lucideWifiOff,
   lucideServer, lucideGlobe, lucideZap, lucideLanguages,
+  lucideMailOpen, lucideBuilding2, lucideMessageSquare,
+  lucidePencil, lucideSave,
 } from '@ng-icons/lucide';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
@@ -45,10 +48,13 @@ export const appConfig: ApplicationConfig = {
       lucideX, lucidePlus, lucideTrash2, lucideLogOut, lucideSun, lucideMoon,
       lucideMenu, lucideAlertTriangle, lucideInfo, lucideCheckCircle2,
       lucideXCircle, lucideDatabase, lucideActivity, lucideLoader, lucideEye,
-      lucideChevronRight, lucideArrowRight, lucideShield, lucidePackage,
+      lucideChevronRight, lucideChevronDown, lucideChevronUp,
+      lucideArrowRight, lucideShield, lucidePackage,
       lucideUsers, lucideTrendingUp, lucideHeart, lucideNewspaper,
       lucideCalendar, lucideUser, lucideLock, lucideWifi, lucideWifiOff,
       lucideServer, lucideGlobe, lucideZap, lucideLanguages,
+      lucideMailOpen, lucideBuilding2, lucideMessageSquare,
+      lucidePencil, lucideSave,
     }),
   ],
 };

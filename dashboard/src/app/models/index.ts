@@ -1,8 +1,8 @@
 export interface PaginationMetadata {
   page: number;
   pageSize: number;
-  totalCount: number;
-  totalPages: number;
+  total: number;
+  totalPages?: number;
 }
 
 export interface CategoryDto {
@@ -56,11 +56,14 @@ export interface ChefDetailDto extends ChefDto {
 }
 
 export interface OrderItemDto {
+  id: string;
   menuItemId: string;
-  menuItemName: string;
-  quantity: number;
-  unitPrice: number;
-  subtotal: number;
+  name: string;
+  nameAr: string;
+  imageUrl: string;
+  price: number;
+  qty: number;
+  lineTotal: number;
 }
 
 export interface OrderDto {
@@ -74,14 +77,17 @@ export interface OrderDto {
   notes?: string;
   paymentMethod: string;
   subtotal: number;
+  deliveryFee: number;
   total: number;
-  createdAt: string;
+  placedAt: string;
+  estimatedDeliveryAt: string;
   items: OrderItemDto[];
 }
 
 export interface OrderStatusDto {
   id: string;
   status: string;
+  estimatedDeliveryAt: string;
 }
 
 export interface CreateOrderRequest {
@@ -92,7 +98,7 @@ export interface CreateOrderRequest {
   building?: string;
   notes?: string;
   paymentMethod: string;
-  items: { menuItemId: string; quantity: number }[];
+  items: { menuItemId: string; qty: number }[];
 }
 
 export interface SubscriptionDto {
@@ -131,6 +137,11 @@ export interface BlogPostDto {
   tags: string[];
 }
 
+export interface BlogPostsAdminResponse {
+  data: BlogPostDto[];
+  pagination: PaginationMetadata;
+}
+
 export interface TestimonialDto {
   id: string;
   customerName: string;
@@ -152,6 +163,30 @@ export interface HealthCheckResponse {
   timestamp: string;
   message: string;
   databaseConnected: boolean;
+}
+
+export interface ContactSubmissionDto {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface OfficeInquirySubmissionDto {
+  id: string;
+  companyName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  headCount: number;
+  deliveryArea?: string;
+  frequency?: string;
+  message: string;
+  createdAt: string;
 }
 
 export interface ListCategoriesResponse { data: CategoryDto[]; }

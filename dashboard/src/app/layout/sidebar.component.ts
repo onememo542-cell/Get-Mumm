@@ -16,7 +16,6 @@ interface NavItem { iconName: string; labelKey: string; route: string; }
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, RouterLinkActive, NgIconComponent, TranslatePipe],
   template: `
-    <!-- Backdrop -->
     @if (open) {
       <div class="fixed inset-0 bg-black/50 z-20 lg:hidden backdrop-blur-sm"
            (click)="close.emit()" role="button" aria-label="Close sidebar" tabindex="-1"></div>
@@ -34,7 +33,6 @@ interface NavItem { iconName: string; labelKey: string; route: string; }
            [class.ltr:-translate-x-full]="!open"
            [class.rtl:translate-x-full]="!open">
 
-      <!-- Brand -->
       <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
         <div class="w-9 h-9 bg-mumm-orange rounded-xl flex items-center justify-center text-white font-bold text-base flex-shrink-0">G</div>
         <div class="min-w-0 flex-1">
@@ -47,7 +45,6 @@ interface NavItem { iconName: string; labelKey: string; route: string; }
         </button>
       </div>
 
-      <!-- Nav -->
       <nav class="flex-1 overflow-y-auto py-3 px-3">
         @for (item of navItems; track item.route) {
           <a [routerLink]="item.route"
@@ -63,7 +60,6 @@ interface NavItem { iconName: string; labelKey: string; route: string; }
         }
       </nav>
 
-      <!-- User Footer -->
       <div class="p-3 border-t border-gray-100 dark:border-gray-800 flex-shrink-0">
         <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800">
           <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
@@ -99,6 +95,7 @@ export class SidebarComponent {
     { iconName: 'lucideFileText',        labelKey: 'NAV.BLOG',          route: '/blog' },
     { iconName: 'lucideBell',            labelKey: 'NAV.SUBSCRIPTIONS', route: '/subscriptions' },
     { iconName: 'lucideStar',            labelKey: 'NAV.TESTIMONIALS',  route: '/testimonials' },
+    { iconName: 'lucideMailOpen',        labelKey: 'NAV.CONTACT',       route: '/contact' },
     { iconName: 'lucideBarChart2',       labelKey: 'NAV.ANALYTICS',     route: '/stats' },
     { iconName: 'lucideSettings',        labelKey: 'NAV.SETTINGS',      route: '/settings' },
   ];

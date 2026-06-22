@@ -3,10 +3,6 @@ using GetMumm.Application.Interfaces;
 
 namespace GetMumm.Api.Controllers;
 
-/// <summary>
-/// API controller for contact and inquiry operations.
-/// Handles contact form submissions and office catering inquiries.
-/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ContactController : ControllerBase
@@ -20,12 +16,6 @@ public class ContactController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// Submit a contact form message.
-    /// </summary>
-    /// <param name="request">Contact request data</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Success response</returns>
     [HttpPost]
     public async Task<ActionResult> SubmitContact([FromBody] SubmitContactRequest request, CancellationToken cancellationToken = default)
     {
@@ -42,12 +32,6 @@ public class ContactController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Submit an office catering inquiry.
-    /// </summary>
-    /// <param name="request">Office inquiry request data</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Success response</returns>
     [HttpPost("office-inquiry")]
     public async Task<ActionResult> SubmitOfficeInquiry([FromBody] SubmitOfficeInquiryRequest request, CancellationToken cancellationToken = default)
     {
@@ -60,6 +44,38 @@ public class ContactController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing office inquiry");
+            throw;
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ContactSubmissionDto>>> GetContacts(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Get all contact submissions request received");
+            var contacts = await _contactService.GetAllContactsAsync(cancellationToken);
+            return Ok(contacts);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving contact submissions");
+            throw;
+        }
+    }
+
+    [HttpGet("office-inquiries")]
+    public async Task<ActionResult<IEnumerable<OfficeInquirySubmissionDto>>> GetOfficeInquiries(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Get all office inquiry submissions request received");
+            var inquiries = await _contactService.GetAllOfficeInquiriesAsync(cancellationToken);
+            return Ok(inquiries);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving office inquiry submissions");
             throw;
         }
     }

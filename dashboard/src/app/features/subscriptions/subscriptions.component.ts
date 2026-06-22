@@ -6,7 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../core/services/api.service';
 import { ToastService } from '../../core/services/toast.service';
-import { SubscriptionDto, CreateSubscriptionRequest } from '../../models';
+import { SubscriptionDto, CreateSubscriptionRequest, UpdateSubscriptionRequest } from '../../models';
 import { SkeletonComponent } from '../../shared/components/skeleton.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 import { ErrorStateComponent } from '../../shared/components/error-state.component';
@@ -25,7 +25,7 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
             @if (!loading()) { {{ items().length }} {{ 'SUBSCRIPTIONS.TITLE' | translate | lowercase }} }
           </p>
         </div>
-        <button class="btn-primary self-start sm:self-auto gap-2" (click)="showCreate.set(!showCreate())">
+        <button class="btn-primary self-start sm:self-auto gap-2" (click)="toggleCreate()">
           @if (showCreate()) {
             <ng-icon name="lucideX" size="14" /> {{ 'COMMON.CANCEL' | translate }}
           } @else {
@@ -66,10 +66,50 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
             </div>
             <div class="flex gap-3">
               <button type="submit" class="btn-primary gap-2" [disabled]="saving() || !f.valid">
-                @if (saving()) { <ng-icon name="lucideLoader" size="14" class="animate-spin" /> {{ 'COMMON.SAVING' | translate }}  }
+                @if (saving()) { <ng-icon name="lucideLoader" size="14" class="animate-spin" /> {{ 'COMMON.SAVING' | translate }} }
                 @else { <ng-icon name="lucidePlus" size="14" /> {{ 'COMMON.CREATE' | translate }} }
               </button>
               <button type="button" class="btn-secondary" (click)="showCreate.set(false)">{{ 'COMMON.CANCEL' | translate }}</button>
+            </div>
+          </form>
+        </div>
+      }
+
+      @if (editingSub()) {
+        <div class="card p-5 border-blue-200 dark:border-blue-800">
+          <h3 class="text-sm font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <ng-icon name="lucidePencil" size="14" class="text-blue-500" />
+            {{ 'SUBSCRIPTIONS.EDIT' | translate }}
+            <code class="text-xs font-mono text-gray-400 ms-auto">{{ editingSub()!.id.slice(0,8) }}…</code>
+          </h3>
+          <form (ngSubmit)="saveEdit()" #ef="ngForm" novalidate>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label class="label">{{ 'SUBSCRIPTIONS.TYPE' | translate }}</label>
+                <select class="input" [(ngModel)]="editForm.type" name="editType">
+                  <option value="">— {{ 'SUBSCRIPTIONS.NO_CHANGE' | translate }} —</option>
+                  <option>Weekly</option><option>Monthly</option>
+                  <option>Quarterly</option><option>Annual</option>
+                </select>
+              </div>
+              <div>
+                <label class="label">{{ 'SUBSCRIPTIONS.STATUS' | translate }}</label>
+                <select class="input" [(ngModel)]="editForm.status" name="editStatus">
+                  <option value="">— {{ 'SUBSCRIPTIONS.NO_CHANGE' | translate }} —</option>
+                  <option>Active</option><option>Expired</option><option>Cancelled</option>
+                </select>
+              </div>
+              <div>
+                <label class="label">{{ 'SUBSCRIPTIONS.END_DATE' | translate }}</label>
+                <input type="date" class="input" [(ngModel)]="editForm.endDate" name="editEndDate" />
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button type="submit" class="btn-primary gap-2" [disabled]="saving()">
+                @if (saving()) { <ng-icon name="lucideLoader" size="14" class="animate-spin" /> {{ 'COMMON.SAVING' | translate }} }
+                @else { <ng-icon name="lucideSave" size="14" /> {{ 'COMMON.SAVE' | translate }} }
+              </button>
+              <button type="button" class="btn-secondary" (click)="cancelEdit()">{{ 'COMMON.CANCEL' | translate }}</button>
             </div>
           </form>
         </div>
@@ -84,7 +124,6 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
                          [title]="'SUBSCRIPTIONS.EMPTY_TITLE' | translate"
                          [message]="'SUBSCRIPTIONS.EMPTY_MSG' | translate" />
       } @else {
-        <!-- Desktop Table -->
         <div class="card overflow-hidden hidden md:block">
           <div class="overflow-x-auto">
             <table class="w-full" role="table">
@@ -93,7 +132,7 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
                   <th class="table-header text-start" scope="col">ID</th>
                   <th class="table-header text-start" scope="col">{{ 'SUBSCRIPTIONS.USER_ID' | translate }}</th>
                   <th class="table-header text-start" scope="col">{{ 'SUBSCRIPTIONS.TYPE' | translate }}</th>
-                  <th class="table-header text-start" scope="col">Status</th>
+                  <th class="table-header text-start" scope="col">{{ 'SUBSCRIPTIONS.STATUS' | translate }}</th>
                   <th class="table-header text-start" scope="col">{{ 'SUBSCRIPTIONS.START_DATE' | translate }}</th>
                   <th class="table-header text-start" scope="col">{{ 'SUBSCRIPTIONS.END_DATE' | translate }}</th>
                   <th class="table-header" scope="col"></th>
@@ -113,10 +152,16 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
                     <td class="table-cell text-sm whitespace-nowrap">{{ sub.startDate | date:'dd MMM yyyy' }}</td>
                     <td class="table-cell text-sm whitespace-nowrap">{{ sub.endDate | date:'dd MMM yyyy' }}</td>
                     <td class="table-cell">
-                      <button class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
-                              (click)="deleteSub(sub.id)" [attr.aria-label]="'COMMON.DELETE' | translate">
-                        <ng-icon name="lucideTrash2" size="14" />
-                      </button>
+                      <div class="flex items-center gap-1 justify-end">
+                        <button class="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors"
+                                (click)="startEdit(sub)" [attr.aria-label]="'COMMON.EDIT' | translate">
+                          <ng-icon name="lucidePencil" size="13" />
+                        </button>
+                        <button class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                                (click)="deleteSub(sub.id)" [attr.aria-label]="'COMMON.DELETE' | translate">
+                          <ng-icon name="lucideTrash2" size="13" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 }
@@ -125,7 +170,6 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
           </div>
         </div>
 
-        <!-- Mobile Cards -->
         <div class="space-y-3 md:hidden" role="list">
           @for (sub of items(); track sub.id) {
             <div class="card p-4" role="listitem">
@@ -143,9 +187,14 @@ import { ErrorStateComponent } from '../../shared/components/error-state.compone
                 <div class="flex items-center gap-1"><ng-icon name="lucideCalendar" size="11" /> {{ sub.startDate | date:'dd MMM yyyy' }}</div>
                 <div class="flex items-center gap-1"><ng-icon name="lucideCalendar" size="11" /> {{ sub.endDate | date:'dd MMM yyyy' }}</div>
               </div>
-              <button class="btn-danger text-xs py-1.5 w-full justify-center gap-1.5" (click)="deleteSub(sub.id)">
-                <ng-icon name="lucideTrash2" size="12" /> {{ 'COMMON.DELETE' | translate }}
-              </button>
+              <div class="flex gap-2">
+                <button class="btn-secondary text-xs py-1.5 flex-1 justify-center gap-1.5" (click)="startEdit(sub)">
+                  <ng-icon name="lucidePencil" size="12" /> {{ 'COMMON.EDIT' | translate }}
+                </button>
+                <button class="btn-danger text-xs py-1.5 flex-1 justify-center gap-1.5" (click)="deleteSub(sub.id)">
+                  <ng-icon name="lucideTrash2" size="12" /> {{ 'COMMON.DELETE' | translate }}
+                </button>
+              </div>
             </div>
           }
         </div>
@@ -157,12 +206,16 @@ export class SubscriptionsComponent implements OnInit {
   private api        = inject(ApiService);
   private toast      = inject(ToastService);
   private destroyRef = inject(DestroyRef);
+
   loading    = signal(true);
   error      = signal(false);
   saving     = signal(false);
   showCreate = signal(false);
+  editingSub = signal<SubscriptionDto | null>(null);
   items      = signal<SubscriptionDto[]>([]);
+
   form: CreateSubscriptionRequest = { userId: '', type: '', startDate: '', endDate: '' };
+  editForm: UpdateSubscriptionRequest = { type: '', status: '', endDate: '' };
 
   ngOnInit(): void { this.load(); }
 
@@ -172,6 +225,11 @@ export class SubscriptionsComponent implements OnInit {
       next: r  => { this.items.set(r); this.loading.set(false); },
       error: () => { this.error.set(true); this.loading.set(false); this.toast.error('Failed to load subscriptions'); },
     });
+  }
+
+  toggleCreate(): void {
+    this.showCreate.set(!this.showCreate());
+    if (this.showCreate()) this.editingSub.set(null);
   }
 
   create(): void {
@@ -184,6 +242,29 @@ export class SubscriptionsComponent implements OnInit {
         this.load();
       },
       error: () => { this.toast.error('Failed to create subscription'); this.saving.set(false); },
+    });
+  }
+
+  startEdit(sub: SubscriptionDto): void {
+    this.editingSub.set(sub);
+    this.editForm = { type: '', status: '', endDate: '' };
+    this.showCreate.set(false);
+  }
+
+  cancelEdit(): void { this.editingSub.set(null); }
+
+  saveEdit(): void {
+    const id = this.editingSub()?.id;
+    if (!id) return;
+    const payload: UpdateSubscriptionRequest = {};
+    if (this.editForm.type)    payload.type    = this.editForm.type;
+    if (this.editForm.status)  payload.status  = this.editForm.status;
+    if (this.editForm.endDate) payload.endDate = this.editForm.endDate;
+    if (!Object.keys(payload).length) { this.cancelEdit(); return; }
+    this.saving.set(true);
+    this.api.updateSubscription(id, payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => { this.toast.success('Subscription updated'); this.saving.set(false); this.editingSub.set(null); this.load(); },
+      error: () => { this.toast.error('Failed to update subscription'); this.saving.set(false); },
     });
   }
 

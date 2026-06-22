@@ -87,8 +87,16 @@ import { OrderDto } from '../../models';
                 <p class="font-bold text-primary-600 dark:text-primary-400">EGP {{ order()!.subtotal | number:'1.0-2' }}</p>
               </div>
               <div>
+                <p class="text-xs text-gray-400 mb-0.5">{{ 'ORDERS.DELIVERY_FEE' | translate }}</p>
+                <p class="font-medium text-gray-700 dark:text-gray-300">EGP {{ order()!.deliveryFee | number:'1.0-2' }}</p>
+              </div>
+              <div>
                 <p class="text-xs text-gray-400 mb-0.5">{{ 'ORDERS.TOTAL' | translate }}</p>
                 <p class="font-bold text-primary-600 dark:text-primary-400 text-base">EGP {{ order()!.total | number:'1.0-2' }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-0.5">{{ 'ORDERS.PLACED_AT' | translate }}</p>
+                <p class="font-medium text-gray-700 dark:text-gray-300">{{ order()!.placedAt | date:'dd MMM yyyy, HH:mm' }}</p>
               </div>
             </div>
             @if (order()!.items?.length) {
@@ -103,24 +111,24 @@ import { OrderDto } from '../../models';
                     </tr>
                   </thead>
                   <tbody>
-                    @for (item of order()!.items; track item.menuItemId) {
+                    @for (item of order()!.items; track item.id) {
                       <tr class="border-t border-gray-50 dark:border-gray-800 hover:bg-gray-50/60 dark:hover:bg-gray-800/30 transition-colors">
-                        <td class="table-cell font-medium">{{ item.menuItemName }}</td>
-                        <td class="table-cell text-end text-gray-500">{{ item.quantity }}</td>
-                        <td class="table-cell text-end text-gray-500">EGP {{ item.unitPrice | number:'1.0-2' }}</td>
-                        <td class="table-cell text-end font-semibold text-gray-800 dark:text-white">EGP {{ item.subtotal | number:'1.0-2' }}</td>
+                        <td class="table-cell font-medium">{{ item.name }}</td>
+                        <td class="table-cell text-end text-gray-500">{{ item.qty }}</td>
+                        <td class="table-cell text-end text-gray-500">EGP {{ item.price | number:'1.0-2' }}</td>
+                        <td class="table-cell text-end font-semibold text-gray-800 dark:text-white">EGP {{ item.lineTotal | number:'1.0-2' }}</td>
                       </tr>
                     }
                   </tbody>
                 </table>
                 <div class="sm:hidden divide-y divide-gray-50 dark:divide-gray-800">
-                  @for (item of order()!.items; track item.menuItemId) {
+                  @for (item of order()!.items; track item.id) {
                     <div class="px-5 py-3 flex items-center justify-between gap-3">
                       <div>
-                        <p class="text-sm font-medium text-gray-800 dark:text-white">{{ item.menuItemName }}</p>
-                        <p class="text-xs text-gray-400">× {{ item.quantity }} · EGP {{ item.unitPrice | number:'1.0-2' }}</p>
+                        <p class="text-sm font-medium text-gray-800 dark:text-white">{{ item.name }}</p>
+                        <p class="text-xs text-gray-400">× {{ item.qty }} · EGP {{ item.price | number:'1.0-2' }}</p>
                       </div>
-                      <p class="text-sm font-bold text-primary-600 dark:text-primary-400">EGP {{ item.subtotal | number:'1.0-2' }}</p>
+                      <p class="text-sm font-bold text-primary-600 dark:text-primary-400">EGP {{ item.lineTotal | number:'1.0-2' }}</p>
                     </div>
                   }
                 </div>

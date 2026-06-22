@@ -7,14 +7,16 @@ import {
   GetFeaturedItemsResponse, ListChefsResponse, GetChefResponse,
   OrderDto, OrderStatusDto,
   SubscriptionDto, CreateSubscriptionRequest, UpdateSubscriptionRequest,
-  BlogPostDto, TestimonialDto, StatsDto, HealthCheckResponse
+  BlogPostDto, BlogPostsAdminResponse,
+  TestimonialDto, StatsDto, HealthCheckResponse,
+  ContactSubmissionDto, OfficeInquirySubmissionDto,
 } from '../../models';
 
 const TTL = {
-  STABLE:    10 * 60 * 1000,  // 10 min — categories, chefs, blog, testimonials
-  MEDIUM:     5 * 60 * 1000,  // 5 min  — menu items
-  REALTIME:      30 * 1000,   // 30 sec — stats, subscriptions
-  HEALTH:        15 * 1000,   // 15 sec — health check
+  STABLE:   10 * 60 * 1000,  // 10 min
+  MEDIUM:    5 * 60 * 1000,  // 5 min
+  REALTIME:     30 * 1000,   // 30 sec
+  HEALTH:       15 * 1000,   // 15 sec
 };
 
 @Injectable({ providedIn: 'root' })
@@ -71,7 +73,7 @@ export class ApiService {
     return this.http.get<OrderStatusDto>(`${this.base}/orders/${id}/status`);
   }
 
-  /* ── Subscriptions (no caching — CRUD) ── */
+  /* ── Subscriptions ── */
   getSubscriptions(): Observable<SubscriptionDto[]> {
     return this.http.get<SubscriptionDto[]>(`${this.base}/Subscriptions`);
   }
@@ -99,12 +101,27 @@ export class ApiService {
     return this.cache.wrap('blog-posts', this.http.get<BlogPostDto[]>(`${this.base}/Blog/posts`), TTL.STABLE);
   }
 
-  getBlogPost(slug: string): Observable<BlogPostDto> {
-    return this.cache.wrap(`blog-post:${slug}`, this.http.get<BlogPostDto>(`${this.base}/Blog/posts/${slug}`), TTL.STABLE);
+  getBlogPostsAdmin(page = 1, pageSize = 20): Observable<BlogPostsAdminResponse> {
+    const key = `blog-admin:${page}:${pageSize}`;
+    const params = new HttpParams().set('page', page).set('pageSize', pageSize);
+    return this.cache.wrap(key, this.http.get<BlogPostsAdminResponse>(`${this.base}/Blog`, { params }), TTL.STABLE);
+  }
+
+  getBlogPostById(id: string): Observable<BlogPostDto> {
+    return this.cache.wrap(`blog-post-id:${id}`, this.http.get<BlogPostDto>(`${this.base}/Blog/${id}`), TTL.STABLE);
   }
 
   /* ── Testimonials ── */
   getTestimonials(): Observable<TestimonialDto[]> {
     return this.cache.wrap('testimonials', this.http.get<TestimonialDto[]>(`${this.base}/Testimonials`), TTL.STABLE);
+  }
+
+  /* ── Contact Submissions ── */
+  getContactSubmissions(): Observable<ContactSubmissionDto[]> {
+    return this.http.get<ContactSubmissionDto[]>(`${this.base}/Contact`);
+  }
+
+  getOfficeInquiries(): Observable<OfficeInquirySubmissionDto[]> {
+    return this.http.get<OfficeInquirySubmissionDto[]>(`${this.base}/Contact/office-inquiries`);
   }
 }
